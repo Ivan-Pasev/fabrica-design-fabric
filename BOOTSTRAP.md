@@ -21,3 +21,16 @@ A bare URL is **not** a universal IDE auto-execution instruction. Some agents ca
 The public GitHub repo must actually contain the referenced files on the fetched ref. Until a proposed KBI/.kbi PR is reviewed and merged, use only files present at that public branch or an explicitly provided review artifact. Never claim that a README alone installs a runtime.
 
 No private FDF Google Drive canon or third-party source is imported into the caller's project. No secrets, historical jury map or signing material are distributed. This is first-party source-only proposal intelligence, not a v1 production engine.
+
+
+## R27: verified file-anchored proposal helper
+
+On an authorized checkout of **FDF's reviewed source branch**, a local IDE may run this **read-only** command against the **caller project's** workspace:
+
+```bash
+python3 tools/fdf_workspace_probe.py --project /absolute/path/to/current-project
+```
+
+The utility reads only bounded UI source files (HTML, JSX/TSX, Vue, Svelte, CSS), ignores common protected/vendor directories and symlinked files, and emits hashed file identities, exact observed file paths/line numbers, candidate improvement rules and HUMAN_REVIEW_REQUIRED status. It does **not** apply changes or execute project scripts. The IDE must use inspected actual source and local project rules to turn these observations into suitable concrete diffs and verify the result. Do not treat regex findings as certified accessibility violations or a substitute for design review.
+
+**Availability:** Check that `tools/fdf_workspace_probe.py` is present at the Git ref you read. If it exists only in a draft branch, it is not available from the public default-branch URL yet. The agent may still inspect the project directly and produce a proposal without this helper.
