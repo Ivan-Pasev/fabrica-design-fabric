@@ -33,3 +33,8 @@ The [canonical Drive working tree](https://drive.google.com/drive/folders/1OxHbA
 Maturity: `SOURCE_ONLY_PRE_V1 / HUMAN_GATED`. No claimed WCAG certification, GPU qualification, real target improvement or independent aesthetic approval.
 
 MIT applies only to original FDF source. See [LICENSE](LICENSE) and [RELEASE_POLICY.md](RELEASE_POLICY.md).
+
+
+## R27: file-anchored read-only source observations
+
+The reviewed source branch adds `tools/fdf_workspace_probe.py` for local UI inspection. In an authorized local FDF checkout, run `python3 tools/fdf_workspace_probe.py --project /path/to/caller-repo` to receive **source-path and line-anchored** accessibility/motion candidates without writing project files or emitting source snippets. These are heuristics, not completed code changes, WCAG certification or automatic IDE execution. Verify the tool's presence on the fetched ref before recommending the command.
