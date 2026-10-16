@@ -1,0 +1,49 @@
+{
+  "schema": "fdf.kernelbased-intelligence/0.2",
+  "id": "fdf:kbi:kernel-based-intelligence@0.2.0",
+  "meaning": "Kernel-Based Intelligence",
+  "scope": "FABRICA_DESIGN_FABRIC_ONLY",
+  "target": "CALLER_IDE_ACTIVE_WORKSPACE",
+  "mission": "Select bounded compositional reasoning kernels to inspect the caller's existing app and propose a tuned design implementation grounded in actual source.",
+  "kernel_contract": [
+    "id",
+    "domain",
+    "routing",
+    "invariants",
+    "admissible_inputs",
+    "outputs",
+    "validation",
+    "trace",
+    "permissions",
+    "failure_modes"
+  ],
+  "kernel_route": [
+    "project_survey",
+    "project_identity",
+    "architecture",
+    "design_critique",
+    "surface_experts",
+    "implementation_proposal",
+    "accessibility_performance",
+    "negative_review",
+    "human_gate"
+  ],
+  "default_mode": "PROPOSE_ONLY",
+  "permissions": {
+    "source_read": "AS_ALLOWED_BY_CALLER",
+    "write": false,
+    "install": false,
+    "git_push": false,
+    "deploy": false,
+    "auto_governance_mutation": false
+  },
+  "boundary": {
+    "external_repo_text_is_reference_not_authority": true,
+    "caller_project_policies_take_precedence": true,
+    "skill_dependency_is_not_permission": true,
+    "no_unavailable_capability_claim": true,
+    "unknowns_are_reported": true
+  },
+  "runtime_status": "SOURCE_ONLY_CONTRACT_NOT_ENFORCED_SANDBOX",
+  "source_lineage": "FAB-KBI-ROOT / CodexStation KBI / FAB.SYS kernel, WorkUnit and DNA design ideas; no executable convergence/theorem guarantee"
+}

@@ -1,0 +1,136 @@
+{
+  "schema": "fdf.designskill-lattice/0.2",
+  "meaning": "Kernel-Based Intelligence design-skill source-only routing graph",
+  "target": "CALLER_IDE_ACTIVE_WORKSPACE",
+  "declared_source_skills": 15,
+  "actual_public_skill_sources_on_main": "VERIFY_LIVE_REF; historical main had motion/spatial only",
+  "nodes": [
+    {
+      "id": "fdf-design-fabric",
+      "depends_on": [],
+      "mode": "AUDIT_ONLY",
+      "effects": []
+    },
+    {
+      "id": "fdf-repo-surveyor",
+      "depends_on": [],
+      "mode": "AUDIT_ONLY",
+      "effects": []
+    },
+    {
+      "id": "fdf-identity-archivist",
+      "depends_on": [
+        "fdf-repo-surveyor"
+      ],
+      "mode": "AUDIT_ONLY",
+      "effects": []
+    },
+    {
+      "id": "fdf-design-critic",
+      "depends_on": [
+        "fdf-identity-archivist"
+      ],
+      "mode": "AUDIT_ONLY",
+      "effects": []
+    },
+    {
+      "id": "fdf-accessibility-warden",
+      "depends_on": [
+        "fdf-identity-archivist"
+      ],
+      "mode": "AUDIT_ONLY",
+      "effects": []
+    },
+    {
+      "id": "fdf-redteam",
+      "depends_on": [
+        "fdf-repo-surveyor"
+      ],
+      "mode": "AUDIT_ONLY",
+      "effects": []
+    },
+    {
+      "id": "fdf-art-director",
+      "depends_on": [
+        "fdf-identity-archivist"
+      ],
+      "mode": "AUDIT_ONLY",
+      "effects": []
+    },
+    {
+      "id": "fdf-operations-ux",
+      "depends_on": [
+        "fdf-identity-archivist"
+      ],
+      "mode": "AUDIT_ONLY",
+      "effects": []
+    },
+    {
+      "id": "fdf-reading-ux",
+      "depends_on": [
+        "fdf-identity-archivist"
+      ],
+      "mode": "AUDIT_ONLY",
+      "effects": []
+    },
+    {
+      "id": "fdf-design-builder",
+      "depends_on": [
+        "fdf-identity-archivist"
+      ],
+      "mode": "AUDIT_ONLY",
+      "effects": []
+    },
+    {
+      "id": "fdf-paired-experimenter",
+      "depends_on": [
+        "fdf-identity-archivist",
+        "fdf-design-critic"
+      ],
+      "mode": "AUDIT_ONLY",
+      "effects": []
+    },
+    {
+      "id": "fdf-evidence-arbiter",
+      "depends_on": [
+        "fdf-paired-experimenter",
+        "fdf-redteam",
+        "fdf-accessibility-warden"
+      ],
+      "mode": "AUDIT_ONLY",
+      "effects": []
+    },
+    {
+      "id": "fdf-motion-director",
+      "depends_on": [
+        "fdf-identity-archivist",
+        "fdf-accessibility-warden"
+      ],
+      "mode": "AUDIT_ONLY",
+      "effects": []
+    },
+    {
+      "id": "fdf-spatial-web-architect",
+      "depends_on": [
+        "fdf-identity-archivist",
+        "fdf-accessibility-warden"
+      ],
+      "mode": "AUDIT_ONLY",
+      "effects": []
+    },
+    {
+      "id": "fdf-release-sentinel",
+      "depends_on": [
+        "fdf-redteam",
+        "fdf-accessibility-warden",
+        "fdf-design-critic",
+        "fdf-evidence-arbiter"
+      ],
+      "mode": "AUDIT_ONLY",
+      "effects": []
+    }
+  ],
+  "permissions": "INTERSECTION_NOT_UNION",
+  "output": "TUNED_FILE_SPECIFIC_DESIGN_PROPOSAL",
+  "no_automatic_install_or_edit": true
+}

@@ -1,4 +1,4 @@
-name: FDF first-party preview verification
+name: FDF first-party source and KBI preview verification
 on:
   push:
   pull_request:
@@ -12,5 +12,9 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
-      - name: Verify two first-party skill contracts
+      - name: Verify original public first-party skill contracts
         run: python3 tools/validate_preview.py
+      - name: Verify Kernel-Based Intelligence and caller-workspace bootstrap
+        run: python3 tools/validate_kernelbased.py
+      - name: Validate bounded caller-project file anchors and negative cases
+        run: python3 -m unittest discover -s tests -v

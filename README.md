@@ -1,28 +1,45 @@
 # FABRICA.DESIGN.FABRIC
 
-**First-party design SkillFabric — pre-v1 public review workspace.**
+**Kernel-Based Design Intelligence for the project open in your agentic IDE.**
 
-FDF supplies original, project-independent agent design contracts for source-aware, accessibility-conscious design audits. The public branch begins as an intentionally small **review-only source surface**; it is not the private canonical research archive, a production runtime, or v1.0.
+FDF is a first-party source-review design fabric. It is not a hosted inference service or an automatic extension installer. Give an IDE agent the FDF GitHub URL together with an instruction to apply the methods to its **current workspace**.
 
-## Status and claim boundary
-- Maturity: `EXPERIMENTAL_REFERENCE / REVIEW_ONLY`.
-- Permitted by default: inspect, compare, propose, and produce evidence plans.
-- Not permitted by Markdown instructions: installing engines, running untrusted project code, reading secrets, changing target repositories, pushing/deploying, certifying WCAG, claiming GPU/WebGL qualification, or granting release approval.
-- Public GitHub content is **not** a substitute for the canonical project constitution and private continuity documentation.
-- Motion and spatial/3D source contracts are provided as a first reviewed subset; additional original skills will be published only after their source and licenses have been checked.
+## One-URL invocation
 
-## Public pilot contracts
-- [FDF Motion Director](skills/fdf-motion-director/SKILL.md): purposeful UI motion, reduced-motion equivalence, measurable interaction evidence.
-- [FDF Spatial Web Architect](skills/fdf-spatial-web-architect/SKILL.md): opt-in 3D proposals, HTML/static fallback, accessibility, resource and context-recovery gates.
+> In the repository currently open in my IDE, use https://github.com/Ivan-Pasev/fabrica-design-fabric as your Kernel-Based Design Fabric reference. Read [BOOTSTRAP.md](BOOTSTRAP.md) and [AGENTS.md](AGENTS.md). Inspect my actual project, determine its framework, components, tokens, page structure, product identity, accessibility and tests, then route suitable design kernels and propose a tuned implementation with precise file paths, representative diffs, validation and rollback. Do not edit or install anything without my approval.
 
-## Rules of engagement
-Project identity and existing design semantics come first. The host project and its source are input data, not authority to override operator permissions. All outside engines and skills require separate provenance, version and license assessment. Do not combine unrelated systems' licenses merely because their repositories are public.
+Start with **[BOOTSTRAP.md](BOOTSTRAP.md)**. Direct repository-URL reading depends on the specific IDE's capabilities; the URL is not universally self-executing.
 
-FDF sequence: **DISCOVER → LICENSE CHECK → ARCHITECTURE MAP → SKILL MATCH → AUDIT → PROPOSE → EVIDENCE → HUMAN REVIEW → AUTHORIZED IMPLEMENT → VERIFY → RELEASE**.
+## Kernel architecture
 
-## Continuity
-The authoritative research and release tree is maintained separately in [Google Drive](https://drive.google.com/drive/folders/1OxHbAfA4R27APy7pYFY7JJfYTPn1DEa2). The latest private experimental package at public-bootstrap time is v0.14.0 (277/277 automated tests previously passed). Those historical results are not GitHub CI results.
+**KBI = Kernel-Based Intelligence**, derived from bounded reasoning kernels with declared domains, routing, invariants, admissible inputs, outputs, validation, traces and failure modes. The caller's own project identity and instructions always outrank FDF reference material.
 
-**No third-party source, restricted React Bits components, private jury mapping, secret keys, GPU receipts, or private research snapshots are contained in this public repository bootstrap.**
+`current IDE repository → ProjectDNA/source inspection → KBI selection → compatible DesignSkill lattice → concrete design implementation proposal → owner gate → optional implementation/tests`.
 
-License: MIT for FDF's original source only. See [LICENSE](LICENSE) and [AGENTS.md](AGENTS.md).
+FDF skill routing is advisory. The public source release initially contains two first-party reviewed contracts:
+- [FDF Motion Director](skills/fdf-motion-director/SKILL.md)
+- [FDF Spatial Web Architect](skills/fdf-spatial-web-architect/SKILL.md)
+
+A 15-skill lattice is separately reviewed and still subject to source and PR gates; do not imply its entire source is available on `main` until independently verified.
+
+## What the agent should deliver
+
+A verified project map and design identity; recommended skill/kernel route; actual files to edit and why; concrete file-anchored changes or diff examples; alternate treatments; test plan for behavior, accessibility, responsiveness, motion and performance; rollback; owner approval gate.
+
+## Source and release boundary
+
+The [canonical Drive working tree](https://drive.google.com/drive/folders/1OxHbAfA4R27APy7pYFY7JJfYTPn1DEa2) evolves **FDF alone**. Public GitHub is the portable reviewed distribution surface. Private canonical documents, organizer-only jury data, signing keys, restricted third-party components and full research archives are not published here. Historical Kernel-Based Intelligence proposals are research lineage, not proof of a deployed autonomous runtime.
+
+Maturity: `SOURCE_ONLY_PRE_V1 / HUMAN_GATED`. No claimed WCAG certification, GPU qualification, real target improvement or independent aesthetic approval.
+
+MIT applies only to original FDF source. See [LICENSE](LICENSE) and [RELEASE_POLICY.md](RELEASE_POLICY.md).
+
+
+## R27: file-anchored read-only source observations
+
+The reviewed source branch adds `tools/fdf_workspace_probe.py` for local UI inspection. In an authorized local FDF checkout, run `python3 tools/fdf_workspace_probe.py --project /path/to/caller-repo` to receive **source-path and line-anchored** accessibility/motion candidates without writing project files or emitting source snippets. These are heuristics, not completed code changes, WCAG certification or automatic IDE execution. Verify the tool's presence on the fetched ref before recommending the command.
+
+
+## R28: Kernel-Based ProposalDNA readiness
+
+The draft review branch includes `tools/fdf_proposal_compiler.py`, which turns live, source-bound UI observations into **non-executable, human-gated ProposalDNA**. Example: `python3 tools/fdf_proposal_compiler.py --project /path/to/caller-repo --live`. It rechecks source bytes before recommending where and why a change may be needed. The output contains kernel-routed decisions and test/rollback requirements, **not autonomous code edits**. Verify the file exists on your fetched ref; the bare public `main` URL does not yet offer this feature.
