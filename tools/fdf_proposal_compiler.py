@@ -96,13 +96,16 @@ def compile_plan(project, receipt):
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--project',required=True)
-    parser.add_argument('--observations',required=True)
+    evidence=parser.add_mutually_exclusive_group(required=True)
+    evidence.add_argument('--observations')
+    evidence.add_argument('--live',action='store_true',help='Generate/recheck observations entirely in memory; no receipt file write')
     args=parser.parse_args()
-    rp=Path(args.observations)
-    if rp.is_symlink() or not rp.is_file() or rp.stat().st_size > 512*1024:
-        raise SystemExit('HOLD: invalid receipt input')
+    if not args.live:
+        rp=Path(args.observations)
+        if rp.is_symlink() or not rp.is_file() or rp.stat().st_size > 512*1024:
+            raise SystemExit('HOLD: invalid receipt input')
     try:
-        receipt=json.loads(rp.read_text('utf-8'))
+        receipt=scan(args.project) if args.live else json.loads(rp.read_text('utf-8'))
         print(json.dumps(compile_plan(args.project,receipt),indent=2,sort_keys=True))
     except (OSError,UnicodeError,ValueError,TypeError,KeyError) as ex:
         raise SystemExit('HOLD: '+str(ex))
