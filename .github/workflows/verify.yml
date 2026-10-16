@@ -16,3 +16,5 @@ jobs:
         run: python3 tools/validate_preview.py
       - name: Verify Kernel-Based Intelligence and caller-workspace bootstrap
         run: python3 tools/validate_kernelbased.py
+      - name: Validate bounded caller-project file anchors and negative cases
+        run: python3 -m unittest discover -s tests -v
