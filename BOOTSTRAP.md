@@ -34,3 +34,16 @@ python3 tools/fdf_workspace_probe.py --project /absolute/path/to/current-project
 The utility reads only bounded UI source files (HTML, JSX/TSX, Vue, Svelte, CSS), ignores common protected/vendor directories and symlinked files, and emits hashed file identities, exact observed file paths/line numbers, candidate improvement rules and HUMAN_REVIEW_REQUIRED status. It does **not** apply changes or execute project scripts. The IDE must use inspected actual source and local project rules to turn these observations into suitable concrete diffs and verify the result. Do not treat regex findings as certified accessibility violations or a substitute for design review.
 
 **Availability:** Check that `tools/fdf_workspace_probe.py` is present at the Git ref you read. If it exists only in a draft branch, it is not available from the public default-branch URL yet. The agent may still inspect the project directly and produce a proposal without this helper.
+
+
+## R28 — source-bound ProposalDNA (draft-branch feature)
+
+With the reviewed FDF branch checked out separately, the following optional standard-library command reads the **caller project's** source and writes only JSON to standard output:
+
+```bash
+python3 tools/fdf_proposal_compiler.py --project /absolute/path/to/current-project --live
+```
+
+It first generates a bounded read-only observation receipt, **re-checks it against current file digests and source anchors**, then routes observations to Kernel-Based DesignSkill proposals. It rejects stale/forged receipts, fabricated lines, unreviewed rules and permission escalation. No code patch is emitted or applied; semantic questions, validation and rollback remain explicit. Only use the tool if it exists on the fetched Git ref; it is presently in this **draft review branch**, not on public `main`.
+
+For persisted evidence, an agent may separately save output **outside the target project** with owner permission and later verify with `--observations /path/to/receipt.json`. Do not store automated receipts in a real project without authorization. The tool does not run the target build, assistive technology, visual tests or a real external IDE integration.
