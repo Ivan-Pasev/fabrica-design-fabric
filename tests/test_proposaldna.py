@@ -54,6 +54,13 @@ class ProposalDNATests(unittest.TestCase):
         self.assertNotIn('SUPER_SECRET_VALUE',p)
         self.assertEqual(a,(self.root/'pages'/'home.tsx').read_bytes())
         self.assertEqual(b,(self.root/'motion.css').read_bytes())
+    def test_cli_live_read_only(self):
+        import subprocess, sys
+        script=Path(__file__).resolve().parents[1]/'tools'/'fdf_proposal_compiler.py'
+        before=(self.root/'pages'/'home.tsx').read_bytes()
+        proc=subprocess.run([sys.executable,str(script),'--project',str(self.root),'--live'],check=True,capture_output=True,text=True)
+        self.assertEqual(len(json.loads(proc.stdout)['proposals']),3)
+        self.assertEqual(before,(self.root/'pages'/'home.tsx').read_bytes())
     def test_existing_semantics_not_automatically_invented(self):
         p=compile_plan(self.root,self.receipt)
         self.assertTrue(all(x['semantic_questions'] for x in p['proposals']))
