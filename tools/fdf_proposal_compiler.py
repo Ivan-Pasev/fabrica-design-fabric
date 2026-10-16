@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""FDF KBI ProposalDNA v0.1: read-only, byte-bound source proposals.
+"""FDF KBI ProposalDNA v0.2: read-only, coverage-bound source proposals.
 
 This is a bounded evidence compiler, not a code editor or security sandbox.
 Input receipts must be generated from the same caller workspace and are fully
@@ -55,6 +55,10 @@ def compile_plan(project, receipt):
         raise ValueError('receipt must be non-mutating')
     if receipt.get('target', receipt.get('target_role')) != 'CALLER_IDE_ACTIVE_WORKSPACE':
         raise ValueError('wrong target role')
+    if receipt.get('approval_required_for_mutation', True) is not True:
+        raise ValueError('receipt cannot relax the human authorization gate')
+    if receipt.get('tests_executed', []) != []:
+        raise ValueError('scanner receipts cannot assert executed tests')
     original = receipt.get('observed_files')
     candidates = receipt.get('candidate_changes')
     if not isinstance(original, list) or not isinstance(candidates, list) or len(original) > 120 or len(candidates) > 600:
@@ -67,6 +71,45 @@ def compile_plan(project, receipt):
         raise ValueError('proposal anchors stale or fabricated')
     if len(set(_observed(live))) != len(candidates):
         raise ValueError('duplicate candidate anchors')
+
+    # Every coverage claim is checked against a newly measured live scan.
+    # R28 receipts without coverage remain readable but are never promoted
+    # to complete, even when today's scan covers all eligible source files.
+    current_coverage = live['coverage']
+    has_coverage = 'coverage' in receipt
+    if has_coverage:
+        if (not isinstance(receipt['coverage'], dict)
+                or receipt['coverage'] != current_coverage):
+            raise ValueError('coverage stale, forged or incompatible')
+        if receipt.get('skipped') != live['skipped']:
+            raise ValueError('coverage skipped-file evidence mismatch')
+    if not current_coverage['complete']:
+        admission = 'HOLD_INCOMPLETE'
+        effective_verdict = 'INCOMPLETE'
+    elif not has_coverage:
+        admission = 'HOLD_UNKNOWN_LEGACY'
+        effective_verdict = 'UNKNOWN_LEGACY'
+    else:
+        admission = 'PASS_SCOPED'
+        effective_verdict = 'COMPLETE_WITHIN_DECLARED_SCOPE'
+    coverage_binding = {
+        'schema': 'fdf.kbi.coverage-binding/0.1',
+        'admission': admission,
+        'verdict': effective_verdict,
+        'receipt_kind': 'R30_COVERAGE' if has_coverage else 'R28_LEGACY_NO_COVERAGE',
+        'fresh_scan_sha256': digest(stable_json(current_coverage)),
+        'receipt_coverage_sha256': digest(stable_json(receipt['coverage'])) if has_coverage else None,
+        'current_scan': current_coverage,
+        'scope_limited': True,
+        'complete_project_audit': False,
+        'owner_authorized': False,
+        'reason': ('Source survey is complete only for the scanner declared eligible scope.'
+                   if admission == 'PASS_SCOPED' else
+                   'Fresh scan proves source survey incomplete.'
+                   if admission == 'HOLD_INCOMPLETE' else
+                   'Legacy receipt has no coverage attestation; no completeness promotion.'),
+    }
+
     items = []
     for x in sorted(candidates, key=lambda x:(x['path'],x['line'],x['rule'])):
         rule=x['rule']
@@ -82,15 +125,18 @@ def compile_plan(project, receipt):
           'rollback':'Restore the recorded original file bytes from the owner-approved baseline if implementation is later authorized.'
         })
     return {
-       'schema':'fdf.kbi.proposaldna/0.1', 'target':'CALLER_IDE_ACTIVE_WORKSPACE',
+       'schema':'fdf.kbi.proposaldna/0.2', 'target':'CALLER_IDE_ACTIVE_WORKSPACE',
        'mode':'PROPOSE_ONLY','source_files':actual_files,
        'observations_sha256':digest(stable_json(live)),
+       'coverage_binding':coverage_binding, 'coverage_admission':admission,
        'proposals':items,'mutations_performed':False,'owner_approval_required':True,
        'all_runtime_checks':'NOT_EXECUTED',
        'limitations':['No executable patches until contextual human decisions are resolved.',
            'Regex source analysis is incomplete and may produce false positives or negatives.',
            'No browser, assistive technology, IDE integration, design jury or production tests executed.',
-           'Source content hashes are integrity markers, not authenticated project provenance.']
+           'Source content hashes are integrity markers, not authenticated project provenance.',
+           'Coverage PASS_SCOPED refers only to selected extensions, allowed directories and scanner limits.',
+           'Incomplete or legacy-unknown coverage cannot authorize mutations or certify whole-project design quality.']
     }
 
 if __name__=='__main__':
