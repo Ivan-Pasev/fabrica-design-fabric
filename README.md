@@ -38,3 +38,8 @@ MIT applies only to original FDF source. See [LICENSE](LICENSE) and [RELEASE_POL
 ## R27: file-anchored read-only source observations
 
 The reviewed source branch adds `tools/fdf_workspace_probe.py` for local UI inspection. In an authorized local FDF checkout, run `python3 tools/fdf_workspace_probe.py --project /path/to/caller-repo` to receive **source-path and line-anchored** accessibility/motion candidates without writing project files or emitting source snippets. These are heuristics, not completed code changes, WCAG certification or automatic IDE execution. Verify the tool's presence on the fetched ref before recommending the command.
+
+
+## R28: Kernel-Based ProposalDNA readiness
+
+The draft review branch includes `tools/fdf_proposal_compiler.py`, which turns live, source-bound UI observations into **non-executable, human-gated ProposalDNA**. Example: `python3 tools/fdf_proposal_compiler.py --project /path/to/caller-repo --live`. It rechecks source bytes before recommending where and why a change may be needed. The output contains kernel-routed decisions and test/rollback requirements, **not autonomous code edits**. Verify the file exists on your fetched ref; the bare public `main` URL does not yet offer this feature.
