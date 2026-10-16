@@ -73,17 +73,31 @@ def _css_without_comments(content):
 
 
 def _has_reduced_motion_override(content):
-    """Conservative heuristic: real media rule and a motion-reducing property.
+    """Require a reduction declaration INSIDE a balanced matching media block.
 
-    Not selector-specific, not a browser guarantee; human review still needed.
+    This source heuristic does not prove selector equivalence or computed CSS.
     """
-    rule = re.search(r'@media\s*[^{}]*\(\s*prefers-reduced-motion\s*:\s*reduce\s*\)\s*\{',
-                     content, re.I)
-    if not rule:
-        return False
-    tail = content[rule.end():]
-    return bool(re.search(r'\b(?:animation|transition)\s*:\s*none\b|'
-                          r'\banimation-duration\s*:\s*0(?:s|ms)\b', tail, re.I))
+    media = re.compile(r'@media\s*[^{}]*\(\s*prefers-reduced-motion\s*:\s*reduce\s*\)\s*\{', re.I)
+    reducer = re.compile(r'(?<![\w-])(?:animation|transition)\s*:\s*none\b|'
+                         r'(?<![\w-])animation-duration\s*:\s*0(?:s|ms)\b', re.I)
+    for match in media.finditer(content):
+        depth = 1
+        close = match.end()
+        while close < len(content) and depth:
+            if content[close] == '{': depth += 1
+            elif content[close] == '}': depth -= 1
+            close += 1
+        if depth == 0 and reducer.search(content[match.end():close-1]):
+            return True
+    return False
+
+
+def _attribute_present(tag, name):
+    """Conservative attribute-name matching: do not confuse data-alt with alt.
+
+    JSX/HTML syntax remains a heuristic and must be reviewed in context.
+    """
+    return bool(re.search(r'(?<![\w:-])' + re.escape(name) + r'\s*=', tag, re.I))
 
 
 def scan(project):
@@ -94,10 +108,21 @@ def scan(project):
     limit_hit = False
     depth_limited = False
     symlink_dirs_skipped = 0
+    walk_error_count = 0
+    walk_unvisited = set()
+    walk_error_examples = []
 
-    for base, dirs, files in os.walk(root, topdown=True, followlinks=False):
+    def note_walk_error(error):
+        nonlocal walk_error_count
+        walk_error_count += 1
+        if len(walk_error_examples) < 8:
+            # Store only an error class; never emit absolute caller filesystem paths.
+            walk_error_examples.append(type(error).__name__)
+
+    for base, dirs, files in os.walk(root, topdown=True, followlinks=False, onerror=note_walk_error):
         here = Path(base)
         depth = len(here.relative_to(root).parts)
+        walk_unvisited.discard(here.relative_to(root).as_posix())
         if depth >= MAX_DEPTH:
             # Don't claim all eligible descendants were examined.
             if any(d not in SKIP and not d.startswith('.') for d in dirs):
@@ -107,6 +132,7 @@ def scan(project):
             admissible = [d for d in dirs if d not in SKIP and not d.startswith('.')]
             symlink_dirs_skipped += sum((here / d).is_symlink() for d in admissible)
             dirs[:] = sorted(d for d in admissible if not (here / d).is_symlink())
+            walk_unvisited.update((here / d).relative_to(root).as_posix() for d in dirs)
         for name in sorted(files):
             path = here / name
             rel = path.relative_to(root).as_posix()
@@ -147,7 +173,7 @@ def scan(project):
                         'status': 'HUMAN_REVIEW_REQUIRED'})
                 continue
             for m in list(re.finditer(r'<img\b[^>]*>', content, re.I | re.S))[:MAX_FINDINGS_PER_RULE]:
-                if not re.search(r'\balt\s*=', m.group(), re.I):
+                if not _attribute_present(m.group(), 'alt'):
                     changes.append({'path': rel,
                         'line': content.count('\n', 0, m.start()) + 1,
                         'rule': 'img_missing_alt',
@@ -155,7 +181,7 @@ def scan(project):
                         'source_excerpt_sha256': hashlib.sha256(m.group().encode()).hexdigest(),
                         'status': 'HUMAN_REVIEW_REQUIRED'})
             for m in list(re.finditer(r'<button\b[^>]*>\s*(?:<svg\b[\s\S]*?</svg>\s*)+</button\s*>', content, re.I))[:MAX_FINDINGS_PER_RULE]:
-                if not re.search(r'\baria-label(?:ledby)?\s*=', m.group(), re.I):
+                if not (_attribute_present(m.group(), 'aria-label') or _attribute_present(m.group(), 'aria-labelledby')):
                     changes.append({'path': rel,
                         'line': content.count('\n', 0, m.start()) + 1,
                         'rule': 'icon_button_name',
@@ -165,7 +191,7 @@ def scan(project):
         if limit_hit:
             break
 
-    coverage_complete = not (limit_hit or depth_limited or skipped_count or symlink_dirs_skipped)
+    coverage_complete = not (limit_hit or depth_limited or skipped_count or symlink_dirs_skipped or walk_error_count or walk_unvisited)
     coverage = {
         'complete': bool(coverage_complete),
         'eligible_files_at_least': eligible,
@@ -174,6 +200,9 @@ def scan(project):
         'file_cap_reached': bool(limit_hit),
         'depth_cap_reached': bool(depth_limited),
         'symlink_directories_skipped': symlink_dirs_skipped,
+        'walk_errors': walk_error_count,
+        'walk_error_types': walk_error_examples,
+        'unvisited_directories': len(walk_unvisited),
         'counts_are_lower_bounds_when_capped': bool(limit_hit or depth_limited),
         'scope': 'eligible .tsx/.jsx/.html/.vue/.svelte/.css outside configured exclusion directories',
         'verdict': 'COMPLETE_WITHIN_DECLARED_SCOPE' if coverage_complete else 'INCOMPLETE',
@@ -195,6 +224,7 @@ def scan(project):
             'Only source hashes and file anchors emitted, not source contents',
             'Coverage_complete is limited to eligible extensions and exclusion policy, not full-project semantic coverage',
             'Race resistance is best effort; the scanner is not a filesystem sandbox',
+            'R33 reduced-motion and HTML attribute checks remain heuristics, not AST/DOM proofs',
             'Real IDE URL handoff and actual quality improvement still unverified',
         ],
     }
