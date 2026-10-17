@@ -92,12 +92,89 @@ def _has_reduced_motion_override(content):
     return False
 
 
-def _attribute_present(tag, name):
-    """Conservative attribute-name matching: do not confuse data-alt with alt.
+def _skip_jsx_expression(tag, start):
+    """Skip balanced {...} expression with quoted literals; not a JSX parser."""
+    depth, index, quote = 1, start + 1, None
+    while index < len(tag):
+        char = tag[index]
+        if quote:
+            if char == '\\':
+                index += 2
+                continue
+            if char == quote:
+                quote = None
+        elif char in ('"', "'", '`'):
+            quote = char
+        elif char == '{':
+            depth += 1
+        elif char == '}':
+            depth -= 1
+            if not depth:
+                return index + 1
+        index += 1
+    return None
 
-    JSX/HTML syntax remains a heuristic and must be reviewed in context.
+
+def _attribute_present(tag, name):
+    """Find an explicit attribute assignment on the opening tag only.
+
+    Skip other attributes' quoted/unquoted values and JSX {...} expressions:
+    text resembling alt= or aria-label= inside a value must not count.
+    Heuristic only; spreads, templates, malformed tags and component semantics
+    require host-project contextual review.
     """
-    return bool(re.search(r'(?<![\w:-])' + re.escape(name) + r'\s*=', tag, re.I))
+    opening = re.match(r'<[a-z][\w:-]*\b', tag, re.I)
+    if not opening:
+        return False
+    index, length = opening.end(), len(tag)
+    while index < length:
+        while index < length and tag[index].isspace():
+            index += 1
+        if index >= length or tag[index] in '/>':
+            return False
+        if tag[index] == '{':
+            index = _skip_jsx_expression(tag, index)
+            if index is None:
+                return False
+            continue
+        start = index
+        while index < length and not tag[index].isspace() and tag[index] not in '=/>{"\'':
+            index += 1
+        if start == index:
+            return False
+        attribute = tag[start:index]
+        while index < length and tag[index].isspace():
+            index += 1
+        if index >= length or tag[index] != '=':
+            continue
+        index += 1
+        while index < length and tag[index].isspace():
+            index += 1
+        if index >= length or tag[index] == '>':
+            return False
+        if attribute.lower() == name.lower():
+            return True
+        if tag[index] in ('"', "'"):
+            quote = tag[index]
+            index += 1
+            while index < length:
+                if tag[index] == '\\':
+                    index += 2
+                elif tag[index] == quote:
+                    index += 1
+                    break
+                else:
+                    index += 1
+            else:
+                return False
+        elif tag[index] == '{':
+            index = _skip_jsx_expression(tag, index)
+            if index is None:
+                return False
+        else:
+            while index < length and not tag[index].isspace() and tag[index] != '>':
+                index += 1
+    return False
 
 
 def scan(project):
@@ -224,7 +301,7 @@ def scan(project):
             'Only source hashes and file anchors emitted, not source contents',
             'Coverage_complete is limited to eligible extensions and exclusion policy, not full-project semantic coverage',
             'Race resistance is best effort; the scanner is not a filesystem sandbox',
-            'R33 reduced-motion and HTML attribute checks remain heuristics, not AST/DOM proofs',
+            'R39 quote-aware attributes and reduced-motion checks remain heuristics, not AST/DOM proofs',
             'Real IDE URL handoff and actual quality improvement still unverified',
         ],
     }
