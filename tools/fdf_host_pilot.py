@@ -12,6 +12,7 @@ import re
 import stat
 import struct
 import sys
+import zlib
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -106,14 +107,50 @@ def _file_record(root, record, kind):
 
 
 def _png_dimensions(data):
-    # Header check, NOT a decoder or proof of a genuine rendered screenshot.
-    if len(data) < 33 or data[:8] != b"\x89PNG\r\n\x1a\n" or data[12:16] != b"IHDR":
-        raise ValueError("HOLD: screenshot must be PNG with IHDR")
-    width, height = struct.unpack(">II", data[16:24])
-    if not (240 <= width <= 8192 and 240 <= height <= 8192):
-        raise ValueError("HOLD: screenshot dimensions outside bounded range")
-    return [width, height]
+    """Check PNG framing, IHDR, IDAT, IEND and chunk CRCs, not rendered pixels.
 
+    Even a structurally valid PNG may depict an unrelated or fabricated UI.
+    """
+    if data[:8] != b"\x89PNG\r\n\x1a\n":
+        raise ValueError("HOLD: screenshot must be PNG")
+    pos = 8
+    chunks = 0
+    dimensions = None
+    idat_seen = False
+    end_seen = False
+    while pos < len(data):
+        if chunks >= 256 or pos + 12 > len(data):
+            raise ValueError("HOLD: PNG chunk count or framing invalid")
+        length = struct.unpack(">I", data[pos:pos + 4])[0]
+        kind = data[pos + 4:pos + 8]
+        if length > MAX_EVIDENCE_BYTES or pos + 12 + length > len(data):
+            raise ValueError("HOLD: PNG chunk oversized or truncated")
+        content = data[pos + 8:pos + 8 + length]
+        stored = struct.unpack(">I", data[pos + 8 + length:pos + 12 + length])[0]
+        expected = zlib.crc32(kind + content) & 0xffffffff
+        if stored != expected:
+            raise ValueError("HOLD: PNG CRC mismatch")
+        if chunks == 0:
+            if kind != b"IHDR" or length != 13:
+                raise ValueError("HOLD: PNG requires first 13-byte IHDR")
+            width, height = struct.unpack(">II", content[:8])
+            if not (240 <= width <= 8192 and 240 <= height <= 8192):
+                raise ValueError("HOLD: screenshot dimensions outside bounded range")
+            dimensions = [width, height]
+        elif kind == b"IHDR":
+            raise ValueError("HOLD: duplicate PNG IHDR")
+        if kind == b"IDAT":
+            idat_seen = True
+        if kind == b"IEND":
+            if length or not idat_seen or pos + 12 + length != len(data):
+                raise ValueError("HOLD: PNG IEND missing IDAT or trailing bytes")
+            end_seen = True
+            break
+        pos += 12 + length
+        chunks += 1
+    if not end_seen or dimensions is None:
+        raise ValueError("HOLD: PNG missing final IEND")
+    return dimensions
 
 def admit(project, fdf_sha, evidence_dir, manifest_name):
     root = _canonical_authorized_root(evidence_dir)
