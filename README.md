@@ -45,3 +45,11 @@ The reviewed source branch adds `tools/fdf_workspace_probe.py` for local UI insp
 ## R28: Kernel-Based ProposalDNA readiness
 
 The draft review branch includes `tools/fdf_proposal_compiler.py`, which turns live, source-bound UI observations into **non-executable, human-gated ProposalDNA**. Example: `python3 tools/fdf_proposal_compiler.py --project /path/to/caller-repo --live`. It rechecks source bytes before recommending where and why a change may be needed. The output contains kernel-routed decisions and test/rollback requirements, **not autonomous code edits**. Verify the file exists on your fetched ref; the bare public `main` URL does not yet offer this feature.
+
+## R40 host-source policy preflight (draft-only)
+
+The source-only `tools/fdf_host_projectdna.py` binds a bounded local UI observation
+to **digests, not authority**, of known host agent-policy files. It never reads
+those policies semantically, edits the target, executes host scripts, or grants
+release. See [IDE_MASTER_INJECTION.md](IDE_MASTER_INJECTION.md) for commands and
+the human host-master acceptance gate. The helper exists only on its review branch.
