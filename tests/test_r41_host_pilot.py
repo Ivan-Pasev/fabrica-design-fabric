@@ -5,6 +5,7 @@ import json
 import struct
 import tempfile
 import unittest
+import zlib
 from pathlib import Path
 
 from tools.fdf_host_pilot import capture, admit, _digest, _png_dimensions
@@ -14,9 +15,13 @@ SHA = "c760133df05e9b8e65366e4d641013f11b0f70de"
 
 
 def mock_png(w, h, payload=b"A"):
-    # Only meets deliberately narrow header check; explicitly not a real screenshot.
-    return b"\x89PNG\r\n\x1a\n" + b"\x00\x00\x00\x0dIHDR" + struct.pack(">II", w, h) + b"\x08\x06\x00\x00\x00" + payload + b"\x00\x00\x00\x00"
-
+    # Structurally framed PNG with CRCs; image semantics still not verified.
+    def chunk(kind, data):
+        return (struct.pack(">I", len(data)) + kind + data +
+                struct.pack(">I", zlib.crc32(kind + data) & 0xffffffff))
+    header = struct.pack(">II", w, h) + b"\x08\x06\x00\x00\x00"
+    return (b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", header) +
+            chunk(b"IDAT", zlib.compress(payload)) + chunk(b"IEND", b""))
 
 class PilotEvidence(unittest.TestCase):
     def setUp(self):
@@ -161,6 +166,19 @@ class PilotEvidence(unittest.TestCase):
     def test_missing_scans_denied(self):
         (self.project / "home.tsx").unlink()
         with self.assertRaisesRegex(ValueError, "intake incomplete"):
+            self.check()
+
+    def test_bad_png_crc_denied(self):
+        corrupted = bytearray(mock_png(1280, 800, b"changed"))
+        corrupted[29] ^= 0x20
+        self.manifest["screenshots"]["after_desktop"] = self.artifact("bad-crc.png", bytes(corrupted))
+        with self.assertRaisesRegex(ValueError, "CRC mismatch"):
+            self.check()
+
+    def test_truncated_png_end_denied(self):
+        broken = mock_png(1280, 800)[:-12]
+        self.manifest["screenshots"]["after_desktop"] = self.artifact("cut.png", broken)
+        with self.assertRaisesRegex(ValueError, "final IEND"):
             self.check()
 
     def test_screen_bounds_reject_tiny_header(self):
