@@ -52,3 +52,8 @@ For persisted evidence, an agent may separately save output **outside the target
 ## R39 review-only local IDE adoption
 
 See [IDE_MASTER_INJECTION.md](IDE_MASTER_INJECTION.md) for a fully copyable, host-authority-preserving orchestration block. The FDF graph is advisory; existing local IDE intelligence remains master. The R39 scanner correction and adoption guide live on a *draft review branch*, not public main. Record exact fetched SHA; never imply source-only CI is an end-to-end IDE trial or production release.
+
+
+## R40 host ProjectDNA source preflight (draft-only)
+
+The optional `tools/fdf_host_projectdna.py` combines bounded UI survey with SHA-256 digests of known host instruction files (not their contents). This cannot establish host policy semantics or validate the actual IDE. Consult `IDE_MASTER_INJECTION.md`; real host master-agent review and explicit edit authority remain mandatory.

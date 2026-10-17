@@ -48,3 +48,27 @@ These tools do **not** implement design changes. Their CSS/markup analysis is he
 ### Acceptance gates
 
 **Source gate**: actual SHA, files and licenses established. **Host gate**: local rules and identity honored. **Mutation gate**: owner authorization consistent with local policy. **Quality gate**: real host tests, rendered/keyboard/mobile evidence, rollback. **Release gate**: independent human review and branch policies where required. Until there is a witnessed connected-IDE outcome, FDF itself remains **IDE PILOT UNVERIFIED**. Do not report this template as validation.
+
+
+### R40: source-bound host ProjectDNA preflight, not IDE qualification
+
+On a separately obtained and reviewed checkout of the exact R40 commit,
+only with the host's permission, the agent may run the following **read-only**
+standard-library preflight (replace paths and the FDF SHA with actual values):
+
+```bash
+python3 tools/fdf_host_projectdna.py --project /absolute/path/to/your-open-app --fdf-sha <PINNED_40_HEX_FDF_COMMIT>
+```
+
+This emits a `fdf.host.projectdna-admission/0.1` JSON receipt containing source
+coverage, candidate UI counts, named instruction-file digests and explicit
+HOLD/host-master review gates. **It does not inspect the semantic content of
+host policies, discover all IDE policy sources, perform a visual audit,
+run host scripts, prove an agent integration, authenticate the supplied SHA
+or authorize editing.** Host law still must be read and interpreted by the
+existing local IDE master agent. `SCOPED_PRECHECK_COMPLETE_HOST_MASTER_REVIEW_REQUIRED`
+is not permission to mutate anything.
+
+When recording a receipt outside the target workspace with owner permission,
+later use `--verify /outside/host-receipt.json` to reject stale source/policy
+bytes; a locally generated unsigned digest does not prove an independent witness.
