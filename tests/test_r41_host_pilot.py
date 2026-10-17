@@ -15,7 +15,7 @@ SHA = "c760133df05e9b8e65366e4d641013f11b0f70de"
 
 def mock_png(w, h, payload=b"A"):
     # Only meets deliberately narrow header check; explicitly not a real screenshot.
-    return b"\x89PNG\r\n\x1a\n" + b"\x00\x00\x00\x0dIHDR" + struct.pack(">II", w, h) + b"\x08\x06\x00\x00\x00" + payload
+    return b"\x89PNG\r\n\x1a\n" + b"\x00\x00\x00\x0dIHDR" + struct.pack(">II", w, h) + b"\x08\x06\x00\x00\x00" + payload + b"\x00\x00\x00\x00"
 
 
 class PilotEvidence(unittest.TestCase):
