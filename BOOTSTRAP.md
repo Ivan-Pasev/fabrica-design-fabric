@@ -57,3 +57,8 @@ See [IDE_MASTER_INJECTION.md](IDE_MASTER_INJECTION.md) for a fully copyable, hos
 ## R40 host ProjectDNA source preflight (draft-only)
 
 The optional `tools/fdf_host_projectdna.py` combines bounded UI survey with SHA-256 digests of known host instruction files (not their contents). This cannot establish host policy semantics or validate the actual IDE. Consult `IDE_MASTER_INJECTION.md`; real host master-agent review and explicit edit authority remain mandatory.
+
+
+## R42 operator-first host integration (draft only)
+
+**Correction to earlier experimental prompts:** an external Design Fabric injection does not authorize target project mutation. In operator-governed IDEs, read host instructions, run only the host's read-only status/propose workflow first, and require a **separate host-native execution instruction** for a fresh accepted pending proposal. An external FDF tool's advisory verdict never acts as approval. See [R42_HOST_OPERATOR_COMPATIBILITY.md](R42_HOST_OPERATOR_COMPATIBILITY.md).
