@@ -53,3 +53,7 @@ to **digests, not authority**, of known host agent-policy files. It never reads
 those policies semantically, edits the target, executes host scripts, or grants
 release. See [IDE_MASTER_INJECTION.md](IDE_MASTER_INJECTION.md) for commands and
 the human host-master acceptance gate. The helper exists only on its review branch.
+
+## R42 host operator compatibility (draft only)
+
+The safe master prompt is now **proposal-first, never self-authorizing**. Some host IDEs deliberately distinguish NEXT() (read-only proposal) from CONTINUE() (execute a current pending proposal). FDF may not collapse those operators. See [R42_HOST_OPERATOR_COMPATIBILITY.md](R42_HOST_OPERATOR_COMPATIBILITY.md), and use host-native law before any edits. The advisory operator gate does not execute source mutations or claim real IDE evidence.
