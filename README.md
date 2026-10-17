@@ -8,7 +8,7 @@ FDF is a first-party source-review design fabric. It is not a hosted inference s
 
 > In the repository currently open in my IDE, use https://github.com/Ivan-Pasev/fabrica-design-fabric as your Kernel-Based Design Fabric reference. Read [BOOTSTRAP.md](BOOTSTRAP.md) and [AGENTS.md](AGENTS.md). Inspect my actual project, determine its framework, components, tokens, page structure, product identity, accessibility and tests, then route suitable design kernels and propose a tuned implementation with precise file paths, representative diffs, validation and rollback. Do not edit or install anything without my approval.
 
-Start with **[BOOTSTRAP.md](BOOTSTRAP.md)**. Direct repository-URL reading depends on the specific IDE's capabilities; the URL is not universally self-executing.
+For host-aware local IDE deployment, see the **[R39 Master Host-Aware IDE Injection](IDE_MASTER_INJECTION.md)** (draft review branch; use a verified SHA, not a default-branch installation claim).\n\nStart with **[BOOTSTRAP.md](BOOTSTRAP.md)**. Direct repository-URL reading depends on the specific IDE's capabilities; the URL is not universally self-executing.
 
 ## Kernel architecture
 

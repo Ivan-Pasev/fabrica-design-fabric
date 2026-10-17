@@ -47,3 +47,8 @@ python3 tools/fdf_proposal_compiler.py --project /absolute/path/to/current-proje
 It first generates a bounded read-only observation receipt, **re-checks it against current file digests and source anchors**, then routes observations to Kernel-Based DesignSkill proposals. It rejects stale/forged receipts, fabricated lines, unreviewed rules and permission escalation. No code patch is emitted or applied; semantic questions, validation and rollback remain explicit. Only use the tool if it exists on the fetched Git ref; it is presently in this **draft review branch**, not on public `main`.
 
 For persisted evidence, an agent may separately save output **outside the target project** with owner permission and later verify with `--observations /path/to/receipt.json`. Do not store automated receipts in a real project without authorization. The tool does not run the target build, assistive technology, visual tests or a real external IDE integration.
+
+
+## R39 review-only local IDE adoption
+
+See [IDE_MASTER_INJECTION.md](IDE_MASTER_INJECTION.md) for a fully copyable, host-authority-preserving orchestration block. The FDF graph is advisory; existing local IDE intelligence remains master. The R39 scanner correction and adoption guide live on a *draft review branch*, not public main. Record exact fetched SHA; never imply source-only CI is an end-to-end IDE trial or production release.
