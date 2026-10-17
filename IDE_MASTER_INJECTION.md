@@ -72,3 +72,8 @@ is not permission to mutate anything.
 When recording a receipt outside the target workspace with owner permission,
 later use `--verify /outside/host-receipt.json` to reject stale source/policy
 bytes; a locally generated unsigned digest does not prove an independent witness.
+
+
+## R41 observed pilot evidence handoff
+
+See [R41_HOST_PILOT.md](R41_HOST_PILOT.md) for a two-phase read-only before/after file-integrity kit. Actual host agents must run authorized design edits, real browser tests and checks; R41 only validates submitted artifact bytes and refuses to promote witness, WCAG, human approval or release gates.
