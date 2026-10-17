@@ -51,7 +51,7 @@ class R39AttributeBoundary(unittest.TestCase):
         self.assertEqual(self.candidate_rules('<button data-note="aria-label=bad" aria-label="Menu"><svg></svg></button>'), [])
 
     def test_actual_attributes_after_embedded_quote_and_equals(self):
-        self.assertEqual(self.candidate_rules("<img data-note='alt=bad and \\"' alt = {'real'}>"), [])
+        self.assertEqual(self.candidate_rules("""<img data-note='alt=bad and "quoted"' alt={'real'}>"""), [])
         self.assertEqual(self.candidate_rules('<img data-note="src=foo alt=bad" alt = "">'), [])
 
     def test_hyphen_colon_and_data_keys_do_not_count(self):
