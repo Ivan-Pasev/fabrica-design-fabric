@@ -9,7 +9,11 @@ import argparse
 import hashlib
 import json
 import re
+import sys
 from pathlib import Path
+
+# Allow direct python3 tools/fdf_host_projectdna.py invocation from any cwd.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from tools.fdf_workspace_probe import _bounded_regular_file, _canonical_authorized_root, scan
 from tools.fdf_proposal_compiler import compile_plan, stable_json
