@@ -62,3 +62,8 @@ The optional `tools/fdf_host_projectdna.py` combines bounded UI survey with SHA-
 ## R42 operator-first host integration (draft only)
 
 **Correction to earlier experimental prompts:** an external Design Fabric injection does not authorize target project mutation. In operator-governed IDEs, read host instructions, run only the host's read-only status/propose workflow first, and require a **separate host-native execution instruction** for a fresh accepted pending proposal. An external FDF tool's advisory verdict never acts as approval. See [R42_HOST_OPERATOR_COMPATIBILITY.md](R42_HOST_OPERATOR_COMPATIBILITY.md).
+
+
+## Optional Emil Kowalski design-skill bridge (FDF/EK-001, DRAFT)
+
+If the **actual caller** has a design/motion request and explicit read access to the pinned external references, use `skills/fdf-kowalski-bridge/SKILL.md`, the 15-skill source map `registry/upstream-emil-kowalski.v1.json`, and the read-only selector `tools/fdf_kowalski_bridge.py`. This bridge references upstream `emilkowalski/skills` at exact commit `2d228630ba1446365f614a108cb8252f1feda202`; the upstream bodies are NOT bundled or installed. Use `python3 tools/fdf_kowalski_bridge.py --framework react --intent motion-build --project-known` only after determining real caller context and honor explicit-only routes. This command selects references but neither reads the caller's project nor fetches/executes upstream content. Host R42 STATUS/NEXT proposal-first protocol remains in force, as do caller instructions and human CONTINUE/PUBLISH/DEPLOY gates. This feature exists only on the EK draft review branch until a human-authorized merge; public main does not contain it.
