@@ -63,6 +63,17 @@ def evaluate(intent):
             return dict(base, verdict="HOLD_INVALID_PROPOSAL_PATH")
     if len(set(scope)) != len(scope):
         return dict(base, verdict="HOLD_DUPLICATE_SCOPE")
+    # First-slice UI proposals cannot silently include configuration or research sources.
+    eligible = {".css", ".scss", ".sass", ".less", ".html", ".jsx", ".tsx", ".vue", ".svelte", ".astro"}
+    for name in scope:
+        parts = name.split("/")
+        if any(p in ("", ".", "..") for p in parts) or ":" in name or "%" in name:
+            return dict(base, verdict="HOLD_INVALID_PROPOSAL_PATH")
+        if any(p.startswith(".") for p in parts[:-1]):
+            if parts[:2] != [".vitepress", "theme"]:
+                return dict(base, verdict="HOLD_PROTECTED_PROPOSAL_PATH")
+        if PurePosixPath(name).suffix.lower() not in eligible:
+            return dict(base, verdict="HOLD_OUTSIDE_UI_ONLY_SCOPE")
     # This is never a grant. A host IDE must reconcile live HEAD, dirty state,
     # applicable nested/global policies, explicit permission and actual source.
     return dict(base, verdict="HOST_CONTINUE_PREFLIGHT_ONLY",
