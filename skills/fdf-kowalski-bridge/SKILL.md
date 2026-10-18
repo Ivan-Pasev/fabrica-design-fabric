@@ -32,3 +32,18 @@ Output must include pinned ref and matching git blob, exact observed caller path
 
 ## Licensing and maturity
 Upstream copyright Emil Kowalski, MIT; see `UPSTREAM_EMIL_KOWALSKI_NOTICE.md`. The code and prose of this bridge are original FDF. Current maturity: `SOURCE_REFERENCED_REVIEW_CANDIDATE / EXTERNAL_APPROVAL_HOLD / V1_HOLD`. This is not a release, nor a local IDE installation.
+
+## EK-002 actual caller ProjectDNA preflight
+
+The bare selection command checks only declared flags. For a user-approved, **read-only scan of the actual existing caller root**, use the optional host-aware bridge (available on this review branch):
+
+```bash
+python3 tools/fdf_kowalski_host_route.py \
+  --project /absolute/path/to/CURRENT_CALLER_PROJECT \
+  --fdf-sha EXACT_40_CHARACTER_CURRENT_FDF_COMMIT \
+  --framework react --intent motion-build --host-operator 'NEXT(UX)'
+```
+
+This composes FDF's existing `fdf_host_projectdna` bounded policy/source scan, the `fdf_host_operator_gate` read-only operator preflight and the pinned EK reference router. It **never reads policy-file contents into output**; the host master must separately interpret all applicable policy layers. It fails closed for missing host policy, incomplete UI coverage, stale or forged prior ProjectDNA, wrong framework route, auto-invocation of explicit-only skills, CONTINUE/PUBLISH/DEPLOY and unknown host operators. Its output schema `fdf.kbi.ek-host-route/0.1` retains `actual_ide_executed=false`, `owner_authorized=false`, `framework_claim_verified=false`, and `release=HOLD`; an observed policy/source digest does **not** prove an actual IDE session or grant code editing rights.
+
+After a real agent reviews source context, apply only the local host's separately authorized NEXT/proposal workflow and honor existing R42 operator precedence. No effects, installation or bundling are authorized by this bridge.

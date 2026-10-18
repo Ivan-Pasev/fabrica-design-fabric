@@ -28,3 +28,11 @@ The R42 host-aware FDF review stack is the integration base. Its `R42_HOST_OPERA
 
 ## Trust, provenance and release
 This is reference-mode adoption (not a source fork). Upstream Git commit and 15 individual SKILL.md Git blobs are locked in the JSON registry; the MIT notice is linked and correctly attributed. FDF policy `RELEASE_POLICY.md` forbids third-party skill bundles: no exceptions silently introduced. Upstream updates require diff, license/security recheck, per-skill admission review and new pinned manifest version. **Draft PR only**; human review/protected-main/real local IDE qualification/public v1 remain HOLD.
+
+## EK-002 — host-bound evolution (additive)
+
+The first bridge's `--project-known` flag is only a declaration; it cannot establish that the caller project was inspected. The additional `tools/fdf_kowalski_host_route.py` composes previously reviewed R40 ProjectDNA and R42 host-operator preflights with the EK pinned-reference router, and introduces a separate schema `fdf.kbi.ek-host-route/0.1`. For a selected skill, output includes current UI observation digest, receipt fingerprint, narrow coverage admission, host-policy file count and **explicit false** flags for IDE execution, owner authorization, upstream execution and authenticated operator policy.
+
+A known host precheck is necessary, never sufficient: all selected references remain propose-only. No policy semantic content is copied into receipts. A stale/forged previous receipt is rejected by recomputing the host binding. A continued or publish/deploy operator bypasses scanner execution and returns HOLD; the host master alone determines those actual authorizations.
+
+Limits: heuristic source scope only; no validation of the declared framework or FDF commit; no complete caller source-map; no actual browser, visual, keyboard or assistive-technology run; no evidence that this command ran inside the owner's IDE. No third-party source vendoring; all R43+ host priorities stay intact.

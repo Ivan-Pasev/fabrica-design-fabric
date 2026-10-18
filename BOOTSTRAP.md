@@ -67,3 +67,13 @@ The optional `tools/fdf_host_projectdna.py` combines bounded UI survey with SHA-
 ## Optional Emil Kowalski design-skill bridge (FDF/EK-001, DRAFT)
 
 If the **actual caller** has a design/motion request and explicit read access to the pinned external references, use `skills/fdf-kowalski-bridge/SKILL.md`, the 15-skill source map `registry/upstream-emil-kowalski.v1.json`, and the read-only selector `tools/fdf_kowalski_bridge.py`. This bridge references upstream `emilkowalski/skills` at exact commit `2d228630ba1446365f614a108cb8252f1feda202`; the upstream bodies are NOT bundled or installed. Use `python3 tools/fdf_kowalski_bridge.py --framework react --intent motion-build --project-known` only after determining real caller context and honor explicit-only routes. This command selects references but neither reads the caller's project nor fetches/executes upstream content. Host R42 STATUS/NEXT proposal-first protocol remains in force, as do caller instructions and human CONTINUE/PUBLISH/DEPLOY gates. This feature exists only on the EK draft review branch until a human-authorized merge; public main does not contain it.
+
+## FDF/EK-002 — Read-only ProjectDNA-bound reference selection (draft)
+
+Where the caller explicitly authorizes a **bounded source preflight**, prefer `tools/fdf_kowalski_host_route.py` over the declaration-only `--project-known` route. It joins live FDF host policy/source digests with operator `NEXT(UX)` and the pinned Emil Kowalski skill registry. Example:
+
+```bash
+python3 tools/fdf_kowalski_host_route.py --project /path/to/existing-caller --fdf-sha <exact-40-char-FDF-commit> --framework react --intent motion-build --host-operator 'NEXT(UX)'
+```
+
+The framework selection and host identity are still agent-declared, not independently authenticated. A successful result means *source-scoped, host-master-review-required proposal reference only*, not an executed IDE session, authorization or design quality proof. Without host policy discovery or adequate coverage, return HOLD, do not bypass via the old declaration-only route. This code is staged on the EK draft PR, **not public `main`**.
