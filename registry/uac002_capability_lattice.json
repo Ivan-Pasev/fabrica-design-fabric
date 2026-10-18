@@ -1,0 +1,66 @@
+{
+  "schema": "fdf.uac002.lattice/0.2",
+  "mode": "FIRST_PARTY_FIT_RANKED_NO_AUTO_EXECUTION",
+  "first_party": [
+    "fdf-project-observer",
+    "fdf-governance-gate",
+    "fdf-evolution-planner",
+    "fdf-verification-engine",
+    "fdf-design-critic",
+    "fdf-accessibility-review",
+    "fdf-motion-director",
+    "fdf-runtime-architecture",
+    "fdf-research-provenance"
+  ],
+  "baseline": [
+    "fdf-project-observer",
+    "fdf-governance-gate",
+    "fdf-evolution-planner",
+    "fdf-verification-engine"
+  ],
+  "ui": [
+    "fdf-design-critic",
+    "fdf-accessibility-review",
+    "fdf-motion-director"
+  ],
+  "runtime": [
+    "fdf-runtime-architecture"
+  ],
+  "research": [
+    "fdf-research-provenance"
+  ],
+  "external_source_only": {
+    "repository": "emilkowalski/skills",
+    "commit": "2d228630ba1446365f614a108cb8252f1feda202",
+    "installed": false
+  },
+  "host_paths": {
+    "codex": [
+      "AGENTS.md",
+      ".agents/skills"
+    ],
+    "cursor": [
+      ".cursor/rules"
+    ],
+    "antigravity": [
+      ".agents/rules",
+      ".agents/skills"
+    ],
+    "gemini": [
+      "GEMINI.md",
+      ".gemini/skills"
+    ],
+    "chatgpt": [
+      "MANUAL_PROJECT_SETTINGS"
+    ],
+    "aistudio": [
+      "MANUAL_BUILD_IMPORT_PROMPT"
+    ]
+  },
+  "prohibited_legacy_paths": [
+    ".agents/workflows"
+  ],
+  "user_approval": "HOST_NATIVE_SEPARATE",
+  "model_weight_training": false,
+  "release": "HOLD"
+}
