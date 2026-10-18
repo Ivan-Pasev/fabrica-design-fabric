@@ -63,16 +63,34 @@ def evaluate(intent):
             return dict(base, verdict="HOLD_INVALID_PROPOSAL_PATH")
     if len(set(scope)) != len(scope):
         return dict(base, verdict="HOLD_DUPLICATE_SCOPE")
-    # First-slice UI proposals cannot silently include configuration or research sources.
-    eligible = {".css", ".scss", ".sass", ".less", ".html", ".jsx", ".tsx", ".vue", ".svelte", ".astro"}
+    # Advisory scope admission is not a grant, and is intentionally narrower
+    # than all project files an owner's actual IDE may legitimately change.
+    ui_ext = {".css", ".scss", ".sass", ".less", ".html", ".jsx", ".tsx",
+              ".vue", ".svelte", ".astro"}
+    science_ext = {".md", ".mdx", ".markdown", ".tex", ".bib"}
+    governed = {"agents.md", "claude.md", "gemini.md", "ai_critical.md",
+                "package.json", "package-lock.json", "pnpm-lock.yaml",
+                "yarn.lock", "tsconfig.json", "jsconfig.json", ".cursorrules",
+                "vite.config.ts", "next.config.mjs", "astro.config.mjs"}
+    protected = {".git", ".github", ".agents", ".cursor", ".vscode", ".idea",
+                 "node_modules", "vendor", "dist", "build", "coverage",
+                 "private", "secrets", "ver", "release", "releases"}
     for name in scope:
         parts = name.split("/")
-        if any(p in ("", ".", "..") for p in parts) or ":" in name or "%" in name:
+        lowered = [part.lower() for part in parts]
+        if (any(part in ("", ".", "..") for part in parts) or
+                ":" in name or "%" in name or "//" in name):
             return dict(base, verdict="HOLD_INVALID_PROPOSAL_PATH")
-        if any(p.startswith(".") for p in parts[:-1]):
-            if parts[:2] != [".vitepress", "theme"]:
-                return dict(base, verdict="HOLD_PROTECTED_PROPOSAL_PATH")
-        if PurePosixPath(name).suffix.lower() not in eligible:
+        if (lowered[-1].startswith(".env") or lowered[-1] in governed or
+                any(part in protected for part in lowered[:-1])):
+            return dict(base, verdict="HOLD_PROTECTED_PROPOSAL_PATH")
+        hidden = [i for i, part in enumerate(lowered[:-1]) if part.startswith(".")]
+        if hidden and not (hidden == [0] and lowered[:2] == [".vitepress", "theme"]):
+            return dict(base, verdict="HOLD_PROTECTED_PROPOSAL_PATH")
+        suffix = PurePosixPath(name).suffix.lower()
+        if suffix in science_ext:
+            return dict(base, verdict="HOLD_CONTENT_OR_SCIENCE_REVIEW_REQUIRED")
+        if suffix not in ui_ext:
             return dict(base, verdict="HOLD_OUTSIDE_UI_ONLY_SCOPE")
     # This is never a grant. A host IDE must reconcile live HEAD, dirty state,
     # applicable nested/global policies, explicit permission and actual source.
