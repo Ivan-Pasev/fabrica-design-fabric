@@ -1,0 +1,589 @@
+{
+  "schema": "fdf.portfolio.third_party_sources/1.0.0",
+  "as_of": "2026-10-21",
+  "scope": "FABRICA.DESIGN.FABRIC_ONLY",
+  "basis": [
+    "Google Drive 04_UPSTREAM_SOURCE_REGISTRY (2026-10-15 and addenda)",
+    "FDF/EK-001 intake (2026-10-18)",
+    "existing reviewed GitHub first-party adapters"
+  ],
+  "claim_boundary": "AUDITED_RESEARCH_SNAPSHOTS; NOT LIVE_2026_10_21_UPSTREAM_HEAD_REVALIDATION",
+  "repositories": [
+    {
+      "repo": "pbakaus/impeccable",
+      "url": "https://github.com/pbakaus/impeccable",
+      "kind": "design",
+      "capabilities": [
+        "design",
+        "quality"
+      ],
+      "license_observed": "Apache-2.0",
+      "license_gate": "LICENSE_REVIEWED",
+      "source_commit": "d631a8827f99414d2b6daba4ef08b7f8701751d7",
+      "source_pin_status": "HISTORICAL_PIN_RECORDED",
+      "disposition": "CAPABILITY_MAPPED",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "Released skill-v4.5.2 is distinct from separately audited main"
+    },
+    {
+      "repo": "leonxlnx/taste-skill",
+      "url": "https://github.com/leonxlnx/taste-skill",
+      "kind": "design",
+      "capabilities": [
+        "design"
+      ],
+      "license_observed": "MIT",
+      "license_gate": "LICENSE_REVIEWED",
+      "source_commit": "f624f37a8c650b9cc550253104925efe4c8de246",
+      "source_pin_status": "HISTORICAL_PIN_RECORDED",
+      "disposition": "CAPABILITY_MAPPED",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "Public-facing web taste; not automatic dashboard authority"
+    },
+    {
+      "repo": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
+      "kind": "design",
+      "capabilities": [
+        "design",
+        "quality"
+      ],
+      "license_observed": "MIT",
+      "license_gate": "LICENSE_REVIEWED",
+      "source_commit": "56ea9cf174ed86786187daa9de0e6247cb0747e4",
+      "source_pin_status": "HISTORICAL_PIN_RECORDED",
+      "disposition": "CAPABILITY_MAPPED",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "Indexed design heuristics, not host policy"
+    },
+    {
+      "repo": "google-labs-code/design.md",
+      "url": "https://github.com/google-labs-code/design.md",
+      "kind": "specification",
+      "capabilities": [
+        "tokens",
+        "design"
+      ],
+      "license_observed": "Apache-2.0",
+      "license_gate": "LICENSE_REVIEWED",
+      "source_commit": "9bf8eae67128b6cc55ad9bf86665767deb4c11cd",
+      "source_pin_status": "HISTORICAL_PIN_RECORDED",
+      "disposition": "SPEC_REFERENCE",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "Design identity specification; no upstream execution"
+    },
+    {
+      "repo": "emilkowalski/skills",
+      "url": "https://github.com/emilkowalski/skills",
+      "kind": "skill-family",
+      "capabilities": [
+        "motion",
+        "design",
+        "mobile",
+        "quality"
+      ],
+      "license_observed": "MIT",
+      "license_gate": "LICENSE_REVIEWED",
+      "source_commit": "2d228630ba1446365f614a108cb8252f1feda202",
+      "source_pin_status": "HISTORICAL_PIN_RECORDED",
+      "disposition": "REFERENCE_BRIDGE_STAGED",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "15 SKILL.md + 8 reference docs pinned by separate upstream registry"
+    },
+    {
+      "repo": "greensock/gsap-skills",
+      "url": "https://github.com/greensock/gsap-skills",
+      "kind": "skill-family",
+      "capabilities": [
+        "motion"
+      ],
+      "license_observed": "MIT",
+      "license_gate": "LICENSE_REVIEWED",
+      "source_commit": "aed9cfd3277740755f6bfc1155c7aa645403b760",
+      "source_pin_status": "HISTORICAL_PIN_RECORDED",
+      "disposition": "FIRST_PARTY_ROUTING_STAGED",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "Eight upstream skills; only original FDF motion contract present"
+    },
+    {
+      "repo": "iart-ai/web-animation-skills",
+      "url": "https://github.com/iart-ai/web-animation-skills",
+      "kind": "skill-family",
+      "capabilities": [
+        "motion",
+        "quality"
+      ],
+      "license_observed": "MIT",
+      "license_gate": "LICENSE_REVIEWED",
+      "source_commit": "b6dba3eb759726845a44163ff0bad70dd9e7fbb6",
+      "source_pin_status": "HISTORICAL_PIN_RECORDED",
+      "disposition": "FIRST_PARTY_ROUTING_STAGED",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "Nine upstream skills; no upstream bodies redistributed"
+    },
+    {
+      "repo": "Impertio-Studio/Three.js-Claude-Skill-Package",
+      "url": "https://github.com/Impertio-Studio/Three.js-Claude-Skill-Package",
+      "kind": "skill-family",
+      "capabilities": [
+        "spatial",
+        "runtime"
+      ],
+      "license_observed": "MIT",
+      "license_gate": "LICENSE_REVIEWED",
+      "source_commit": "6c190f0db95d6e4b77d7843d181c6d3325c09d0e",
+      "source_pin_status": "HISTORICAL_PIN_RECORDED",
+      "disposition": "FIRST_PARTY_ROUTING_STAGED",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "3D source planning; subpath license audit required before copying"
+    },
+    {
+      "repo": "style-dictionary/style-dictionary",
+      "url": "https://github.com/style-dictionary/style-dictionary",
+      "kind": "runtime",
+      "capabilities": [
+        "tokens",
+        "runtime"
+      ],
+      "license_observed": "Apache-2.0",
+      "license_gate": "LICENSE_REVIEWED",
+      "source_commit": null,
+      "source_pin_status": "PIN_NOT_RECORDED",
+      "disposition": "OPTIONAL_DEPENDENCY",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "Token build system, not an agent skill"
+    },
+    {
+      "repo": "design-tokens/community-group",
+      "url": "https://github.com/design-tokens/community-group",
+      "kind": "specification",
+      "capabilities": [
+        "tokens"
+      ],
+      "license_observed": "MIXED_W3C_SCOPED",
+      "license_gate": "MIXED_SUBPATH_REVIEW",
+      "source_commit": null,
+      "source_pin_status": "PIN_NOT_RECORDED",
+      "disposition": "SPEC_REFERENCE",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "Specification and test suite have distinct licenses"
+    },
+    {
+      "repo": "anthropics/skills",
+      "url": "https://github.com/anthropics/skills",
+      "kind": "skill-family",
+      "capabilities": [
+        "design",
+        "runtime"
+      ],
+      "license_observed": "MIXED_SUBPATH",
+      "license_gate": "MIXED_SUBPATH_REVIEW",
+      "source_commit": "dbd4588f9e1033efb41dad4bef2f7947c8993d44",
+      "source_pin_status": "HISTORICAL_PIN_RECORDED",
+      "disposition": "SUBPATH_REFERENCE",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "frontend-design Apache-2.0; document-format tools not blanket OSS"
+    },
+    {
+      "repo": "vercel-labs/agent-skills",
+      "url": "https://github.com/vercel-labs/agent-skills",
+      "kind": "skill-family",
+      "capabilities": [
+        "runtime",
+        "quality"
+      ],
+      "license_observed": "UNKNOWN",
+      "license_gate": "LICENSE_UNKNOWN",
+      "source_commit": "063bee94c3f4df8453406c830b0a7df0f2860278",
+      "source_pin_status": "HISTORICAL_PIN_RECORDED",
+      "disposition": "REFERENCE_ONLY",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "Root license not confirmed; no copied bodies"
+    },
+    {
+      "repo": "superdesigndev/superdesign-skill",
+      "url": "https://github.com/superdesigndev/superdesign-skill",
+      "kind": "skill-family",
+      "capabilities": [
+        "design"
+      ],
+      "license_observed": "MIT",
+      "license_gate": "LICENSE_REVIEWED",
+      "source_commit": null,
+      "source_pin_status": "PIN_NOT_RECORDED",
+      "disposition": "REFERENCE_ONLY",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "Potential service/runtime coupling"
+    },
+    {
+      "repo": "dequelabs/axe-core",
+      "url": "https://github.com/dequelabs/axe-core",
+      "kind": "qa",
+      "capabilities": [
+        "quality"
+      ],
+      "license_observed": "MPL-2.0",
+      "license_gate": "LICENSE_REVIEWED",
+      "source_commit": null,
+      "source_pin_status": "PIN_NOT_RECORDED",
+      "disposition": "OPTIONAL_DEPENDENCY",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "MPL obligations apply if code redistributed"
+    },
+    {
+      "repo": "storybookjs/storybook",
+      "url": "https://github.com/storybookjs/storybook",
+      "kind": "qa",
+      "capabilities": [
+        "quality",
+        "components"
+      ],
+      "license_observed": "MIT",
+      "license_gate": "LICENSE_REVIEWED",
+      "source_commit": null,
+      "source_pin_status": "PIN_NOT_RECORDED",
+      "disposition": "OPTIONAL_DEPENDENCY",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "Component state harness; no installation"
+    },
+    {
+      "repo": "microsoft/playwright-mcp",
+      "url": "https://github.com/microsoft/playwright-mcp",
+      "kind": "qa",
+      "capabilities": [
+        "quality",
+        "runtime"
+      ],
+      "license_observed": "Apache-2.0",
+      "license_gate": "LICENSE_REVIEWED",
+      "source_commit": null,
+      "source_pin_status": "PIN_NOT_RECORDED",
+      "disposition": "OPTIONAL_DEPENDENCY",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "Browser automation tool, not automatically enabled"
+    },
+    {
+      "repo": "GoogleChrome/lighthouse-ci",
+      "url": "https://github.com/GoogleChrome/lighthouse-ci",
+      "kind": "qa",
+      "capabilities": [
+        "quality"
+      ],
+      "license_observed": "Apache-2.0",
+      "license_gate": "LICENSE_REVIEWED",
+      "source_commit": null,
+      "source_pin_status": "PIN_NOT_RECORDED",
+      "disposition": "OPTIONAL_DEPENDENCY",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "Web performance regression CI"
+    },
+    {
+      "repo": "shadcn-ui/ui",
+      "url": "https://github.com/shadcn-ui/ui",
+      "kind": "components",
+      "capabilities": [
+        "components",
+        "design"
+      ],
+      "license_observed": "MIT",
+      "license_gate": "LICENSE_REVIEWED",
+      "source_commit": null,
+      "source_pin_status": "PIN_NOT_RECORDED",
+      "disposition": "OPTIONAL_DEPENDENCY",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "Caller chooses compatible components"
+    },
+    {
+      "repo": "radix-ui/primitives",
+      "url": "https://github.com/radix-ui/primitives",
+      "kind": "components",
+      "capabilities": [
+        "components",
+        "quality"
+      ],
+      "license_observed": "MIT",
+      "license_gate": "LICENSE_REVIEWED",
+      "source_commit": null,
+      "source_pin_status": "PIN_NOT_RECORDED",
+      "disposition": "OPTIONAL_DEPENDENCY",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "Framework-specific accessible primitives"
+    },
+    {
+      "repo": "joepUI/motion-ref-skill",
+      "url": "https://github.com/joepUI/motion-ref-skill",
+      "kind": "skill-family",
+      "capabilities": [
+        "motion"
+      ],
+      "license_observed": "MIT",
+      "license_gate": "LICENSE_REVIEWED",
+      "source_commit": null,
+      "source_pin_status": "PIN_NOT_RECORDED",
+      "disposition": "REFERENCE_ONLY",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "Chinese-language motion reference"
+    },
+    {
+      "repo": "frankxai/awesome-motion-design-agent-skills",
+      "url": "https://github.com/frankxai/awesome-motion-design-agent-skills",
+      "kind": "index",
+      "capabilities": [
+        "motion"
+      ],
+      "license_observed": "CC0-1.0",
+      "license_gate": "SUBPATH_REVIEW_REQUIRED",
+      "source_commit": null,
+      "source_pin_status": "PIN_NOT_RECORDED",
+      "disposition": "DISCOVERY_REFERENCE",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "Index licensing does not authorize downstream source"
+    },
+    {
+      "repo": "ibelick/motion-primitives",
+      "url": "https://github.com/ibelick/motion-primitives",
+      "kind": "components",
+      "capabilities": [
+        "motion",
+        "components"
+      ],
+      "license_observed": "MIT",
+      "license_gate": "LICENSE_REVIEWED",
+      "source_commit": null,
+      "source_pin_status": "PIN_NOT_RECORDED",
+      "disposition": "OPTIONAL_DEPENDENCY",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "Motion components rather than policy"
+    },
+    {
+      "repo": "motiondivision/motion",
+      "url": "https://github.com/motiondivision/motion",
+      "kind": "runtime",
+      "capabilities": [
+        "motion",
+        "runtime"
+      ],
+      "license_observed": "MIT",
+      "license_gate": "LICENSE_REVIEWED",
+      "source_commit": "a7df1f379561f6b4030e94c1d93f4fcd25b3493a",
+      "source_pin_status": "HISTORICAL_PIN_RECORDED",
+      "disposition": "OPTIONAL_DEPENDENCY",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "JS/React motion runtime"
+    },
+    {
+      "repo": "mrdoob/three.js",
+      "url": "https://github.com/mrdoob/three.js",
+      "kind": "runtime",
+      "capabilities": [
+        "spatial",
+        "runtime"
+      ],
+      "license_observed": "MIT",
+      "license_gate": "LICENSE_REVIEWED",
+      "source_commit": null,
+      "source_pin_status": "PIN_NOT_RECORDED",
+      "disposition": "OPTIONAL_DEPENDENCY",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "3D engine; not a skill"
+    },
+    {
+      "repo": "pmndrs/react-three-fiber",
+      "url": "https://github.com/pmndrs/react-three-fiber",
+      "kind": "runtime",
+      "capabilities": [
+        "spatial",
+        "runtime"
+      ],
+      "license_observed": "MIT",
+      "license_gate": "LICENSE_REVIEWED",
+      "source_commit": null,
+      "source_pin_status": "PIN_NOT_RECORDED",
+      "disposition": "OPTIONAL_DEPENDENCY",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "React renderer; version compatibility gate"
+    },
+    {
+      "repo": "pmndrs/drei",
+      "url": "https://github.com/pmndrs/drei",
+      "kind": "runtime",
+      "capabilities": [
+        "spatial",
+        "runtime"
+      ],
+      "license_observed": "MIT",
+      "license_gate": "LICENSE_REVIEWED",
+      "source_commit": null,
+      "source_pin_status": "PIN_NOT_RECORDED",
+      "disposition": "OPTIONAL_DEPENDENCY",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "R3F helpers; version compatibility gate"
+    },
+    {
+      "repo": "DavidHDev/react-bits",
+      "url": "https://github.com/DavidHDev/react-bits",
+      "kind": "components",
+      "capabilities": [
+        "components",
+        "motion"
+      ],
+      "license_observed": "MIT_PLUS_COMMONS_CLAUSE",
+      "license_gate": "REDISTRIBUTION_RESTRICTED",
+      "source_commit": "78463fd00389cd4cb5efb16cc34810cbbeb1f436",
+      "source_pin_status": "HISTORICAL_PIN_RECORDED",
+      "disposition": "DO_NOT_BUNDLE",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "Source audit recorded Commons Clause restriction"
+    },
+    {
+      "repo": "emalorenzo/three-agent-skills",
+      "url": "https://github.com/emalorenzo/three-agent-skills",
+      "kind": "skill-family",
+      "capabilities": [
+        "spatial"
+      ],
+      "license_observed": "UNKNOWN",
+      "license_gate": "LICENSE_UNKNOWN",
+      "source_commit": "f950f95ae3b13581546e6d6d8b2f88a08eb3e577",
+      "source_pin_status": "HISTORICAL_PIN_RECORDED",
+      "disposition": "REFERENCE_ONLY",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "No root LICENSE observed in pinned inspection"
+    },
+    {
+      "repo": "antfu-collective/vitesse",
+      "url": "https://github.com/antfu-collective/vitesse",
+      "kind": "specimen",
+      "capabilities": [
+        "runtime"
+      ],
+      "license_observed": "MIT",
+      "license_gate": "LICENSE_REVIEWED",
+      "source_commit": "a8785264f83c2ebe1b3cf689296775a4949957c8",
+      "source_pin_status": "HISTORICAL_PIN_RECORDED",
+      "disposition": "PRIVATE_SOURCE_SPECIMEN",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "Only src/components/README.md private byte-custody specimen; no complete fork"
+    },
+    {
+      "repo": "shadcn-ui/taxonomy",
+      "url": "https://github.com/shadcn-ui/taxonomy",
+      "kind": "specimen",
+      "capabilities": [
+        "components"
+      ],
+      "license_observed": "MIT",
+      "license_gate": "LICENSE_REVIEWED",
+      "source_commit": "298a8857c7128a0d121e7f699dfd729f23b3966d",
+      "source_pin_status": "HISTORICAL_PIN_RECORDED",
+      "disposition": "PRIVATE_SOURCE_SPECIMEN",
+      "distribution": "NO_PUBLIC_UPSTREAM_CODE_BUNDLED",
+      "installed_in_owner_ide": false,
+      "host_verified": false,
+      "owner_approved_install": false,
+      "notes": "Only config/site.ts private byte-custody specimen; no full fork"
+    }
+  ],
+  "counts": {
+    "unique_repositories": 30,
+    "emil_upstream_skill_sources": 15,
+    "first_party_explicit_skill_files_in_review_tree": 5,
+    "first_party_generated_catalog_definitions": 9
+  },
+  "explicit_exclusions": [
+    "NO_REMOTE_INSTALL",
+    "NO_UPSTREAM_SKILL_BODY_VENDORED",
+    "NO_LICENSE_AUTOGRANT",
+    "NO_EXISTING_PROJECT_ROOT_POLICY_MUTATION",
+    "NO_SELF_AUTHORIZED_COMMITS_OR_DEPLOYMENT"
+  ],
+  "upstream_emil_registry": "registry/upstream-emil-kowalski.v1.json",
+  "effective_license_policy": "09_LICENSE_PROVENANCE_AND_ATTRIBUTION"
+}

@@ -1,0 +1,87 @@
+{
+  "schema": "fdf.portfolio.admission_protocol/1.0.0",
+  "as_of": "2026-10-21",
+  "authority": "CALLER_HOST_POLICY_AND_SEPARATE_OWNER_APPROVAL",
+  "stage_order": [
+    "DISCOVERED",
+    "LICENSE_SCOPED",
+    "SOURCE_PINNED",
+    "ARCHITECTURE_MAPPED",
+    "FDF_REFERENCE_ADAPTER",
+    "PROJECT_FIT_PROPOSED",
+    "OWNER_APPROVED_FOR_TARGET",
+    "INSTALLED_IN_TARGET",
+    "HOST_SKILL_ACTIVATION_WITNESSED",
+    "RELEASE_REVIEWED"
+  ],
+  "principle": "STATES_REQUIRE_EVIDENCE_NOT_DECLARATIONS; REFERENCE_ADAPTER_IS_NOT_INSTALLATION",
+  "evidence_gates": {
+    "DISCOVERED": [
+      "source repository URL",
+      "classification",
+      "observed date"
+    ],
+    "LICENSE_SCOPED": [
+      "exact license path and text hash",
+      "license scope and redistribution requirements"
+    ],
+    "SOURCE_PINNED": [
+      "exact immutable commit",
+      "source path Git blobs",
+      "independently rechecked upstream repository"
+    ],
+    "ARCHITECTURE_MAPPED": [
+      "capability domain",
+      "entrypoints",
+      "dependency and threat inventory"
+    ],
+    "FDF_REFERENCE_ADAPTER": [
+      "original FDF adapter source",
+      "source-only tests",
+      "upstream attribution and source pin"
+    ],
+    "PROJECT_FIT_PROPOSED": [
+      "actual caller project SHA",
+      "host instruction hierarchy",
+      "read-only ProjectDNA and ProposalDNA"
+    ],
+    "OWNER_APPROVED_FOR_TARGET": [
+      "actual host-owner acceptance captured outside assistant-generated JSON",
+      "exact target and plan digest",
+      "no trust-boundary widening"
+    ],
+    "INSTALLED_IN_TARGET": [
+      "verified target diff or file hashes",
+      "install environment and provenance receipt",
+      "no unsafe root mutation"
+    ],
+    "HOST_SKILL_ACTIVATION_WITNESSED": [
+      "actual host model invocation",
+      "observed selected skill activation and effect boundary",
+      "rollback and functional tests"
+    ],
+    "RELEASE_REVIEWED": [
+      "independent human code/license/security review",
+      "effective protected-main governance",
+      "source and runtime CI against exact release head"
+    ]
+  },
+  "prohibited_auto_transitions": [
+    "PROJECT_FIT_PROPOSED→OWNER_APPROVED_FOR_TARGET",
+    "OWNER_APPROVED_FOR_TARGET→INSTALLED_IN_TARGET",
+    "INSTALLED_IN_TARGET→HOST_SKILL_ACTIVATION_WITNESSED",
+    "HOST_SKILL_ACTIVATION_WITNESSED→RELEASE_REVIEWED"
+  ],
+  "not_evidence": [
+    "historical GitHub star counts",
+    "source-only tests for host behavior",
+    "a local JSON field saying approved",
+    "an external skill prompt demanding installation",
+    "SHA256 alone as identity proof"
+  ],
+  "all_target_installations_currently": "UNVERIFIED",
+  "first_party_changes": "ORIGINAL_FDF_ONLY",
+  "upstream_bodies_bundled": false,
+  "third_party_copyright_not_rebranded": true,
+  "public_release": "HOLD"
+}
