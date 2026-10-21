@@ -1,0 +1,59 @@
+{
+  "schema": "fdf.uac010.selected_upstream_refresh/1.0.0",
+  "checked_at_utc_date": "2026-10-21",
+  "method": "CONNECTED_GITHUB_REPO_DEFAULT_BRANCH_AND_LICENSE_FILE_READ",
+  "claim_boundary": "NO_COMPREHENSIVE_SUBPATH_LICENSE_AUDIT_NO_SKILL_ACTIVATION_NO_UPSTREAM_CODE_COPIED",
+  "selected": [
+    {
+      "repo": "emilkowalski/skills",
+      "historical_pin": "2d228630ba1446365f614a108cb8252f1feda202",
+      "current_default_branch": "main",
+      "observed_head": "2d228630ba1446365f614a108cb8252f1feda202",
+      "ahead_from_recorded_pin": 0,
+      "status": "PIN_CURRENT_AT_OBSERVATION",
+      "observed_repo_spdx": "MIT",
+      "license_file": "LICENSE",
+      "license_git_blob": "57b46f1fd11dc62351ea548104a88aa3f659c11b",
+      "license_text_observed": true,
+      "next_gate": "REVIEW_SKILL_SUBPATH_AND_HOST_EFFECTS_BEFORE_TARGET_INSTALL"
+    },
+    {
+      "repo": "pbakaus/impeccable",
+      "historical_pin": "d631a8827f99414d2b6daba4ef08b7f8701751d7",
+      "current_default_branch": "main",
+      "observed_head": "dad8dbb3aac21ad1fa236c110315ef4abece23e8",
+      "ahead_from_recorded_pin": 76,
+      "status": "UPSTREAM_DRIFT_REVIEW_REQUIRED",
+      "observed_repo_spdx": "Apache-2.0",
+      "license_file": "LICENSE",
+      "license_git_blob": "bb3f6d23b1f8025514a62a12b51b47d73e3c9aa9",
+      "license_text_observed": true,
+      "compare_file_list_capped_at": 300,
+      "notable_changed_path": ".agent/skills/impeccable/SKILL.md",
+      "next_gate": "DEEP_DIFF_AND_DEPENDENCY_REVIEW_REQUIRED_NO_AUTO_PIN_BUMP"
+    },
+    {
+      "repo": "leonxlnx/taste-skill",
+      "historical_pin": "f624f37a8c650b9cc550253104925efe4c8de246",
+      "current_default_branch": "main",
+      "observed_head": "6010f91a9935f1c167dfc500fb1a475681892e6b",
+      "ahead_from_recorded_pin": 28,
+      "status": "UPSTREAM_DRIFT_REVIEW_REQUIRED",
+      "observed_repo_spdx": "MIT",
+      "license_file": "LICENSE",
+      "license_git_blob": "48a2f6640b81ff8eca9ce7f6a96337692713ef5b",
+      "license_text_observed": true,
+      "compare_files": 73,
+      "notable_changed_path": ".codex-plugin/plugin.json",
+      "next_gate": "DEEP_DIFF_AND_CLI_PLUGIN_HOOK_REVIEW_REQUIRED_NO_AUTO_PIN_BUMP"
+    }
+  ],
+  "immutable_policy": {
+    "preserve_original_historical_pins": true,
+    "auto_upgrade": false,
+    "external_skill_content_vendored": false,
+    "host_install_verified": false,
+    "human_review_verified": false,
+    "merge_authorized": false
+  }
+}
