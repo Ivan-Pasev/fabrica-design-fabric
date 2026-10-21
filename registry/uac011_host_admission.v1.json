@@ -1,0 +1,103 @@
+{
+  "schema": "fdf.host_admission.protocol/1.0",
+  "date": "2026-10-21",
+  "mode": "OWNER_LOCAL_WITNESS_REQUIRED",
+  "target": "one real caller project in owner's chosen IDE",
+  "source_baseline": "FDF/UAC-010 ProjectDNA witness",
+  "preconditions": [
+    "actual workspace identified",
+    "current higher-priority host and project policies reviewed",
+    "FDF candidate source pinned",
+    "owner authorized read-only admission work"
+  ],
+  "observations": [
+    {
+      "id": "projectdna",
+      "required": true,
+      "evidence": "redacted UAC-010 JSON witness; hash matches its original output"
+    },
+    {
+      "id": "host_context",
+      "required": true,
+      "evidence": "operator confirms current IDE/product and workspace; not merely CLI --host flag"
+    },
+    {
+      "id": "effective_rules",
+      "required": true,
+      "evidence": "operator-observed global/team/project/nested instructions or UNKNOWN with explicit limitation"
+    },
+    {
+      "id": "skill_discovery",
+      "required": true,
+      "evidence": "host-native skills/settings list visibly contains exact FDF skill name and workspace path"
+    },
+    {
+      "id": "skill_activation",
+      "required": true,
+      "evidence": "host-native invocation/activation visibly reports skill use, rather than guessed from local file presence"
+    },
+    {
+      "id": "bounded_output",
+      "required": true,
+      "evidence": "a read-only FDF proposal references actual project architecture and obeys original governing rules"
+    },
+    {
+      "id": "file_integrity",
+      "required": true,
+      "evidence": "Git status and/or file hashes before and after no-write exercise; unintended edits investigated"
+    },
+    {
+      "id": "rollback",
+      "required": false,
+      "evidence": "needed only if separately authorized test installation changed managed paths"
+    },
+    {
+      "id": "owner_review",
+      "required": true,
+      "evidence": "separately recorded operator decision; not an assistant-generated approval assertion"
+    }
+  ],
+  "hosts": {
+    "antigravity": {
+      "native_path": ".agents/skills/<skill>/SKILL.md",
+      "discovery_check": "Agent Customizations: active skills and source scope",
+      "invocation": "request explicit FDF skill in agent UI"
+    },
+    "cursor": {
+      "native_path": ".cursor/rules/<rule>.mdc or supported skill locations",
+      "discovery_check": "Cursor Rules UI and applied rules; skill loading separately confirmed",
+      "invocation": "reference manually invoked rule or supported skill in agent session"
+    },
+    "codex": {
+      "native_path": ".agents/skills/<skill>/SKILL.md where supported",
+      "discovery_check": "inspect actual Codex supported skills and AGENTS.md scope",
+      "invocation": "explicitly ask for named skill under current Codex controls"
+    },
+    "gemini-cli": {
+      "native_path": ".gemini/skills/<skill>/SKILL.md or .agents/skills alias",
+      "discovery_check": "/skills list and skill status in trusted workspace",
+      "invocation": "model activate_skill consent event; never auto consent"
+    },
+    "ai-studio": {
+      "native_path": "MANUAL_CLOUD_PROMPT_AND_SOURCE_IMPORT",
+      "discovery_check": "actual opened build project sources/settings",
+      "invocation": "manual scoped instruction, not local agent-skill autoload"
+    },
+    "chatgpt-project": {
+      "native_path": "MANUAL_PROJECT_INSTRUCTIONS_OR_SOURCE",
+      "discovery_check": "actual project settings and visible connected sources",
+      "invocation": "manual FDF prompt/source use, not file presence"
+    }
+  },
+  "claim_boundary": {
+    "synthetic_ci_proves_host_activation": false,
+    "filled_template_proves_human_approval": false,
+    "github_source_blob_proves_installed_in_caller": false,
+    "owner_observation_requires_independent_review": true,
+    "install_authorized": false,
+    "merge_authorized": false,
+    "deploy_authorized": false,
+    "release": "HOLD"
+  },
+  "evidence_handling": "Use redacted references and keep raw local policy and session data private. Do not upload secrets, raw paths, or full user rule texts."
+}
