@@ -11,6 +11,7 @@ from pathlib import Path
 
 BASE = Path(__file__).resolve().parents[2] / "distribution/uac-v0.2"
 sys.path.insert(0, str(BASE))
+sys.path.insert(0, str(BASE / "tools"))
 spec = importlib.util.spec_from_file_location("uac008_original_safe_tests", BASE / "tests/test_fdf_safe.py")
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)

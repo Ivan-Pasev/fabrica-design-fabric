@@ -1,6 +1,7 @@
 """UAC-008: ensure GitHub has the byte-identical UAC-007 source and run its tests."""
 import hashlib
 import json
+import os
 import subprocess
 import sys
 import unittest
@@ -20,9 +21,11 @@ class UAC008SourceAndTests(unittest.TestCase):
             self.assertEqual(hashlib.sha256(data).hexdigest(), expected["sha256"], relative)
 
     def test_exact_imported_uac007_transaction_suite(self):
+        env = dict(os.environ)
+        env["PYTHONPATH"] = os.pathsep.join([str(BASE), str(BASE / "tools"), env.get("PYTHONPATH", "")])
         proc = subprocess.run(
             [sys.executable, "-m", "unittest", "discover", "-s", "tests", "-p", "test_fdf_safe.py", "-v"],
-            cwd=BASE, text=True, capture_output=True, timeout=90,
+            cwd=BASE, env=env, text=True, capture_output=True, timeout=90,
         )
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
         self.assertIn("Ran 13 tests", proc.stderr)
