@@ -1,0 +1,83 @@
+{
+  "baseline_archive_sha256": "de833726ce83117d0305cad1af04c4fc88578bd031eb439377ff46968c70ccdf",
+  "files": {
+    "FABRICA_MANIFEST.json": {
+      "bytes": 2455,
+      "sha256": "51b3ae68b08b3f0411e323cbf1458049f2bf4e63ad5000310d70feb2de25c2f3"
+    },
+    "FDF_UNIVERSAL_INJECTION.md": {
+      "bytes": 5525,
+      "sha256": "022af5ff9a7d1cc563359cae404b92ae68d90f55d405b783b8223e2c5658537f"
+    },
+    "README.md": {
+      "bytes": 5004,
+      "sha256": "a99b33179afe416bfc19ecf824b9d5be5026fec4586bf5af7ffd1d64bc0f9289"
+    },
+    "README_UAC007.md": {
+      "bytes": 2989,
+      "sha256": "78f7e9e7ccbd95f763c88409a356498608ebe880f8afefe5df0710262892eb8c"
+    },
+    "docs/FDF_KERNEL_SPEC.md": {
+      "bytes": 3123,
+      "sha256": "7fc1ac1dcac7eea5888058d9f13f933d69d186719ac8549df53632b52b3bc262"
+    },
+    "docs/MACHINE_HANDOFF.md": {
+      "bytes": 1604,
+      "sha256": "b3c82ade58c157c358599e85675780e042f229e0ad6997d4b701a2112f65f8f3"
+    },
+    "docs/PLATFORM_COMPATIBILITY.md": {
+      "bytes": 1972,
+      "sha256": "e5f3006aab2eaaca01d601de6f6424e663b1d889707d9014a36398d096efb1e8"
+    },
+    "docs/THREAT_MODEL_AND_GATES.md": {
+      "bytes": 2957,
+      "sha256": "8ad7ebf90dbb8bf8a7e227ed69761b4b7c3a062c02de4f2ce301556385d1fc4c"
+    },
+    "docs/UAC007_SECURITY_REVIEW.md": {
+      "bytes": 1935,
+      "sha256": "af76c2ea8ff6c60c59cb80ec2c95feb05e3b53aa62f7ff584ca08a0cc3ea4aa4"
+    },
+    "examples/SCENARIO_REPLAY.json": {
+      "bytes": 1707,
+      "sha256": "08c5f2cc37da0bf7edc258c9a5102047d6fa86dc156ccec1046e6499d8a2f6a7"
+    },
+    "examples/run_scenarios.py": {
+      "bytes": 2370,
+      "sha256": "46f272f38644e339f5541741dd1d9c26e6feb4ad8b4f4d6da7af1d349edaf1fa"
+    },
+    "skills/fdf-universal-adopter/SKILL.md": {
+      "bytes": 2115,
+      "sha256": "8d9e476b0cfaf2c93e79d2dd65ebe9deec56423c771cc06e9b691b9c1a74563c"
+    },
+    "tests/test_fdf_adopt.py": {
+      "bytes": 8852,
+      "sha256": "23d3676870fe2e83e6b63b83a1a7a7c1f302b76422b7dcaac7256d7f49c0d581"
+    },
+    "tests/test_fdf_kernel.py": {
+      "bytes": 5489,
+      "sha256": "c30f7fd6b97e5e05e7bf1627fb1ff4b26a9bb1f5726d1666b3c47855519119e1"
+    },
+    "tests/test_fdf_safe.py": {
+      "bytes": 4452,
+      "sha256": "ccf11f1202931993211f27a280353f3fc2187ffe7b477b44673a74720d959b39"
+    },
+    "tools/fdf.py": {
+      "bytes": 2803,
+      "sha256": "e3af3bb4301610a08b6fb9a8f77a889f9724493a127454ca850563d01a4342d2"
+    },
+    "tools/fdf_adopt.py": {
+      "bytes": 19823,
+      "sha256": "48abe77b12a91d94bae66e06234204d2b7d6a44b536b8f365209e4bc54a8ca71"
+    },
+    "tools/fdf_kernel.py": {
+      "bytes": 9390,
+      "sha256": "b07c93acb4119a8138a7af5fc7e9f147fbe4e1419317a023094085f2fa7b76bc"
+    },
+    "tools/fdf_safe.py": {
+      "bytes": 9586,
+      "sha256": "abd68f1d6d7fc1c69c8a7dc7085bf1263413a7fb90ddb47935c5ba7c95d1608c"
+    }
+  },
+  "release": "HOLD",
+  "schema": "fdf.uac007.package/0.1"
+}
