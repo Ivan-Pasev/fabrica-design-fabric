@@ -1,0 +1,64 @@
+{
+  "scenarios": [
+    {
+      "all_existing_root_files_byte_identical_after_rollback": true,
+      "applied": true,
+      "name": "new-project",
+      "owner_authorized_external": "NOT_ATTESTED",
+      "plan_action_count": 27,
+      "plan_collisions": [],
+      "platforms": [
+        "cursor",
+        "codex",
+        "gemini",
+        "antigravity",
+        "chatgpt",
+        "aistudio"
+      ],
+      "real_ide_verified": false,
+      "rolled_back": true,
+      "root_hooks": "append",
+      "source_execution": "NONE",
+      "verified": "INSTALLED_SOURCE_HASHES_MATCH"
+    },
+    {
+      "all_existing_root_files_byte_identical_after_rollback": true,
+      "applied": true,
+      "name": "mature-project",
+      "owner_authorized_external": "NOT_ATTESTED",
+      "plan_action_count": 35,
+      "plan_collisions": [],
+      "platforms": [
+        "cursor",
+        "codex",
+        "gemini",
+        "antigravity",
+        "chatgpt",
+        "aistudio"
+      ],
+      "real_ide_verified": false,
+      "rolled_back": true,
+      "root_hooks": "append",
+      "source_execution": "NONE",
+      "verified": "INSTALLED_SOURCE_HASHES_MATCH"
+    },
+    {
+      "all_existing_root_files_byte_identical_after_rollback": true,
+      "applied": true,
+      "name": "cursor-only",
+      "owner_authorized_external": "NOT_ATTESTED",
+      "plan_action_count": 9,
+      "plan_collisions": [],
+      "platforms": [
+        "cursor"
+      ],
+      "real_ide_verified": false,
+      "rolled_back": true,
+      "root_hooks": "none",
+      "source_execution": "NONE",
+      "verified": "INSTALLED_SOURCE_HASHES_MATCH"
+    }
+  ],
+  "schema": "fdf.adoption.scenario-evidence/0.1",
+  "status": "SYNTHETIC_FIXTURE_ONLY"
+}
