@@ -27,3 +27,10 @@ Full upstream Anatomy checkout/build/full audit, complete 3D and motion, isolate
 ## Mandatory release checks
 
 SOURCE, MODEL, STATE, OBSERVABLES, GEOMETRY, SECURITY, ACCESSIBILITY, REPRODUCIBILITY, HOST_AUTHORIZATION, RIGHTS, CLAIM_BOUNDARY, PUBLICATION. Each check carries PASS / FAIL / NOT_RUN / INCONCLUSIVE / EXCEPTION, evidence digest, scope, covered states and test environment. An EXCEPTION is never a PASS. Product code may be tested while release remains BLOCKED.
+
+## Ω6 candidate — bounded source audit closure (2026-11-13)
+- Model replay check is now enforced in every **static** Anatomy SVG/HTML path when the model identifier is `fab.policy.reference`. The previous self-comparison of observables was tautological and was removed. Invalid/missing event traces block rendering, not merely the interactive timeline.
+- Painter order is derived from `A.settle(...).items[*].key`, the same solved ordering that `A.depthOrder` evaluated, rather than recomputing unverified center-depth sorting. SVG carries explicit `data-paint-index` for testable output parity.
+- Decorative link paths are explicitly `NOT_RUN` for geometry/depth audit and whole-scene assurance remains `INCONCLUSIVE`. A PASS describes bounded solid checks only.
+- Root-level GitHub Actions now runs the actual nested product on push to the Ω6 branch and under the defined path-scoped pull-request trigger. A green first-party FDF workflow alone does not verify FAB.VISUAL.
+- Claims remain restricted to a synthetic policy model. No physical metrology, browser accessibility, complete Anatomy upstream suite or production deployment is admitted.
