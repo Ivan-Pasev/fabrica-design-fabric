@@ -1,0 +1,3 @@
+[submodule "products/fab-visual/upstream/anatomy"]
+	path = products/fab-visual/upstream/anatomy
+	url = https://github.com/wheresryan22/anatomy.git
