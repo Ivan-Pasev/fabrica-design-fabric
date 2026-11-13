@@ -23,6 +23,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: ${{ matrix.node }}
@@ -59,12 +60,13 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Build deterministic source-only candidate ZIP
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/omega8"
-          python3 scripts/build-source-snapshot.py --root . --out "$RUNNER_TEMP/omega8/fab-visual-omega8-source.zip" --commit "$GITHUB_SHA" | tee "$RUNNER_TEMP/omega8/build-receipt.json"
+          python3 scripts/build-source-snapshot.py --root . --out "$RUNNER_TEMP/omega8/fab-visual-omega8-source.zip" --commit "${{ github.event.pull_request.head.sha || github.sha }}" | tee "$RUNNER_TEMP/omega8/build-receipt.json"
           cd "$RUNNER_TEMP/omega8"
           sha256sum -c fab-visual-omega8-source.zip.sha256
           unzip -t fab-visual-omega8-source.zip > archive-integrity.txt

@@ -14,7 +14,7 @@ const target=realpathSync(targetArg);
 if(target==='/'||target===packageRoot) {console.error('invalid install target');process.exit(2);}
 const extension=join(target,'.codexstation','extensions','fab-visual');
 const skill=join(target,'.agents','skills','fab-visual');
-const items=[['src',join(extension,'src')],['bin',join(extension,'bin')],['vendor/anatomy',join(extension,'vendor','anatomy')],['skills/fab-visual/SKILL.md',join(skill,'SKILL.md')],['extensions/codexstation-fab-visual/AGENTS.md',join(extension,'AGENTS.md')],['UPSTREAM_LOCK.json',join(extension,'UPSTREAM_LOCK.json')]];
+const items=[['src',join(extension,'src')],['bin',join(extension,'bin')],['vendor/anatomy',join(extension,'vendor','anatomy')],['skills/fab-visual/SKILL.md',join(skill,'SKILL.md')],['extensions/codexstation-fab-visual/AGENTS.md',join(extension,'AGENTS.md')],['UPSTREAM_LOCK.json',join(extension,'UPSTREAM_LOCK.json')],['LICENSE',join(extension,'LICENSE')],['NOTICE',join(extension,'NOTICE')]];
 // Protect host from symlink redirection through pre-existing path ancestors.
 function parentGuard(path) {
   let at=dirname(path);
