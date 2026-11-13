@@ -2,7 +2,7 @@
 
 **Model-governed, evidence-carrying procedural visualization with a portable CodexStation extension.**
 
-**Status:** `v0.2.0-alpha.0` engineering reference; 31 local tests pass; **not released to production**. The independent renderer executes; the external Anatomy runtime is source-locked but **not included** and its complete upstream checkout is not locally reproduced. No scientific certification is implied.
+**Status:** `v0.2.0-alpha.0` engineering reference; 32 local tests pass; **not released to production**. The independent renderer executes; the external Anatomy runtime is source-locked but **not included** and its complete upstream checkout is not locally reproduced. No scientific certification is implied.
 
 ## Architecture
 

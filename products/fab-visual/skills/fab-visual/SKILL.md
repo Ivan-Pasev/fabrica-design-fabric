@@ -19,8 +19,9 @@ Use this skill when the task needs a scientific, engineering or computational vi
 
 ## Commands
 
-`node bin/fab-visual.mjs demo dist/policy-machine.html`
-`node bin/fab-visual.mjs validate fixtures/policy-scene.json`
+From the source-repository root: `node bin/fab-visual.mjs demo dist/policy-machine.html`.
+From an installed CodexStation root: `node .codexstation/extensions/fab-visual/bin/fab-visual.mjs demo dist/policy-machine.html`.
+`node bin/fab-visual.mjs validate fixtures/policy-scene.json` (repository fixture only)
 `node bin/fab-visual.mjs render fixtures/policy-scene.json dist/scene.svg`
 `node bin/fab-visual.mjs anatomy-plan fixtures/policy-scene.json`
 `node bin/fab-visual.mjs inspect-upstream vendor/anatomy`
