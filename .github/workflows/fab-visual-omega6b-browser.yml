@@ -1,0 +1,48 @@
+name: FAB.VISUAL Ω6B bounded browser and semantic regression
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'products/fab-visual/src/visual/semantic-*.mjs'
+      - 'products/fab-visual/tests/semantic-*.mjs'
+      - 'products/fab-visual/scripts/browser-qa.py'
+      - 'products/fab-visual/examples/semantic-descent.mjs'
+      - '.github/workflows/fab-visual-omega6b-browser.yml'
+permissions:
+  contents: read
+jobs:
+  browser-and-refinement:
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    defaults:
+      run:
+        working-directory: products/fab-visual
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # verified v4 ref as of 2026-11-13
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # verified v4 ref as of 2026-11-13
+        with:
+          node-version: '22.16.0'
+      - name: Node reference and semantic-refinement tests
+        run: node --test tests/*.test.mjs
+      - name: Generate bounded synthetic visualization artifacts
+        run: |
+          node bin/fab-visual.mjs anatomy-verify
+          node bin/fab-visual.mjs anatomy-timeline dist/anatomy-timeline.html
+          node examples/semantic-descent.mjs dist/semantic-descent.html
+      - name: Install isolated Chromium QA dependencies
+        run: |
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --disable-pip-version-check 'playwright==1.57.0'
+          .venv/bin/python -m playwright install --with-deps chromium
+      - name: Browser UI regression with bounded evidence
+        run: .venv/bin/python scripts/browser-qa.py
+      - name: Preserve local browser evidence (not release approval)
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # verified v4 ref as of 2026-11-13
+        with:
+          name: fab-visual-omega6b-browser-evidence
+          path: products/fab-visual/evidence/omega6-browser/
+          if-no-files-found: warn
+          retention-days: 14
