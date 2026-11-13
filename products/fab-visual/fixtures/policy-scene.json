@@ -5,7 +5,11 @@
   "model": {
     "id": "fab.policy.reference",
     "revision": "v0.2",
-    "authority": "local demonstration only"
+    "authority": "local demonstration only",
+    "trace": [
+      "START",
+      "POLICY_ESCALATE"
+    ]
   },
   "parts": [
     {

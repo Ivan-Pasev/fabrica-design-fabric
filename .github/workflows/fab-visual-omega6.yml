@@ -1,0 +1,45 @@
+name: FAB.VISUAL Ω6 independent product verification
+on:
+  push:
+    branches: ['feature/fab-visual-omega6-audit-parity']
+  pull_request:
+    paths:
+      - 'products/fab-visual/**'
+      - '.github/workflows/fab-visual-omega6.yml'
+permissions:
+  contents: read
+jobs:
+  executable-reference:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['20.19.0', '22.16.0']
+    defaults:
+      run:
+        working-directory: products/fab-visual
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Verify source-locked Anatomy subset
+        run: node bin/fab-visual.mjs anatomy-verify
+      - name: Run full reference test suite
+        run: node --test tests/*.test.mjs
+      - name: Reproduce concrete artifacts
+        run: |
+          node bin/fab-visual.mjs anatomy-render fixtures/policy-scene.json /tmp/fabvisual-omega6.svg
+          node bin/fab-visual.mjs anatomy-timeline /tmp/fabvisual-omega6.html
+          test -s /tmp/fabvisual-omega6.svg
+          test -s /tmp/fabvisual-omega6.svg.witness.json
+          test -s /tmp/fabvisual-omega6.html
+      - name: Ensure release gate is not promoted
+        run: |
+          if node bin/fab-visual.mjs gate examples/codexstation-policy/manifest.json; then
+            echo "ERROR: release gate unexpectedly opened"
+            exit 1
+          fi
