@@ -93,4 +93,14 @@ async function run(){
 }
 try{const report=await run();mkdirSync(evidence,{recursive:true});writeFileSync(join(evidence,'omega7-browser-receipt.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));}
 catch(e){const report={result:'FAIL',error:e.message,node:process.version,tests:results};mkdirSync(evidence,{recursive:true});writeFileSync(join(evidence,'omega7-browser-receipt.json'),JSON.stringify(report,null,2)+'\n');console.error(JSON.stringify(report));process.exitCode=1;}
-finally{ws?.close();proc?.kill('SIGTERM');await sleep(150);if(profile)rmSync(profile,{recursive:true,force:true});}
+finally{
+ ws?.close();
+ if(proc && proc.exitCode===null && proc.signalCode===null){
+   proc.kill('SIGTERM');
+   // Chrome can asynchronously create profile files after receiving SIGTERM.
+   // Wait for process exit before removing a transient profile.
+   for(let i=0;i<40 && proc.exitCode===null && proc.signalCode===null;i++)await sleep(100);
+   if(proc.exitCode===null && proc.signalCode===null){proc.kill('SIGKILL');await sleep(350);}
+ }
+ if(profile)rmSync(profile,{recursive:true,force:true,maxRetries:15,retryDelay:150});
+}
