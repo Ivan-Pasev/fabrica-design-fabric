@@ -1,0 +1,108 @@
+name: FAB.VISUAL Omega10 full pinned Anatomy source and upstream reproduction
+on:
+  push:
+    branches: ['feature/fab-visual-omega10-upstream-reproduction']
+  pull_request:
+    paths:
+      - 'products/fab-visual/**'
+      - '.github/workflows/fab-visual-omega10.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  full-pinned-upstream:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - name: Checkout reviewed FAB.VISUAL source without persistent credentials
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: fabrica
+      - name: Checkout exact public Anatomy commit (separate tree)
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: wheresryan22/anatomy
+          ref: 1482e8469b0a9e0d8cc18ea2740a01423d29ae80
+          fetch-depth: 1
+          persist-credentials: false
+          path: anatomy
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22.16.0'
+      - name: Verify 173 tracked Git blobs and original MIT notice
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/omega10
+          python3 fabrica/products/fab-visual/scripts/omega10-upstream-lock.py \
+            --root anatomy \
+            --commit 1482e8469b0a9e0d8cc18ea2740a01423d29ae80 \
+            --count 173 \
+            --output evidence/omega10/complete-upstream-blob-ledger.json \
+            > evidence/omega10/source-verification.json
+          grep -Fq 'Copyright (c) 2026 Ryan' anatomy/LICENSE
+          git -C anatomy status --short > evidence/omega10/before-build-git-status.txt
+          test ! -s evidence/omega10/before-build-git-status.txt
+      - name: Preserve full original source as immutable tar.gz (including images, PDFs and LICENSE)
+        shell: bash
+        run: |
+          set -euo pipefail
+          git -C anatomy archive --format=tar HEAD | gzip -n -9 > evidence/omega10/anatomy-1482e846-full-source.tar.gz
+          test "$(tar -tzf evidence/omega10/anatomy-1482e846-full-source.tar.gz | grep -v '/$' | wc -l)" -eq 173
+          sha256sum evidence/omega10/anatomy-1482e846-full-source.tar.gz > evidence/omega10/source-tarball.sha256
+          tar -tzf evidence/omega10/anatomy-1482e846-full-source.tar.gz > evidence/omega10/archive-members.txt
+      - name: Test complete source on Node.js (upstream suite, pinned test-only dependencies)
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd anatomy
+          test_deps="$(mktemp -d)"
+          trap 'rm -rf "$test_deps"' EXIT
+          npm install --prefix "$test_deps" --no-audit --no-fund --ignore-scripts \
+            react@19.3.0 react-dom@19.3.0 typescript@5.9.3 esbuild@0.28.2
+          NODE_PATH="$test_deps/node_modules" node --test scripts/*.test.mjs \
+            2>&1 | tee ../evidence/omega10/upstream-node-tests.tap
+      - name: Build every upstream example (Linux reproduction; upstream CI uses macOS)
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd anatomy
+          {
+            node examples/dial-indicator/build.mjs
+            node examples/dial-indicator/build.mjs --light
+            node examples/desk-computer/build.mjs
+            node examples/desk-computer/build.mjs --light
+            node examples/arcade-cabinet/build.mjs
+            node examples/arcade-cabinet/build.mjs --light
+            node examples/ripple-tank/build.mjs
+            node examples/ripple-tank/build.mjs --light
+            node examples/turning-dial/build.mjs
+            node examples/turning-dial/build.mjs --light
+            node examples/turning-dial/build.mjs --light --verify
+            node examples/turning-dial/stress.mjs --light
+            node examples/raptor-engine/build.mjs
+            node examples/raptor-engine/build.mjs --light
+            node examples/push-button/build.mjs
+            node examples/push-button/build.mjs --light
+          } 2>&1 | tee ../evidence/omega10/upstream-builds.log
+      - name: Record potential Linux/macOS rebuild variance (do not silently discard)
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/omega10
+          git -C anatomy status --porcelain > evidence/omega10/after-build-git-status.txt || true
+          git -C anatomy diff --stat > evidence/omega10/after-build-diff-stat.txt || true
+          find evidence/omega10 -type f ! -name SHA256SUMS.txt ! -name 'anatomy-1482e846-full-source.tar.gz' -print0 \
+            | sort -z | xargs -0 -r sha256sum > evidence/omega10/SHA256SUMS.txt
+          sha256sum -c evidence/omega10/SHA256SUMS.txt
+      - name: Retain full source bytes and bounded reproducibility evidence (not a release)
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: fab-visual-omega10-full-upstream-source-and-tests
+          path: evidence/omega10/
+          if-no-files-found: error
+          retention-days: 30
