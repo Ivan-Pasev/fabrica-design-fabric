@@ -1,0 +1,10 @@
+node_modules/
+.env
+.env.*
+!*.example
+.DS_Store
+vendor/
+dist/
+coverage/
+*.log
+*.witness.local.json

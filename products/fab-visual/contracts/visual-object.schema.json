@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fab.systems/spec/visual-object-v0.1.schema.json",
+  "title": "FAB Visual Object v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "representation",
+    "model",
+    "claims",
+    "evidence",
+    "release"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "fab.visual.v0.1"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "representation": {
+      "enum": [
+        "PHYSICAL",
+        "ANALOGICAL",
+        "FORMAL"
+      ]
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "revision",
+        "authority"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "authority": {
+          "type": "string"
+        },
+        "units": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "scientifically_validated"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "ILLUSTRATIVE",
+            "EXPLANATORY",
+            "SIMULATED",
+            "EXPERIMENTAL",
+            "VALIDATED",
+            "CERTIFIED"
+          ]
+        },
+        "scientifically_validated": {
+          "type": "boolean"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "state",
+        "observables",
+        "geometry",
+        "accessibility",
+        "security"
+      ],
+      "properties": {
+        "source": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "NOT_RUN",
+            "INCONCLUSIVE",
+            "EXCEPTION"
+          ]
+        },
+        "state": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "NOT_RUN",
+            "INCONCLUSIVE",
+            "EXCEPTION"
+          ]
+        },
+        "observables": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "NOT_RUN",
+            "INCONCLUSIVE",
+            "EXCEPTION"
+          ]
+        },
+        "geometry": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "NOT_RUN",
+            "INCONCLUSIVE",
+            "EXCEPTION"
+          ]
+        },
+        "accessibility": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "NOT_RUN",
+            "INCONCLUSIVE",
+            "EXCEPTION"
+          ]
+        },
+        "security": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "NOT_RUN",
+            "INCONCLUSIVE",
+            "EXCEPTION"
+          ]
+        }
+      }
+    },
+    "release": {
+      "enum": [
+        "BLOCKED",
+        "APPROVED"
+      ]
+    },
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "upstream_commit": {
+          "type": "string"
+        },
+        "license": {
+          "type": "string"
+        },
+        "source_sha256": {
+          "type": "string"
+        },
+        "artifact_sha256": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}
