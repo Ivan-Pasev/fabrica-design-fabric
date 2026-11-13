@@ -12,6 +12,7 @@ import * as A from '../../vendor/anatomy/kit/audit.mjs';
 import { assertScene } from '../visual/contract.mjs';
 import { checkSceneAabbIndependently } from './independent-occlusion.mjs';
 import { verifySyntheticPolicySnapshot } from './policy-proof.mjs';
+import { analyzeProjectedLinks } from './link-projection.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'vendor', 'anatomy');
 const escape = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -95,12 +96,13 @@ export function anatomySceneModel(scene, options={}) {
     throw new Error('painter identity mismatch');
   const screen=boundsResult(scene,P,width,height,height3d);
   const independent=checkSceneAabbIndependently(scene,{height:height3d});
+  const projectedLinkClearance=analyzeProjectedLinks(scene,P,{height3d});
   const status = !independent.ok || !screen.ok || depth.problems.length || depth.missing.length || order.solved.dropped.length || order.solved.cycles.length ? 'FAIL' : 'PASS';
   const audit={
     status, sampling:'SAMPLED_NOT_FORMAL', step:auditStep,
     scope:'PINNED_SOLIDS_ONLY', paint_order:paintOrder,
     model_evidence:modelEvidence,
-    connections:{status:(scene.links||[]).length?'NOT_RUN':'PASS',scope:'DECORATIVE_LINK_PATHS_NOT_PART_OF_ANATOMY_DEPTH_AUDIT'},
+    connections:{status:(scene.links||[]).length?'NOT_RUN':'PASS',scope:'DECORATIVE_LINK_PATHS_NOT_PART_OF_ANATOMY_DEPTH_AUDIT',projected_2d:projectedLinkClearance},
     full_scene_assurance:(scene.links||[]).length || modelEvidence.status!=='PASS'?'INCONCLUSIVE':'SAMPLED_BOUNDED',
     release:'HOLD',
     projected_bounds:screen,

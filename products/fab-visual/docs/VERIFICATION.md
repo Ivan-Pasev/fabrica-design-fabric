@@ -34,3 +34,10 @@ SOURCE, MODEL, STATE, OBSERVABLES, GEOMETRY, SECURITY, ACCESSIBILITY, REPRODUCIB
 - Decorative link paths are explicitly `NOT_RUN` for geometry/depth audit and whole-scene assurance remains `INCONCLUSIVE`. A PASS describes bounded solid checks only.
 - Root-level GitHub Actions now runs the actual nested product on push to the Ω6 branch and under the defined path-scoped pull-request trigger. A green first-party FDF workflow alone does not verify FAB.VISUAL.
 - Claims remain restricted to a synthetic policy model. No physical metrology, browser accessibility, complete Anatomy upstream suite or production deployment is admitted.
+
+## Ω7 candidate — conservative projected link oracle and CI evidence retention
+
+- A new independent 2D Liang–Barsky segment-vs-projected-AABB oracle assesses straight decorative link projections against the 8-corner screen bounds of **non-endpoint** 3D visual solids. Tangency is conservatively included; a possible obstruction produces INCONCLUSIVE rather than PASS. The oracle covers only a fixed-camera screen projection and cannot establish 3D cable clearance, occlusion order, endpoint fitting or wire-to-wire independence.
+- The older connections.status=NOT_RUN for full depth/audit remains unchanged. A nested projected_2d status reports narrowly scoped PASS or INCONCLUSIVE; full_scene_assurance remains INCONCLUSIVE. No physical wiring or scientific proof claim.
+- A standalone Chromium CDP smoke script executes only local generated synthetic HTML in a disposable about:blank page; the script tests keyboard Next/Previous/End, release-state agreement, reduced-motion browser preference, 390px viewport width, named accessibility nodes, and captures a PNG. The harness passed 9/9 checks against a locally constructed synthetic HTML fixture; **that is not yet a test of the generated Anatomy timeline** until the Ω7 GitHub browser job completes.
+- The Ω7 root CI runs the full Node 20/22 test matrix, retains TAP test logs, source lock output, derived assets and SHA256SUMS through GitHub artifacts; a separate Chromium job provides screenshot and bounded browser witness. Merge/release remains blocked pending review.
