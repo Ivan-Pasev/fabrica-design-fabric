@@ -21,6 +21,32 @@ TARGETS=(
 )
 REPEATS=3
 PROCESSES=2
+STAGE_SELECTORS={"raptor-light":".rp-stage","turning-light":".ts-stage"}
+
+
+def validate_scene_target(snapshot: dict, expected_selector: str) -> bool:
+    """Reject decorative 12px icons/foreign-stage pointer targets."""
+    if not isinstance(snapshot, dict):
+        return False
+    stage=snapshot.get("stage", {})
+    primary=snapshot.get("primary_svg", {})
+    if snapshot.get("stage_selector") != expected_selector:
+        return False
+    if stage.get("count") != 1 or not stage.get("hit_inside_stage"):
+        return False
+    rectangle=stage.get("rect")
+    if not isinstance(rectangle,(list,tuple)) or len(rectangle)!=4:
+        return False
+    if rectangle[2] < 120 or rectangle[3] < 100:
+        return False
+    if primary.get("count",0)<1:
+        return False
+    if primary.get("width",0)<120 or primary.get("height",0)<90:
+        return False
+    viewbox=primary.get("viewbox")
+    if not viewbox or not isinstance(viewbox,str) or len(viewbox.split())!=4:
+        return False
+    return True
 
 
 def digest(raw: bytes) -> str:
@@ -102,34 +128,61 @@ async def capture(playwright,root,relative,output,stem,width,source):
         await page.goto((root/relative).resolve().as_uri(),wait_until="load",timeout=60000)
         await page.evaluate("async()=>{if(document.fonts)await document.fonts.ready}")
         await page.wait_for_timeout(450)
-        pointer=await page.evaluate("""() => {
-          const target=document.querySelector('.iso-plate svg')
-                   ||document.querySelector('svg')||document.body;
-          target.scrollIntoView({block:'center',inline:'nearest'});
-          const r=target.getBoundingClientRect();
+        scene_selector=STAGE_SELECTORS["raptor-light" if stem.startswith("raptor-light") else "turning-light"]
+        target=page.locator(scene_selector)
+        if await target.count()!=1:
+            raise ValueError("source-backed stage selector not unique: "+scene_selector)
+        await target.scroll_into_view_if_needed(timeout=10000)
+        pointer=await page.evaluate("""(selector) => {
+          const stage=document.querySelector(selector);
+          const r=stage.getBoundingClientRect();
           return {x:Math.min(innerWidth-2,Math.max(2,r.left+r.width/2)),
                   y:Math.min(innerHeight-2,Math.max(2,r.top+r.height/2))};
-        }""")
+        }""",scene_selector)
         await page.mouse.move(pointer["x"],pointer["y"])
         await page.wait_for_timeout(250)
-        observation=await page.evaluate("""(p) => {
-          const el=document.elementFromPoint(p.x,p.y);
-          const plate=document.querySelector('.iso-plate')||document.body;
-          const svg=document.querySelector('.iso-plate svg')||document.querySelector('svg');
-          const r=svg?.getBoundingClientRect();
+        observation=await page.evaluate("""({selector,p}) => {
+          const stage=document.querySelector(selector);
+          const sr=stage.getBoundingClientRect();
+          const element=document.elementFromPoint(p.x,p.y);
+          const available=[...stage.querySelectorAll('svg')].map(svg=>{
+            const r=svg.getBoundingClientRect();
+            return {node:svg,rect:r,area:r.width*r.height,
+                    viewbox:svg.getAttribute('viewBox')};
+          }).filter(s=>s.rect.width>=120&&s.rect.height>=90);
+          available.sort((a,b)=>b.area-a.area);
+          const chosen=available[0];
+          const r=chosen?.rect;
+          const cs=getComputedStyle(stage);
           return {
-            hover_hit:el?{tag:el.tagName,cls:String(el.getAttribute('class')||'').slice(0,120)}:null,
+            stage_selector:selector,
+            stage:{
+              count:document.querySelectorAll(selector).length,
+              hit_inside_stage:!!element&&(stage===element||stage.contains(element)),
+              hit_tag:element?.tagName||null,
+              hit_class:String(element?.getAttribute('class')||'').slice(0,120),
+              rect:[sr.x,sr.y,sr.width,sr.height].map(v=>Math.round(v*1000)/1000),
+              aria_value_now:stage.getAttribute('aria-valuenow'),
+              aria_value_text:stage.getAttribute('aria-valuetext'),
+              role:stage.getAttribute('role'),
+              style:{opacity:cs.opacity,transform:cs.transform,
+                     animation:cs.animationName,transition:cs.transitionProperty}
+            },
+            primary_svg:{
+              count:available.length,
+              width:r?.width||0,height:r?.height||0,
+              viewbox:chosen?.viewbox||null
+            },
             readout:(document.querySelector('[data-readout]')?.textContent||'').slice(0,240),
             live:(document.querySelector('[data-live]')?.textContent||'').slice(0,240),
-            visible_svg:document.querySelectorAll('svg').length,
+            svg_count:document.querySelectorAll('svg').length,
             svg_paths:document.querySelectorAll('svg path').length,
-            svg_rect:r?[r.x,r.y,r.width,r.height].map(v=>Math.round(v*1000)/1000):null,
-            viewbox:svg?.getAttribute('viewBox')||null,
-            plate_class:String(plate.className),
             overflow:document.documentElement.scrollWidth>innerWidth+2,
             reduced_motion:matchMedia('(prefers-reduced-motion:reduce)').matches
           };
-        }""",pointer)
+        }""",{"selector":scene_selector,"p":pointer})
+        if not validate_scene_target(observation,scene_selector):
+            raise ValueError("decorative-icon/incorrect scene target rejected")
         # A lexical camera object may exist; lacking it is a transparent NOT_AVAILABLE.
         live_camera=await page.evaluate("""() => {
           try {
@@ -182,16 +235,24 @@ async def run(args):
                     evidence[side].append(await capture(playwright,root,relative,
                         out/"frames",f"{label}-{side}-process{attempt}",width,
                         preflight[label][side]))
-            classification=replay_classification(evidence)
+            valid_stage=all(
+                validate_scene_target(entry.get("observation"),
+                    STAGE_SELECTORS[label])
+                for side in ("pinned","rebuilt")
+                for entry in evidence[side])
+            classification=(replay_classification(evidence) if valid_stage
+                else "FAIL_SCENE_STAGE_IDENTITY")
             source_camera=all(r["live_camera"]["source"]!="UNAVAILABLE"
                 for side in evidence for r in evidence[side])
             report["case_results"].append({"case":label,"width":width,
                 "state":"hover_center","classification":classification,
+                "stage_identity_valid":valid_stage,
                 "camera_model_exposed":source_camera,
                 "authoritative_camera_frame_readback":"NOT_AVAILABLE",
                 "attempts":evidence})
     report["process_replay_execution"]=(
         "PASS" if len(report["case_results"])==len(TARGETS) else "INCOMPLETE")
+    report["stage_target_contract"]="SOURCE_DEFINED_LARGE_STAGE_SVG_WITH_HIT_INSIDE_STAGE"
     report["claim_boundary"]="Source-locked DOM/hover observations and fresh-process PNG replay. "
     report["claim_boundary"]+="No authoritative camera/frame event readback, "
     report["claim_boundary"]+="so cannot infer depth/occlusion, full visual or physical equivalence."
