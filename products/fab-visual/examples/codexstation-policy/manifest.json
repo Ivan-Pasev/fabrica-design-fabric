@@ -1,0 +1,10 @@
+{
+  "schema_version":"fab.visual.v0.1",
+  "id":"codexstation-policy-analogy-pilot",
+  "representation":"ANALOGICAL",
+  "model":{"id":"illustrative-policy-state-machine", "revision":"0.1.0", "authority":"FAB.VISUAL demonstrator", "units":{}},
+  "claims":{"status":"EXPLANATORY", "scientifically_validated":false, "note":"This seed does not assert the current live CodexStation authorization implementation."},
+  "evidence":{"source":"NOT_RUN", "state":"PASS", "observables":"PASS", "geometry":"NOT_RUN", "accessibility":"NOT_RUN", "security":"NOT_RUN"},
+  "provenance":{"upstream_commit":"1482e8469b0a9e0d8cc18ea2740a01423d29ae80", "license":"MIT"},
+  "release":"BLOCKED"
+}

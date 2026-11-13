@@ -1,0 +1,37 @@
+name: FAB.VISUAL reference CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['20.19.0','22.16.0']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Syntax + deterministic tests
+        run: |
+          node --check bin/fab-visual.mjs
+          node --test tests/*.test.mjs
+      - name: Build synthetic demonstration
+        run: |
+          node bin/fab-visual.mjs demo /tmp/fab-visual-demo.html
+          node bin/fab-visual.mjs render fixtures/policy-scene.json /tmp/fab-visual.svg
+          test -s /tmp/fab-visual-demo.html
+          test -s /tmp/fab-visual.svg
+      - name: Release gate must remain closed on unverified fixture
+        run: |
+          if node bin/fab-visual.mjs gate examples/codexstation-policy/manifest.json; then
+            echo 'FAIL: unverified candidate unexpectedly admitted'
+            exit 1
+          fi

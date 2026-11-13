@@ -1,0 +1,10 @@
+FAB.VISUAL: Independent reference code Copyright (c) 2026 Ivan Petrov Pasev, MIT licensed.
+
+UPSTREAM ATTRIBUTION: Anatomy (https://github.com/wheresryan22/anatomy), MIT license,
+Copyright (c) 2026 Ryan. Exact reviewed commit:
+1482e8469b0a9e0d8cc18ea2740a01423d29ae80.
+No upstream Anatomy source is included in this distribution. If independently
+installed or vendored, its original LICENSE and notices must be retained.
+
+The reference renderer is not an upstream Anatomy renderer, a scientific validation,
+a certification, or a production authorization component.

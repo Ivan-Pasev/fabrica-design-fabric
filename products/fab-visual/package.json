@@ -1,0 +1,20 @@
+{
+  "name": "@fab-sys/fab-visual",
+  "version": "0.2.0-alpha.0",
+  "type": "module",
+  "private": false,
+  "description": "Evidence-carrying model-to-visual reference runtime and portable CodexStation extension; experimental, not production verified",
+  "bin": { "fab-visual": "./bin/fab-visual.mjs" },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "demo": "node bin/fab-visual.mjs demo dist/policy-machine.html",
+    "validate": "node bin/fab-visual.mjs validate fixtures/policy-scene.json",
+    "render": "node bin/fab-visual.mjs render fixtures/policy-scene.json dist/policy-machine.svg",
+    "anatomy:plan": "node bin/fab-visual.mjs anatomy-plan fixtures/policy-scene.json",
+    "gate": "node bin/fab-visual.mjs gate examples/codexstation-policy/manifest.json",
+    "verify": "node --test tests/*.test.mjs"
+  },
+  "engines": {"node": ">=20.10.0"},
+  "license": "MIT",
+  "files": ["bin", "src", "skills", "extensions", "contracts", "UPSTREAM_LOCK.json", "LICENSE", "NOTICE", "README.md"]
+}

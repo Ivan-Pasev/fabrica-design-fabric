@@ -1,0 +1,13 @@
+{
+  "repository": "https://github.com/wheresryan22/anatomy",
+  "branch": "main",
+  "commit": "1482e8469b0a9e0d8cc18ea2740a01423d29ae80",
+  "commit_date_utc": "2026-10-18T20:20:24Z",
+  "verified_as_of": "2026-11-13",
+  "license_spdx": "MIT",
+  "notice": "MIT License - Copyright (c) 2026 Ryan. Preserve upstream LICENSE and copyright if copying substantial portions.",
+  "bundled_source": false,
+  "reproduction": "NOT_RUN: Full upstream checkout unavailable in this execution environment",
+  "upstream_released": "v1.1.0",
+  "advisory": "Open pull requests are not assumed merged, and source-derived bugs are not represented as upstream test execution."
+}
