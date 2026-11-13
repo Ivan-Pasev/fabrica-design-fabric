@@ -1,0 +1,97 @@
+name: FAB.VISUAL Omega9 semantic inspector and mobile smoke
+on:
+  push:
+    branches: ['feature/fab-visual-omega9-semantic-inspection']
+  pull_request:
+    paths:
+      - 'products/fab-visual/**'
+      - '.github/workflows/fab-visual-omega9.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['20.19.0','22.16.0']
+    defaults:
+      run:
+        working-directory: products/fab-visual
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Verify pinned upstream subset and all product invariants
+        shell: bash
+        run: |
+          set -euo pipefail
+          node bin/fab-visual.mjs anatomy-verify
+          node --test tests/*.test.mjs
+      - name: Generate zoomable model-backed HTML for both representations
+        shell: bash
+        run: |
+          set -euo pipefail
+          node bin/fab-visual.mjs anatomy-timeline dist/omega9-policy.html
+          node examples/semantic-descent.mjs dist/omega9-semantic.html
+          test -s dist/omega9-policy.html
+          test -s dist/omega9-semantic.html
+      - name: Release gate remains closed
+        shell: bash
+        run: |
+          if node bin/fab-visual.mjs gate examples/codexstation-policy/manifest.json; then
+            echo 'UNEXPECTED RELEASE OPEN' && exit 1
+          fi
+  mobile-browser-smoke:
+    runs-on: ubuntu-latest
+    needs: source-regression
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: products/fab-visual
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22.16.0'
+      - name: Recreate exact synthetic HTML
+        run: |
+          node bin/fab-visual.mjs anatomy-timeline dist/omega9-policy.html
+          node examples/semantic-descent.mjs dist/omega9-semantic.html
+      - name: Isolated browser dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --disable-pip-version-check 'playwright==1.57.0'
+          .venv/bin/python -m playwright install --with-deps chromium
+      - name: Inspect 390/768/1280 mobile/tablet/desktop and keep screenshot witness
+        run: .venv/bin/python scripts/omega9-mobile-qa.py
+      - name: Capture bounded evidence with verifiable hashes
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/omega9-mobile
+          find evidence/omega9-mobile -type f ! -name SHA256SUMS.txt -print0 | sort -z | xargs -0 -r sha256sum > evidence/omega9-mobile/SHA256SUMS.txt
+          sha256sum -c evidence/omega9-mobile/SHA256SUMS.txt
+      - name: Archive exact synthetic source outputs, screenshots and verification receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: fab-visual-omega9-mobile-evidence
+          path: |
+            products/fab-visual/evidence/omega9-mobile
+            products/fab-visual/dist/omega9-policy.html
+            products/fab-visual/dist/omega9-semantic.html
+          if-no-files-found: warn
+          retention-days: 30
