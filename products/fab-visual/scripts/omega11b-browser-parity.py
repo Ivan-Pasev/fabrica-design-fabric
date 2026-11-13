@@ -55,7 +55,7 @@ def classify_pixels(baseline_same_state, candidate_same_state, baseline_stable,
         return "INCONCLUSIVE_DYNAMIC_STATE"
     if baseline_dom != candidate_dom:
         return "OBSERVED_DOM_DELTA"
-    if baseline_same_state:
+    if baseline_same_state and candidate_same_state:
         return "OBSERVED_IDENTICAL_PIXELS"
     return "OBSERVED_PIXEL_DELTA"
 
@@ -68,7 +68,10 @@ def image_stats(a, b, output_path):
             return {"equal": False, "same_dimensions": False,
                     "sizes": [list(left.size), list(right.size)]}
         difference = ImageChops.difference(left, right)
-        box = difference.getbbox()
+        boxes = [channel.getbbox() for channel in difference.split()]
+        boxes = [b for b in boxes if b]
+        box = (min(b[0] for b in boxes), min(b[1] for b in boxes),
+               max(b[2] for b in boxes), max(b[3] for b in boxes)) if boxes else None
         if box is None:
             return {"equal": True, "same_dimensions": True, "changed_pixels": 0,
                     "changed_fraction": 0.0, "bbox": None}
