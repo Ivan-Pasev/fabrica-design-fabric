@@ -1,0 +1,93 @@
+name: FAB.VISUAL Omega7 evidence and browser acceptance
+on:
+  push:
+    branches: ['feature/fab-visual-omega7-browser-link-evidence']
+  pull_request:
+    paths:
+      - 'products/fab-visual/**'
+      - '.github/workflows/fab-visual-omega7.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  executable-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['20.19.0','22.16.0']
+    defaults:
+      run:
+        working-directory: products/fab-visual
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Execute full tested reference and persist TAP
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/omega7 dist
+          printf 'commit=%s\nnode=%s\n' "$GITHUB_SHA" "$(node --version)" > evidence/omega7/environment.txt
+          node bin/fab-visual.mjs anatomy-verify > evidence/omega7/anatomy-source-lock.json
+          node --test tests/*.test.mjs 2>&1 | tee evidence/omega7/tests.tap
+      - name: Generate and hash visual artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          node bin/fab-visual.mjs anatomy-render fixtures/policy-scene.json dist/omega7.svg > evidence/omega7/anatomy-render-report.json
+          node bin/fab-visual.mjs anatomy-timeline dist/omega7.html > evidence/omega7/timeline-report.json
+          sha256sum dist/omega7.svg dist/omega7.svg.witness.json dist/omega7.html evidence/omega7/tests.tap > evidence/omega7/SHA256SUMS.txt
+      - name: Release gate must remain closed
+        shell: bash
+        run: |
+          if node bin/fab-visual.mjs gate examples/codexstation-policy/manifest.json > evidence/omega7/closed-release-gate.txt; then
+            echo 'UNEXPECTED RELEASE OPEN' && exit 1
+          fi
+      - name: Retain software evidence and visuals
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: fab-visual-omega7-node-${{ matrix.node }}
+          path: |
+            products/fab-visual/evidence/omega7/
+            products/fab-visual/dist/omega7.svg
+            products/fab-visual/dist/omega7.svg.witness.json
+            products/fab-visual/dist/omega7.html
+          if-no-files-found: warn
+          retention-days: 30
+  browser-acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: products/fab-visual
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22.16.0'
+      - name: Generate actual source-locked timeline
+        run: node bin/fab-visual.mjs anatomy-timeline dist/omega7-browser.html
+      - name: Exercise isolated Chromium browser acceptance
+        run: node scripts/browser-acceptance.mjs dist/omega7-browser.html evidence/omega7-browser
+      - name: Hash browser witness and screenshot
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p evidence/omega7-browser
+          find evidence/omega7-browser -type f -print0 | sort -z | xargs -0 -r sha256sum > evidence/omega7-browser/SHA256SUMS.txt
+      - name: Retain browser artifact and scope receipt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: fab-visual-omega7-browser
+          path: products/fab-visual/evidence/omega7-browser/
+          if-no-files-found: warn
+          retention-days: 30
