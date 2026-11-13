@@ -1,0 +1,120 @@
+name: FAB.VISUAL Ω7 full original Anatomy parity
+on:
+  push:
+    branches: ['feature/fab-visual-omega7-complete-anatomy']
+  pull_request:
+    paths:
+      - '.gitmodules'
+      - 'products/fab-visual/**'
+      - '.github/workflows/fab-visual-omega7-full-upstream.yml'
+permissions:
+  contents: read
+jobs:
+  source-inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22.16.0'
+      - name: Exact complete source and byte parity
+        run: node products/fab-visual/scripts/full-anatomy-source.mjs --clean --out /tmp/fab-anatomy-source-receipt.json
+      - name: FAB.VISUAL overlay regression
+        working-directory: products/fab-visual
+        run: node --test tests/*.test.mjs
+      - name: Test additive full-profile installer in disposable fake host
+        run: |
+          mkdir -p /tmp/fab-omega7-fake-host
+          node products/fab-visual/scripts/install-full-anatomy-codexstation.mjs --root /tmp/fab-omega7-fake-host
+          node products/fab-visual/scripts/install-full-anatomy-codexstation.mjs --root /tmp/fab-omega7-fake-host --apply
+          test -f /tmp/fab-omega7-fake-host/.agents/skills/anatomy/kit/turn.mjs
+          test -f /tmp/fab-omega7-fake-host/.agents/skills/anatomy/examples/raptor-engine/raptor-engine-poster-a4.pdf
+          test -f /tmp/fab-omega7-fake-host/.agents/skills/anatomy/SKILL.md
+      - name: Retain source-level proof, not a release
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: omega7-pinned-source-inventory
+          path: /tmp/fab-anatomy-source-receipt.json
+          retention-days: 30
+  native-node-suite:
+    runs-on: macos-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.16.0'
+      - name: Reproduce original pinned Anatomy CI dependencies
+        run: |
+          mkdir -p "$RUNNER_TEMP/anatomy-deps"
+          npm install --prefix "$RUNNER_TEMP/anatomy-deps" --no-audit --no-fund --ignore-scripts react@19.3.0 react-dom@19.3.0 typescript@5.9.3 esbuild@0.28.2
+      - name: Original FULL Anatomy Node test suite
+        working-directory: products/fab-visual/upstream/anatomy
+        run: NODE_PATH="$RUNNER_TEMP/anatomy-deps/node_modules" node --test scripts/*.test.mjs
+  native-example-parity:
+    runs-on: macos-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.16.0'
+      - name: Rebuild every original scripted example and both themes
+        working-directory: products/fab-visual/upstream/anatomy
+        run: |
+          node examples/dial-indicator/build.mjs
+          node examples/dial-indicator/build.mjs --light
+          node examples/desk-computer/build.mjs
+          node examples/desk-computer/build.mjs --light
+          node examples/arcade-cabinet/build.mjs
+          node examples/arcade-cabinet/build.mjs --light
+          node examples/ripple-tank/build.mjs
+          node examples/ripple-tank/build.mjs --light
+          node examples/turning-dial/build.mjs
+          node examples/turning-dial/build.mjs --light
+          node examples/turning-dial/build.mjs --light --verify
+          node examples/turning-dial/stress.mjs --light
+          node examples/raptor-engine/build.mjs
+          node examples/raptor-engine/build.mjs --light
+          node examples/push-button/build.mjs
+          node examples/push-button/build.mjs --light
+          git diff --exit-code
+          test -z "$(git status --porcelain)"
+  browser-print-smoke:
+    runs-on: macos-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.16.0'
+      - name: Browser geometry photo in the ORIGINAL renderer
+        working-directory: products/fab-visual/upstream/anatomy
+        run: node scripts/capture.mjs examples/dial-indicator/dial-indicator-light.html --out /tmp/anatomy-native-capture.png
+      - name: Verify original print PDF output
+        working-directory: products/fab-visual/upstream/anatomy
+        run: |
+          node scripts/print.mjs examples/push-button/sheet.mjs --format poster --out omega7-native-poster
+          test -s examples/push-button/omega7-native-poster-poster-a4.pdf
+          cp examples/push-button/omega7-native-poster-poster-a4.pdf /tmp/omega7-native-poster-poster-a4.pdf
+      - name: Store browser and PDF proof artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: omega7-original-chrome-and-print
+          path: |
+            /tmp/anatomy-native-capture.png
+            /tmp/omega7-native-poster-poster-a4.pdf
+          retention-days: 30

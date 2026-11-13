@@ -1,0 +1,99 @@
+{
+  "as_of": "2026-11-13",
+  "upstream": {
+    "url": "https://github.com/wheresryan22/anatomy",
+    "commit": "1482e8469b0a9e0d8cc18ea2740a01423d29ae80",
+    "blobs": 173,
+    "bytes": 27648351,
+    "license": "MIT",
+    "state": "PINNED_SUBMODULE_CANDIDATE"
+  },
+  "candidates": [
+    {
+      "repo": "Reasonofmoon/anatomy-revised",
+      "tree": "89cb5981dba4485509c4005fe357f243d66a63d4",
+      "paths": 203,
+      "retained_original_paths": 173,
+      "addition_count": 30,
+      "rank": "P0",
+      "candidate": [
+        "callout",
+        "fold",
+        "legibility",
+        "print"
+      ],
+      "action": "REVIEW_ONLY"
+    },
+    {
+      "repo": "ochlodeep/anatomy-schematic",
+      "tree": "adaa7e590d93f4691b1feafa3a3da1550d2b5c45",
+      "paths": 116,
+      "addition_count": 18,
+      "missing_original_paths": 75,
+      "rank": "P0",
+      "candidate": [
+        "schema",
+        "cellGrid",
+        "heightField",
+        "graphs"
+      ],
+      "action": "REVIEW_ONLY"
+    },
+    {
+      "repo": "jrramon/anatomy-lego",
+      "tree": "a42c37b3c1a5f0f329a79b04b09deeb0e2a20fc6",
+      "paths": 65,
+      "addition_count": 30,
+      "missing_original_paths": 138,
+      "rank": "P1",
+      "candidate": [
+        "stepwise_assembly",
+        "support_audit",
+        "grid"
+      ],
+      "action": "REVIEW_ONLY"
+    },
+    {
+      "repo": "Charlyhno-eng/anatomy-codex",
+      "tree": "b47e95fd8c549dd1ce77019e4295ae0af91e94aa",
+      "paths": 117,
+      "missing_original_paths": 110,
+      "rank": "P1",
+      "candidate": [
+        "typescript",
+        "codex",
+        "preview",
+        "gif_export"
+      ],
+      "action": "REVIEW_ONLY"
+    },
+    {
+      "repo": "yangshun2005/anatomy-cn",
+      "tree": "d16a305e54f6e9286e9b993320de200a0ee95840",
+      "paths": 148,
+      "rank": "P2",
+      "candidate": [
+        "localization"
+      ],
+      "action": "REVIEW_ONLY"
+    },
+    {
+      "repo": "RianKoja/anatomy-skill",
+      "tree": "1482e8469b0a9e0d8cc18ea2740a01423d29ae80",
+      "paths": 173,
+      "rank": "NO_DELTA",
+      "action": "MIRROR"
+    },
+    {
+      "repo": "47thtechcorner/RayCodes_AnatomySkill",
+      "tree": "4e9c896097fd36027c6e1d97b83c30af98373e7d",
+      "paths": 7,
+      "rank": "P2",
+      "candidate": [
+        "case_studies"
+      ],
+      "action": "REVIEW_ONLY"
+    }
+  ],
+  "invariant": "NO_FULL_FORK_MERGE_WITHOUT_LICENSE_SOURCE_AND_UPSTREAM_PARITY_REVIEW"
+}
