@@ -8,7 +8,10 @@ import tempfile
 import unittest
 from pathlib import Path
 
-SPEC=importlib.util.spec_from_file_location('drift',Path(__file__).with_name('diagnose-upstream-drift.py'))
+SOURCE=Path(__file__).resolve().parent.parent / 'scripts' / 'diagnose-upstream-drift.py'
+if not SOURCE.is_file():
+    SOURCE=Path(__file__).with_name('diagnose-upstream-drift.py') # local source sandbox
+SPEC=importlib.util.spec_from_file_location('drift',SOURCE)
 D=importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(D)
 
