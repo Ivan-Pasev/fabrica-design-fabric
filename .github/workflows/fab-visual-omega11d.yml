@@ -1,0 +1,121 @@
+name: FAB.VISUAL Omega11D source-backed scene stage identity
+on:
+  push:
+    branches: ['feature/fab-visual-omega11d-stage-identity']
+  pull_request:
+    paths:
+      - 'products/fab-visual/scripts/omega11c-state-replay.py'
+      - 'products/fab-visual/tests/test_omega11d_stage_identity.py'
+      - '.github/workflows/fab-visual-omega11d.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-real-scene-target:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - name: Checkout exact unmerged candidate with no lasting credentials
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: fabrica
+      - name: Checkout original immutable Anatomy source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: wheresryan22/anatomy
+          ref: 1482e8469b0a9e0d8cc18ea2740a01423d29ae80
+          fetch-depth: 1
+          persist-credentials: false
+          path: pinned
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22.16.0'
+      - name: Lock source 173 blobs and rebuild in disposable working tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/omega11d
+          python3 fabrica/products/fab-visual/scripts/omega10-upstream-lock.py \
+            --root pinned --commit 1482e8469b0a9e0d8cc18ea2740a01423d29ae80 \
+            --count 173 --output evidence/omega11d/source-lock-ledger.json \
+            > evidence/omega11d/source-lock.json
+          test -z "$(git -C pinned status --porcelain)"
+          cp -a pinned rebuilt
+          (cd rebuilt && node examples/raptor-engine/build.mjs > ../evidence/omega11d/raptor-dark-build.log 2>&1)
+          (cd rebuilt && node examples/raptor-engine/build.mjs --light > ../evidence/omega11d/raptor-light-build.log 2>&1)
+          (cd rebuilt && node examples/turning-dial/stress.mjs --light > ../evidence/omega11d/turning-build.log 2>&1)
+          python3 fabrica/products/fab-visual/scripts/diagnose-upstream-drift.py \
+            --baseline pinned --rebuilt rebuilt \
+            --output evidence/omega11d/numeric-drift.json \
+            > evidence/omega11d/drift-stdout.json
+          { node --version; node -p process.versions.v8; python3 --version; uname -a; } \
+            > evidence/omega11d/toolchain.txt
+          git -C fabrica rev-parse HEAD > evidence/omega11d/review-head.txt
+          git -C pinned rev-parse HEAD > evidence/omega11d/source-head.txt
+      - name: Install pinned independent Python and Chromium tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --disable-pip-version-check \
+            'playwright==1.57.0' 'pillow==11.3.0'
+          .venv/bin/python -m playwright install --with-deps chromium
+      - name: Run original forensic unit suite and stage identity negatives
+        shell: bash
+        run: |
+          set -euo pipefail
+          .venv/bin/python -m unittest discover -s fabrica/products/fab-visual/tests \
+            -p 'test_omega11*d*.py' -v 2>&1 \
+            | tee evidence/omega11d/adversarial-stage-tests.log
+          .venv/bin/python -m unittest discover -s fabrica/products/fab-visual/tests \
+            -p 'test_omega11c_state_replay.py' -v 2>&1 \
+            | tee evidence/omega11d/inherited-source-tests.log
+      - name: Capture actual Anatomy stage regions in eight fresh processes
+        shell: bash
+        run: |
+          set -euo pipefail
+          .venv/bin/python fabrica/products/fab-visual/scripts/omega11c-state-replay.py \
+            --baseline pinned --rebuilt rebuilt \
+            --output evidence/omega11d/scene-replay \
+            2>&1 | tee evidence/omega11d/scene-replay-summary.log
+          .venv/bin/python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('evidence/omega11d/scene-replay/OMEGA11C_REPLAY_RECEIPT.json').read_text())
+          assert r['source_pin']=='1482e8469b0a9e0d8cc18ea2740a01423d29ae80'
+          assert r['process_replay_execution']=='PASS' and len(r['case_results'])==2
+          assert r['stage_target_contract']=='SOURCE_DEFINED_LARGE_STAGE_SVG_WITH_HIT_INSIDE_STAGE'
+          assert r['true_camera_frame_state']=='NOT_ADMITTED'
+          assert r['depth_order_oracle']=='NOT_RUN' and r['release']=='HOLD'
+          for case in r['case_results']:
+              assert case['stage_identity_valid'] is True
+              selector= '.rp-stage' if case['case']=='raptor-light' else '.ts-stage'
+              for side in ('pinned','rebuilt'):
+                  for attempt in case['attempts'][side]:
+                      obs=attempt['observation']
+                      assert obs['stage_selector']==selector
+                      assert obs['stage']['hit_inside_stage']
+                      assert obs['primary_svg']['width']>=120
+                      assert obs['primary_svg']['height']>=90
+          print('LARGE_SOURCE_STAGE_VERIFIED; SOURCE_CAMERA_FRAME_STILL_NOT_ADMITTED; RELEASE_HOLD')
+          PY
+          test -z "$(git -C pinned status --porcelain)"
+      - name: Hash evidence, do not mutate original
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          find evidence/omega11d -type f ! -name SHA256SUMS.txt -print0 \
+            | sort -z | xargs -0 -r sha256sum \
+            > evidence/omega11d/SHA256SUMS.txt
+          sha256sum -c evidence/omega11d/SHA256SUMS.txt
+      - name: Preserve research receipts and screenshots only
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: fab-visual-omega11d-stage-identity
+          path: evidence/omega11d/
+          if-no-files-found: warn
+          retention-days: 30
