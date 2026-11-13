@@ -13,10 +13,35 @@ const evidence=resolve(process.argv[3]||'dist/browser-acceptance');
 if(!existsSync(html))throw Error('Missing built synthetic timeline: '+html);
 const chrome=[process.env.CHROME_BIN,'google-chrome','chromium','chromium-browser','google-chrome-stable'].filter(Boolean).find(x=>spawnSync('which',[x],{encoding:'utf8'}).status===0);
 if(!chrome)throw Error('Chromium not found: set CHROME_BIN');
-const profile=mkdtempSync(join(tmpdir(),'fab-visual-browser-'));
-const args=['--headless=new','--disable-gpu','--disable-background-networking','--no-first-run','--no-default-browser-check','--disable-dev-shm-usage','--remote-debugging-port=0',`--user-data-dir=${profile}`,'about:blank'];
-if(process.getuid?.()===0)args.splice(1,0,'--no-sandbox'); // local root test only; CI runner should retain browser sandbox
+let profile=null;
 let proc=null,ws=null;
+let startupDiagnostics=[];
+function launchArgs(dir) {
+  const flags=['--headless=new','--disable-gpu','--disable-background-networking','--no-first-run','--no-default-browser-check','--disable-dev-shm-usage','--remote-debugging-port=0',`--user-data-dir=${dir}`,'about:blank'];
+  // Root-only local fixture inspection. CI runs nonroot and retains the browser sandbox.
+  if(process.getuid?.()===0)flags.splice(1,0,'--no-sandbox');
+  return flags;
+}
+async function launchBrowser(){
+  for(let attempt=1;attempt<=2;attempt++){
+    profile=mkdtempSync(join(tmpdir(),'fab-visual-browser-'));
+    let stderr='';
+    proc=spawn(chrome,launchArgs(profile),{stdio:['ignore','ignore','pipe']});
+    proc.stderr.on('data',chunk=>{stderr=(stderr+String(chunk)).slice(-7000)});
+    const portfile=join(profile,'DevToolsActivePort');
+    for(let i=0;i<350&&!existsSync(portfile);i++){
+      if(proc.exitCode!==null||proc.signalCode!==null)break;
+      await sleep(100);
+    }
+    if(existsSync(portfile))return Number(readFileSync(portfile,'utf8').split('\n')[0]);
+    startupDiagnostics.push({attempt,exitCode:proc.exitCode,signal:proc.signalCode,stderr:stderr.slice(-2500)});
+    proc.kill('SIGTERM');
+    await sleep(500);
+    rmSync(profile,{recursive:true,force:true});
+    await sleep(700);
+  }
+  throw Error('Chromium DevTools failed after 2 attempts: '+JSON.stringify(startupDiagnostics));
+}
 const results=[];
 const assert=(name,ok,details={})=>{results.push({name,status:ok?'PASS':'FAIL',details});if(!ok)throw Error(name+': '+JSON.stringify(details));};
 const sleep=ms=>new Promise(done=>setTimeout(done,ms));
@@ -29,11 +54,7 @@ async function cmd(method,params={}){
 async function evaluate(expression){const r=await cmd('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw Error('browser exception '+JSON.stringify(r.exceptionDetails));return r.result?.value;}
 async function key(key,keyCode){await cmd('Input.dispatchKeyEvent',{type:'rawKeyDown',key,code:key,windowsVirtualKeyCode:keyCode,nativeVirtualKeyCode:keyCode,text:key==='Enter'?'\r':undefined,unmodifiedText:key==='Enter'?'\r':undefined});await cmd('Input.dispatchKeyEvent',{type:'char',text:key==='Enter'?'\r':'',key,code:key,windowsVirtualKeyCode:keyCode});await cmd('Input.dispatchKeyEvent',{type:'keyUp',key,code:key,windowsVirtualKeyCode:keyCode});}
 async function run(){
- proc=spawn(chrome,args,{stdio:'ignore'});
- const portfile=join(profile,'DevToolsActivePort');
- for(let i=0;i<140&&!existsSync(portfile);i++){if(proc.exitCode!==null)throw Error('Chrome exited '+proc.exitCode);await sleep(100)}
- if(!existsSync(portfile))throw Error('Chrome debugger did not start');
- const port=Number(readFileSync(portfile,'utf8').split('\n')[0]);
+ const port=await launchBrowser();
  let tabs=await (await fetch(`http://127.0.0.1:${port}/json`)).json();
  const tab=tabs.find(t=>t.type==='page'&&t.webSocketDebuggerUrl);
  if(!tab)throw Error('No browser target');
@@ -72,4 +93,4 @@ async function run(){
 }
 try{const report=await run();mkdirSync(evidence,{recursive:true});writeFileSync(join(evidence,'omega7-browser-receipt.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));}
 catch(e){const report={result:'FAIL',error:e.message,node:process.version,tests:results};mkdirSync(evidence,{recursive:true});writeFileSync(join(evidence,'omega7-browser-receipt.json'),JSON.stringify(report,null,2)+'\n');console.error(JSON.stringify(report));process.exitCode=1;}
-finally{ws?.close();proc?.kill('SIGTERM');await sleep(150);rmSync(profile,{recursive:true,force:true});}
+finally{ws?.close();proc?.kill('SIGTERM');await sleep(150);if(profile)rmSync(profile,{recursive:true,force:true});}
