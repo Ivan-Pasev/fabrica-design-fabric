@@ -112,8 +112,8 @@ async def capture(playwright,root,relative,output,stem,width,source):
         }""")
         await page.mouse.move(pointer["x"],pointer["y"])
         await page.wait_for_timeout(250)
-        observation=await page.evaluate("""() => {
-          const el=document.elementFromPoint(arguments[0],arguments[1]);
+        observation=await page.evaluate("""(p) => {
+          const el=document.elementFromPoint(p.x,p.y);
           const plate=document.querySelector('.iso-plate')||document.body;
           const svg=document.querySelector('.iso-plate svg')||document.querySelector('svg');
           const r=svg?.getBoundingClientRect();
@@ -125,11 +125,11 @@ async def capture(playwright,root,relative,output,stem,width,source):
             svg_paths:document.querySelectorAll('svg path').length,
             svg_rect:r?[r.x,r.y,r.width,r.height].map(v=>Math.round(v*1000)/1000):null,
             viewbox:svg?.getAttribute('viewBox')||null,
-            plate_class:plate.className,
+            plate_class:String(plate.className),
             overflow:document.documentElement.scrollWidth>innerWidth+2,
             reduced_motion:matchMedia('(prefers-reduced-motion:reduce)').matches
           };
-        }""",pointer["x"],pointer["y"])
+        }""",pointer)
         # A lexical camera object may exist; lacking it is a transparent NOT_AVAILABLE.
         live_camera=await page.evaluate("""() => {
           try {
