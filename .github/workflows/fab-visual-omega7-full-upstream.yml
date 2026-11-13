@@ -107,8 +107,9 @@ jobs:
       - name: Verify original print PDF output
         working-directory: products/fab-visual/upstream/anatomy
         run: |
-          node scripts/print.mjs examples/push-button/sheet.mjs --format poster --out /tmp/omega7-native-poster
-          test -s /tmp/omega7-native-poster-poster-a4.pdf
+          node scripts/print.mjs examples/push-button/sheet.mjs --format poster --out omega7-native-poster
+          test -s examples/push-button/omega7-native-poster-poster-a4.pdf
+          cp examples/push-button/omega7-native-poster-poster-a4.pdf /tmp/omega7-native-poster-poster-a4.pdf
       - name: Store browser and PDF proof artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:

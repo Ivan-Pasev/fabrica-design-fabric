@@ -39,7 +39,7 @@ export function gitBlobSha(bytes) {
 }
 export function parseLsTree(output) {
   return String(output).split('\n').filter(Boolean).map(line=>{
-    const m=/^100644 blob ([0-9a-f]{40}) ([0-9]+)\t(.+)$/.exec(line);
+    const m=/^100644\s+blob\s+([0-9a-f]{40})\s+([0-9]+)\t(.+)$/.exec(line);
     if(!m)throw new Error('unexpected upstream git tree entry: '+line.slice(0,100));
     return {path:m[3],sha:m[1],size:Number(m[2])};
   });

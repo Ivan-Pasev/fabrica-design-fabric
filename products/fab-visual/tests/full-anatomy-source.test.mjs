@@ -6,6 +6,7 @@ test('Git blob hash matches canonical MIT upstream text',()=>{
 });
 test('Git tree parser requires canonical tracked blob record',()=>{
   assert.deepEqual(parseLsTree('100644 blob 0123456789abcdef0123456789abcdef01234567 3\ta.txt'),[{path:'a.txt',sha:'0123456789abcdef0123456789abcdef01234567',size:3}]);
+  assert.deepEqual(parseLsTree('100644 blob 0123456789abcdef0123456789abcdef01234567      89\t.gitattributes'),[{path:'.gitattributes',sha:'0123456789abcdef0123456789abcdef01234567',size:89}]);
   assert.throws(()=>parseLsTree('160000 commit abc -\tkit'),/unexpected upstream/);
 });
 test('full-source invariants are explicit and complete',()=>{

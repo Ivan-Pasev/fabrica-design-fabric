@@ -28,7 +28,7 @@ try{
   cpSync(ANATOMY_ROOT,stage,{recursive:true,force:false,errorOnExist:true,filter:(path)=>!(['.git'].includes(path.split('/').at(-1)))});
   const rows=execFileSync('git',['-C',ANATOMY_ROOT,'ls-tree','-r','-l','HEAD'],{encoding:'utf8'}).trim().split('\n');
   let count=0;
-  for(const row of rows){const m=/^100644 blob ([0-9a-f]{40}) ([0-9]+)\t(.+)$/.exec(row);if(!m)throw new Error('tree parse');const file=join(stage,m[3]);const buf=readFileSync(file);if(buf.length!==Number(m[2])||gitBlobSha(buf)!==m[1])throw new Error('stage mismatch '+m[3]);count++;}
+  for(const row of rows){const m=/^100644\s+blob\s+([0-9a-f]{40})\s+([0-9]+)\t(.+)$/.exec(row);if(!m)throw new Error('tree parse');const file=join(stage,m[3]);const buf=readFileSync(file);if(buf.length!==Number(m[2])||gitBlobSha(buf)!==m[1])throw new Error('stage mismatch '+m[3]);count++;}
   if(count!==EXPECTED_BLOBS)throw new Error('staged file count wrong');
   renameSync(stage,destination);
   mkdirSync(dirname(receiptPath),{recursive:true});
