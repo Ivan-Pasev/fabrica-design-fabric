@@ -10,9 +10,19 @@
 - Dry-run-only installer by default; opt-in copy, collision HOLD and no replacement.
 - Reproduced source-equivalent adversarial counterexamples: nodal count threshold and same-theme publishing collision.
 
+## Ω5 exact source subset + executed native geometry (2026-11-13)
+
+- Verified five exact upstream Git blob hashes for Anatomy `kit/iso-kit.mjs`, `kit/lathe.mjs`, `kit/tube.mjs`, `kit/audit.mjs`, original MIT `LICENSE` at commit `1482e8469b0a9e0d8cc18ea2740a01423d29ae80`.
+- Ran direct Node imports and upstream projection/solid functions, direct SDF checks and sampled depth ordering with its unmodified audit implementation.
+- Implemented a separate deterministic isometric SVG renderer and 5-frame policy-state HTML timeline using original Anatomy geometry generation. The original Anatomy toolkit is separate from the older 2D reference renderer.
+- Independent analytic AABB overlap detector and ray-box centerline occlusion oracle; these are bounded checks, not exhaustive computational geometry proofs.
+- Reproduced thin-wire raster blind spot using actual upstream `A.overlapsOf` (wire radii 0.05 and 0.15: no detected pairs; 0.55: pair detected under our fixture).
+- Added synthetic policy event-trace replay; forgeries of approval/readouts/part color and discontinuous timeline events are rejected. 54/54 local Node 22.16.0 tests pass.
+- Static SVG raster inspection via CairoSVG succeeded; headless Chromium screenshot attempt did not complete. Browser interaction remains NOT_RUN/INCONCLUSIVE.
+
 ## Not yet verified
 
-Upstream Anatomy checkout/build/audit, full geometry and motion, isolated Chrome, cross-browser accessibility, scientific empirical validation, hardware claims, public GitHub dedicated repo creation, installed CodexStation release integration, production deployment or external certification.
+Full upstream Anatomy checkout/build/full audit, complete 3D and motion, isolated Chrome, cross-browser accessibility, scientific empirical validation, hardware claims, public GitHub dedicated repo creation, installed CodexStation release integration, production deployment or external certification.
 
 ## Mandatory release checks
 

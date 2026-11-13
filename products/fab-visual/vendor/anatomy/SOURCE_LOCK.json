@@ -1,0 +1,18 @@
+{
+  "source_repository": "https://github.com/wheresryan22/anatomy",
+  "commit": "1482e8469b0a9e0d8cc18ea2740a01423d29ae80",
+  "license": "MIT",
+  "scope": "FOUR_PINNED_MODULES_AND_LICENSE_ONLY",
+  "full_upstream_checkout": false,
+  "incomplete_module_count": 169,
+  "blobs": {
+    "kit/iso-kit.mjs": "248ee01cc00dfaeee9d693f49f63e32913f03115",
+    "kit/lathe.mjs": "b2fb74dfda69aa6296152d76ec70f314ce2955f1",
+    "kit/tube.mjs": "94d1c84a7b7a1d1b1000de9ae3c84f53d093901a",
+    "kit/audit.mjs": "7fc329342210e9130f3dcdac2537cb9022c36e56",
+    "LICENSE": "aa20733917ffc919b6b04834e6a6e22909df7c76"
+  },
+  "transport": "GitHub connector exact source bytes -> Google Docs transport -> UTF-8 BOM/CRLF/blank paragraph normalization -> git hash-object validation",
+  "source_verification": "EXACT_GIT_BLOB_MATCH_FOR_ALL_FIVE_FILES",
+  "authenticity_ceiling": "Git blob byte identity does not attest upstream author identity; commit/tree lineage pinned through the GitHub source reference"
+}

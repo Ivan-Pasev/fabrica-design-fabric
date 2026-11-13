@@ -5,7 +5,7 @@ export function policyScene(events=['START','POLICY_ESCALATE']) {
   const obs = observable(state);
   return {
     schema:'fab.scene.v0.2',id:'codexstation-policy-machine',representation:'ANALOGICAL',
-    model:{id:'fab.policy.reference',revision:'v0.2',authority:'local demonstration only'},
+    model:{id:'fab.policy.reference',revision:'v0.2',authority:'local demonstration only',trace:state.trace},
     parts:[
       {id:'intake',label:'Intake',x:40,y:120,w:180,h:85,ports:[{id:'out',flow:'control'}]},
       {id:'policy',label:'Policy gate',x:295,y:120,w:180,h:85,ports:[{id:'in',flow:'control'},{id:'out',flow:'control'}],status:obs.phase==='BLOCKED'?'BLOCKED':undefined},

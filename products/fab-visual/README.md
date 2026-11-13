@@ -2,7 +2,7 @@
 
 **Model-governed, evidence-carrying procedural visualization with a portable CodexStation extension.**
 
-**Status:** `v0.2.0-alpha.0` engineering reference; 32 local tests pass; **not released to production**. The independent renderer executes; the external Anatomy runtime is source-locked but **not included** and its complete upstream checkout is not locally reproduced. No scientific certification is implied.
+**Status:** `v0.3.0-alpha.0 / Ω5` engineering candidate; **54 local tests pass**; no production release. The independent renderer and a **genuine 4-module pinned Anatomy isometric renderer** execute. The complete 173-blob Anatomy repository and its browser/3D test suites are not fully reproduced. No scientific certification is implied.
 
 ## Architecture
 
@@ -12,9 +12,9 @@ Authorized domain model / evidence
          v
 FAB SceneIR v0.2 (validate contract, containment DAG, typed flows)
          |                        |
-         |                        +--> Anatomy adapter plan (HOLD until verified)
+         |                        +--> Exact pinned Anatomy subset (MIT) / 3D isometric analogy
          v
-Independent SVG / HTML reference renderer
+Independent SVG/HTML + real Anatomy geometry rendering
          |
          v
 Canonical SHA-256 output witness + adversarial tests
@@ -35,6 +35,9 @@ node bin/fab-visual.mjs demo dist/policy.html
 node bin/fab-visual.mjs validate fixtures/policy-scene.json
 node bin/fab-visual.mjs render fixtures/policy-scene.json dist/policy.svg
 node bin/fab-visual.mjs anatomy-plan fixtures/policy-scene.json
+node bin/fab-visual.mjs anatomy-verify
+node bin/fab-visual.mjs anatomy-render fixtures/policy-scene.json dist/anatomy-policy.svg
+node bin/fab-visual.mjs anatomy-timeline dist/anatomy-timeline.html
 node bin/fab-visual.mjs gate examples/codexstation-policy/manifest.json
 ```
 
@@ -57,9 +60,9 @@ Creates an additive skill under `.agents/skills/fab-visual` and an extension und
 
 Source: https://github.com/wheresryan22/anatomy
 Reviewed pin: `1482e8469b0a9e0d8cc18ea2740a01423d29ae80`.
-License: MIT, copyright 2026 Ryan. No original source included. `node bin/fab-visual.mjs inspect-upstream vendor/anatomy` requires a separate exact, Git-backed checkout; missing and mismatched installations fail closed.
+License: MIT, copyright 2026 Ryan. A narrow exact-source subset is now included under `vendor/anatomy/` with original upstream LICENSE and SHA-pinned `SOURCE_LOCK.json`. Run `node bin/fab-visual.mjs anatomy-verify` to verify all five original blobs. `inspect-upstream` remains exclusively for a *separately obtained complete Git-backed checkout* and is not appropriate to the partial vendored subset.
 
-The existing independent SVG reference renderer **is not** the Anatomy geometry engine. For actual Anatomy rendering, its kit/graphics/audits must be installed, integrated and exercised with browser tests in a contained environment. See `docs/UPSTREAM_ABSORPTION.md` and `docs/VERIFICATION.md`.
+The independent SVG reference renderer **is not** the Anatomy geometry engine. Ω5 adds a separate **actual Anatomy-based renderer**, using original `slabOf` and `audit` source, bounded sampled depth checks, independent AABB collision checking and replay-verified policy timelines. This is **not** proof of full upstream audit, all rendering modes or browser accessibility. For the full Anatomy suite, an isolated upstream checkout and browser/3D tests are still required. See `docs/UPSTREAM_ABSORPTION.md` and `docs/VERIFICATION.md`.
 
 ## Product boundaries
 
@@ -75,7 +78,8 @@ The existing independent SVG reference renderer **is not** the Anatomy geometry 
 | Path | Purpose |
 |---|---|
 | `src/visual` | SceneIR, model consistency, SVG/HTML, interactive timeline, provenance |
-| `src/adapters` | External, pinned Anatomy adapter plan and source inspection |
+| `src/adapters` | Exact pinned Anatomy isometric renderer, independent AABB oracle, policy replay checker and upstream discovery |
+| `vendor/anatomy` | Source-lock verified four original Anatomy modules and verbatim upstream MIT LICENSE |
 | `src/gate.mjs` | Fail-closed publication admission |
 | `bin/` | Zero-dependency CLI |
 | `contracts/` | Machine-readable visual artifact schema |
@@ -88,7 +92,7 @@ The existing independent SVG reference renderer **is not** the Anatomy geometry 
 
 ## Continuity / provenance
 
-Canonical private research root: [FAB.VISUAL on Google Drive]([private canonical Drive source — supplied separately to authorized operators]).
+Canonical private research root: [FAB.VISUAL on Google Drive](https://drive.google.com/drive/folders/PRIVATE_CANONICAL_ROOT_REDACTED).
 
 Drive controls current research state, source/evidence ledger and official handoff. Public repository copies must be reviewed as public-safe derivatives, **not** unfiltered mirrors of private CodexStation contents. The future dedicated public repo target is `Ivan-Pasev/fab-visual`; do not treat this target as a live URL unless it has been created and verified.
 

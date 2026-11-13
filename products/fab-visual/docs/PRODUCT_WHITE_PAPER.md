@@ -47,3 +47,14 @@ Computational: a policy authorization mechanism with its exact transition and au
 ## Conclusion
 
 A visual artifact is a research object with a model and evidence boundaries—not a decorative picture or an automatic proof. FAB.VISUAL aims to make that distinction executable while exploiting high-quality explanatory substrates without surrendering constitutional authority.
+
+
+## Appendix Ω5 — First source-locked Anatomy integration (13 November 2026)
+
+The independent v0.2 SceneIR renderer has gained an actual original-source Anatomy isometric adapter in v0.3.0-alpha.0. Four modules (iso-kit, lathe, tube, audit) and the original MIT license were reconstructed exactly from the pinned upstream Git source through a controlled connector export; each matches its Git blob SHA. The bundled modules are an isolated source subset, not the 173-blob upstream repository. The code directly executes Anatomy `slabOf` geometry, signed-distance functions and sampled depth-order detection to produce an isometric policy diagram. It also runs a separate analytic axis-aligned-box intersection check; for a thin wire occluded by a plate, the independently derived camera ray records occlusion while Anatomy `overlapsOf` returns zero pairs under tested radii, therefore the result is marked `INCONCLUSIVE`. No sampled success is claimed to be formal proof.
+
+A synthetic 5-state authorization narrative is emitted from an append-only state-machine event trace. Every frame is replayed against the model, observable consistency is checked, and the 'Release' node's condition must equal actual replayed authorization/release state. A malicious or corrupted readout is rejected. All 54 local automated tests passed in the current isolated Node 22.16.0 environment; an explicit synthetic CodexStation installation was tested in a disposable directory and verified source-lock integrity.
+
+A static SVG was rasterized with CairoSVG and inspected; a headless Chromium screenshot attempt was unsuccessful, so browser interaction, screen reader testing, reduced motion, full upstream release tests, 3D orbit audits, scientific validation and production host integrations remain outside evidence coverage. GitHub publication is staged as a draft change in the existing public fabrica-design-fabric repository, not as a standalone `fab-visual` repository or a general release.
+
+The formal contract and claim interpretation remain unchanged: a renderer cannot establish a proof, authorization or experimentally verified physical proposition. The next research cycle should target full upstream reproducibility, narrow-feature bounding geometry, multilevel semantic descent, real browser accessibility, print/vector parity, and the dedicated public repository creation gate.

@@ -32,3 +32,10 @@ Untrusted model inputs, agent-authored code, generated HTML, headless browser to
 3. Arbitrary physical/engineering fidelity beyond synthetic example.
 4. CAD/VTK/Manim adapters.
 5. Formal refinement proofs, interval geometry oracle, deployment-signed witnesses, public security review.
+
+
+## Ω5 Architecture delta
+
+A *new* source-locked Anatomy renderer is mounted alongside, not in place of, the independent v0.2 renderer. It imports `vendor/anatomy/kit/{iso-kit,lathe,tube,audit}.mjs` and refuses to operate when any of the five pinned Git blob hashes differ. The renderer is limited to `ANALOGICAL` because the source input schema's x/y/w/h are display layout units, not calibrated engineering geometry. For geometry validation, `A.settle` and `A.depthOrder` run on the exact isometric AABB-derived solids with declared raster step; a second independent AABB collision oracle enforces physical layout nonoverlap. The adapter explicitly distinguishes sampled depth PASS from full upstream correctness.
+
+The model timeline attaches a replayable event trace and checks a confluence contract: released/authorized/phase values and the release component's visual state are consequences of exactly the replayed policy transition sequence. A change to the display cannot independently authorize a release. This is a proof about a synthetic reference state machine, not about the actual CodexStation runtime. The portable installer copies source-lock-verified modules into an auxiliary extension directory, preserving the host's constitutional boundaries.

@@ -30,3 +30,8 @@ When authorized, clone into a separate unprivileged workspace, checkout the exac
 3. Bind a SHA-locked adapter and capture independent CI receipts.
 4. Contribute upstream corrections when possible without fork identity confusion.
 5. Only then evaluate optional vendoring or permanent fork with original MIT notices.
+
+
+## Ω5 exact-source partial absorption — 2026-11-13
+
+Exact Git blob SHA for four original source files and original MIT LICENSE was verified after conversion transport normalization, and native code was directly executed. This resolves a **narrow executable adapter** but not full upstream absorption. See `vendor/anatomy/SOURCE_LOCK.json` and `docs/VERIFICATION.md`. The 173-blob original tree inventory stays authoritative for the full-scope acquisition program. Other 169 blobs have **not** been bundled. Pull requests not merged at pin remain research leads, not accepted patchset. The native audit reproduces a thin-wire false negative; independent ray-vs-AABB checks therefore report INCONCLUSIVE rather than accepting absence of sampled overlap as evidence of full visibility correctness.

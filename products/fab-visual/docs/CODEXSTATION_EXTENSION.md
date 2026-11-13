@@ -22,3 +22,8 @@ Deployment live constitutional control > attached FAB.VISUAL install receipt > p
 ## Uninstall
 
 Installer creates only self-contained new paths; removal must be reviewed against the receipt and the current host before deleting them. No destructive uninstall is bundled.
+
+
+## Ω5 tested synthetic installation / verified source bridge
+
+The opt-in installer now copies the exact MIT-licensed Anatomy source subset (four JavaScript modules plus upstream LICENSE and SOURCE_LOCK.json). A disposable fake CodexStation host was used to verify dry-run, explicit copy, source-blob verification from installed paths, and timeline generation. No real CodexStation release was modified. Run `.codexstation/extensions/fab-visual/bin/fab-visual.mjs anatomy-verify` after each install. Model authorization and host authority remain distinct.

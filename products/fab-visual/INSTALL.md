@@ -14,4 +14,4 @@ Only creates `.agents/skills/fab-visual` and `.codexstation/extensions/fab-visua
 
 `node .codexstation/extensions/fab-visual/bin/fab-visual.mjs demo /tmp/fab-visual-policy.html`
 
-Tests were executed on a temporary folder, not a live CodexStation release. External Anatomy source is NOT included.
+Tests were executed on a temporary folder, not a live CodexStation release. The independently verifiable **MIT-licensed pinned Anatomy subset** is now installed under `vendor/anatomy`; the complete upstream repository is not included. After installation run `node .codexstation/extensions/fab-visual/bin/fab-visual.mjs anatomy-verify` and `node .codexstation/extensions/fab-visual/bin/fab-visual.mjs anatomy-timeline /tmp/fab-visual-anatomy.html`.
