@@ -1,0 +1,79 @@
+name: FAB.VISUAL Omega8 source-convergence verification and source snapshot
+on:
+  push:
+    branches: ['feature/fab-visual-omega8-source-convergence']
+  pull_request:
+    paths:
+      - 'products/fab-visual/**'
+      - '.github/workflows/fab-visual-omega8.yml'
+permissions:
+  contents: read
+jobs:
+  combined-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['20.19.0', '22.16.0']
+    defaults:
+      run:
+        working-directory: products/fab-visual
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Verify exact pinned Anatomy subset and merged runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          node bin/fab-visual.mjs anatomy-verify
+          node --test tests/*.test.mjs
+      - name: Exercise both representational tracks
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          node bin/fab-visual.mjs anatomy-render fixtures/policy-scene.json dist/omega8-visual.svg
+          node bin/fab-visual.mjs anatomy-timeline dist/omega8-timeline.html
+          node examples/semantic-descent.mjs dist/omega8-refinement.html
+          test -s dist/omega8-visual.svg
+          test -s dist/omega8-refinement.html
+      - name: Ensure publication authority is not implied
+        shell: bash
+        run: |
+          if node bin/fab-visual.mjs gate examples/codexstation-policy/manifest.json; then
+            echo 'UNEXPECTED RELEASE ADMISSION' && exit 1
+          fi
+  source-snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    needs: combined-regression
+    defaults:
+      run:
+        working-directory: products/fab-visual
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Build deterministic source-only candidate ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/omega8"
+          python3 scripts/build-source-snapshot.py --root . --out "$RUNNER_TEMP/omega8/fab-visual-omega8-source.zip" --commit "${{ github.event.pull_request.head.sha || github.sha }}" | tee "$RUNNER_TEMP/omega8/build-receipt.json"
+          cd "$RUNNER_TEMP/omega8"
+          sha256sum -c fab-visual-omega8-source.zip.sha256
+          unzip -t fab-visual-omega8-source.zip > archive-integrity.txt
+      - name: Preserve exact-source candidate for independent host testing
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: fab-visual-omega8-exact-source
+          path: ${{ runner.temp }}/omega8/
+          if-no-files-found: error
+          retention-days: 30
