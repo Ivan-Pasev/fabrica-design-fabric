@@ -52,7 +52,7 @@ def read_snapshot(path):
         raise ValueError("expected complete 43 gate/52 evidence source data")
     if any(set(g)!=set(ATTR) for g in gs) or any(set(e)!=set(EATTR) for e in es):
         raise ValueError("missing or extra native Sheet field")
-    if len({g["gate_id"] for g in gs})!=43 or [g["gate_id"] for g in gs[32:]]!=LATEST_IDS:
+    if len({g["gate_id"] for g in gs})!=43 or [g["gate_id"] for g in gs[BASE_GATES:]]!=LATEST_IDS:
         raise ValueError("unknown gate sequence or duplicate")
     if len({sha(DB.canonical(e)) for e in es})!=52:
         raise ValueError("duplicated native evidence record")
