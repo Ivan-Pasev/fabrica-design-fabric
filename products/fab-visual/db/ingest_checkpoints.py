@@ -34,6 +34,9 @@ def ingest(database,manifest_path,browser_path,head_path,run_id,receipt_path):
         raise ValueError("invalid actual git review head")
     if type(run_id)!=int or run_id<=0:
         raise ValueError("GitHub CI run ID is required")
+    original_sha={"raptor-light":"48f64b954b93567f1a5ca87fa823c34ae9e81842fa5b95512deba6b22b37a537",
+                  "turning-light":"e175e82f1bba087bb6031e375fb5da386f4f779e89e91a7864f7fc298b8b14e3"}
+    stage_selectors={"raptor-light":".rp-stage","turning-light":".ts-stage"}
     if manifest.get("source_commit")!=DB.PIN or browser.get("source_commit")!=DB.PIN:
         raise ValueError("source-pinned lineage mismatch")
     if manifest.get("frame_attestation")!="NOT_ADMITTED" or manifest.get("real_depth")!="NOT_RUN":
@@ -64,6 +67,9 @@ def ingest(database,manifest_path,browser_path,head_path,run_id,receipt_path):
         if key in used or scene not in ("raptor-light","turning-light") or side not in ("original","minimal","observing") or type(proc)!=int or proc not in (0,1):
             raise ValueError("duplicate or malformed source/variant/process identity")
         used.add(key)
+        stage=x.get("source_defined_stage") or {}
+        if stage.get("selector")!=stage_selectors[scene] or not isinstance(stage.get("rect"),list) or len(stage["rect"])!=4 or stage["rect"][2]<=20 or stage["rect"][3]<=20:
+            raise ValueError("not a source-defined full-size stage")
         if x.get("errors") or x.get("blocked_external_requests"):
             raise ValueError("JavaScript error or blocked remote source in evidence")
         if side=="original":
@@ -74,14 +80,19 @@ def ingest(database,manifest_path,browser_path,head_path,run_id,receipt_path):
         if x.get("classification")!="PASS_FIXED_APPLICATION_ORDINAL_ONLY":
             raise ValueError("not an applied-state checkpoint")
         c=x.get("checkpoint")
-        if not isinstance(c,dict) or c.get("serial")!=3 or c.get("done") is not True or c.get("target")!=3:
+        expected_mode="MINIMAL_CHECKPOINT" if side=="minimal" else "OBSERVING_CHECKPOINT"
+        expected_grade=("AFTER_RAPTOR_TICK_DOM_UPDATE_BEFORE_PRESENT" if scene=="raptor-light"
+                        else "AFTER_TURNING_CONTROLLER_SET_BEFORE_PRESENT")
+        if not isinstance(c,dict) or c.get("schema")!="fab.visual.omega11g.control.v1" or c.get("scene")!=scene or c.get("mode")!=expected_mode or c.get("applied_state_grade")!=expected_grade:
+            raise ValueError("invalid derived checkpoint mode, grade or scene")
+        if c.get("serial")!=3 or c.get("done") is not True or c.get("target")!=3:
             raise ValueError("stale or fabricated checkpoint")
         if c.get("actual_renderer_frame")!="NOT_ADMITTED" or c.get("actual_mesh_depth")!="NOT_RUN":
             raise ValueError("forged frame/depth result")
         mode="MINIMAL_CHECKPOINT" if side=="minimal" else "OBSERVING_CHECKPOINT"
         entry=manifest["variants"].get(scene+"|"+mode)
-        if not entry or entry.get("derivative_html_sha256")!=x.get("html_sha256"):
-            raise ValueError("derivative SHA not tied to original-locked manifest")
+        if not entry or entry.get("original_html_sha256")!=original_sha[scene] or entry.get("derivative_html_sha256")!=x.get("html_sha256"):
+            raise ValueError("source/derivative SHA not tied to the pinned original manifest")
         if entry.get("source_commit")!=DB.PIN:
             raise ValueError("derivative source commit mismatch")
         if side=="minimal":
