@@ -23,7 +23,7 @@ external accounts or publish without the actual project owner explicitly grantin
 that specific action. Prepare actionable patches/evidence; no release claim.
 ```
 
-The protocol is compatible with IDEs **that can retrieve a GitHub page and honor the task**. It cannot cause automatic activation in every IDE. A bare link does not create a plugin, install source, grant command execution, start a background agent, or override the host project's rules.
+The protocol is compatible with IDEs **that can retrieve a GitHub page and honor the task**. It cannot cause automatic activation in every IDE. **The user must explicitly authorize any installation, code execution, or workspace mutation.** A bare link does not create a plugin, install source, grant command execution, start a background agent, or override the host project's rules.
 
 ## Authoritative loading chain
 
