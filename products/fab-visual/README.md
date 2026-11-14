@@ -2,7 +2,21 @@
 
 **Model-governed, evidence-carrying procedural visualization with a portable CodexStation extension.**
 
-**Status:** `v0.8.0-alpha.0 / Ω11N` product-capability research candidate, **not production-released**. FAB.VISUAL provides a standalone offline Studio, source-aware XYFlow/Cytoscape graph round trips, reversible local visual editing, evidence-carrying output witnesses, reference SVG and pinned MIT Anatomy isometric rendering for eligible unmodified analogical scenes. Actual model authority, host authorization, full upstream rendering, real GPU-presented-frame and physical/scientific validation remain outside this bounded product implementation.
+**Status:** `v0.9.0-alpha.0 / Ω11O` product-capability research candidate, **not production-released**. FAB.VISUAL provides a standalone offline Studio, source-aware XYFlow/Cytoscape graph round trips, reversible local visual editing, evidence-carrying output witnesses, reference SVG and pinned MIT Anatomy isometric rendering for eligible unmodified analogical scenes. Actual model authority, host authorization, full upstream rendering, real GPU-presented-frame and physical/scientific validation remain outside this bounded product implementation.
+
+## Ω11O — portable IDE skill + exact quantitative boundaries
+
+**One-link IDE discovery:** paste `https://github.com/Ivan-Pasev/fabrica-design-fabric/blob/feature/fab-visual-omega11o-ide-science-skill/IDE_START_HERE_FAB_VISUAL.md` into a GitHub/HTTPS-capable IDE agent. The public `main` branch contains the earlier review-only bootstrap; this source is an **unmerged research branch**, not an automatically installed or released skill. See `skills/fab-visual-ide/SKILL.md`, `AGENTS.md` and `docs/IDE_AUTONOMY_CONTRACT_OMEGA11O.md`. Agent read-only analysis may be automatic when the host supports it; cloning, code execution, host writes and deployment require separate permission.
+
+**Mathematics/logic/physics:** source-labelled quantitative sidecar verifies strict SI units and dimensional vectors, power/energy balance residuals, triangle-inequality uncertainty bounds and finite declared authorization-graph consistency. An independent test checks pinned Anatomy camera basis and source coordinate projection. All are bounded numeric or finite declarative results, not measured physics or actual human authorization.
+
+```bash
+cd products/fab-visual
+node bin/fab-visual.mjs audit-quantitative fixtures/quantitative-microgrid.synthetic.json
+node --test tests/*.test.mjs
+```
+
+All illustrative microgrid numbers are synthetic. `physicalValidation`, `scientificCertification`, `hostAuthorization` remain `NOT_RUN`; `release` remains `HOLD`. For equations, source analysis and negative fixtures see `docs/MATH_LOGIC_PHYSICS_BOUNDARIES_OMEGA11O.md`.
 
 ## Architecture
 

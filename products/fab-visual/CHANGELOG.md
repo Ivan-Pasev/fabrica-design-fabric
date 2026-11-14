@@ -1,3 +1,13 @@
+## v0.9.0-alpha.0 — Ω11O Public IDE Skill Bridge, Mathematics and Source-Locked Anatomy Review
+
+- Added public one-link `IDE_START_HERE_FAB_VISUAL.md` and Agent Skills `skills/fab-visual-ide/SKILL.md` with machine-readable scope/claim/permission manifest, nested product skill, targeted Copilot instructions and explicit unmerged-branch limitation.
+- Built first-party SI quantitative sidecar with seven-base-dimension vectors, bounded allowable unit conversions, power/energy residuals, absolute and relative tolerances, conservative uncertainty bound and explicit source references.
+- Added finite declared authorization-state graph checks; pass means bounded synthetic graph consistency only, not actual human permission, release or theorem proof.
+- Added independent isometric camera-basis orthogonality and handedness checks compared against exact upstream pinned Anatomy `K.iso`, with non-injective 3D-to-2D interpretation.
+- CLI `audit-quantitative` runs a synthetic microgrid fixture and exits nonzero on invalid/inconsistent quantitative input; strict unknown claim fields and double-signed negative flows rejected.
+- Re-reviewed upstream MIT Anatomy v1.1.0 release and main exact commit 1482e8469b0a9e0d8cc18ea2740a01423d29ae80. Only four geometry modules plus original LICENSE are locally vendored; full WebGL/turning/3D and physical certification remain NOT_RUN.
+- Added agent/human source maps and mathematics/physics proof ceilings. No automatic IDE installation, external script execution, hidden runtime dependency, DB migration, main merge or production release. HOLD.
+
 ## v0.8.0-alpha.0 — Ω11N Defended ZIP Project Import and Local Revision Replay
 
 - Added real browser-only `.zip` project opener. Enforces canonical six-file ZIP STORE directory with CRC32, exact UTF-8 names, bounded entry sizes, no compression/decompression, no unsafe paths or additional payloads.

@@ -1,6 +1,6 @@
 {
   "name": "@fab-sys/fab-visual",
-  "version": "0.8.0-alpha.0",
+  "version": "0.9.0-alpha.0",
   "type": "module",
   "private": false,
   "description": "Evidence-carrying model-to-visual reference runtime and portable CodexStation extension; experimental, not production verified",
@@ -23,7 +23,8 @@
     "interchange:cytoscape": "node bin/fab-visual.mjs interchange fixtures/policy-scene.json cytoscape dist/scene.cytoscape.json",
     "interchange:roundtrip": "node bin/fab-visual.mjs interchange-import reactflow dist/scene.reactflow.json fixtures/policy-scene.json dist/scene.roundtrip.json",
     "gallery": "node bin/fab-visual.mjs gallery dist/gallery",
-    "project": "node bin/fab-visual.mjs project templates/energy-microgrid.scene.json templates/energy-microgrid.scene.json local-study dist/energy-project.zip"
+    "project": "node bin/fab-visual.mjs project templates/energy-microgrid.scene.json templates/energy-microgrid.scene.json local-study dist/energy-project.zip",
+    "audit:quantitative": "node bin/fab-visual.mjs audit-quantitative fixtures/quantitative-microgrid.synthetic.json"
   },
   "engines": {
     "node": ">=20.10.0"

@@ -14,15 +14,25 @@ import { renderStudio } from '../src/visual/studio.mjs';
 import {buildGalleryBundle} from '../src/visual/gallery.mjs';
 import {forkVisualScene,visualDiff,zipStore,projectFiles} from '../src/visual/project.mjs';
 import {sha256,canonicalJSON} from '../src/visual/provenance.mjs';
+import {auditQuantitativeContract} from '../src/visual/quantitative-audit.mjs';
 import { exportInterchange, FORMATS } from '../src/adapters/interchange.mjs';
 import { importInterchange } from '../src/adapters/graph-import.mjs';
-function help(){console.log(`FAB.VISUAL v0.8.0-alpha.0 · Ω11N\nUsage:\n  node bin/fab-visual.mjs demo [out.html]\n  node bin/fab-visual.mjs render <scene.json> <out.svg|out.html>\n  node bin/fab-visual.mjs validate <scene.json>\n  node bin/fab-visual.mjs anatomy-plan <scene.json>\n  node bin/fab-visual.mjs inspect-upstream <path>\n  node bin/fab-visual.mjs anatomy-verify\n  node bin/fab-visual.mjs anatomy-render <scene.json> <out.svg|out.html>\n  node bin/fab-visual.mjs anatomy-timeline [out.html]\n  node bin/fab-visual.mjs studio <scene.json> <out.html>\n  node bin/fab-visual.mjs gallery [output-directory]\n  node bin/fab-visual.mjs project <source.scene.json> <edited.scene.json> <fork-slug> <out.zip>\n  node bin/fab-visual.mjs interchange <scene.json> <reactflow|cytoscape|mermaid|dot> <out>\n  node bin/fab-visual.mjs interchange-import <reactflow|cytoscape> <graph.json> <source-scene.json> <out.json>\n  node bin/fab-visual.mjs gate <manifest.json>`);}
+function help(){console.log(`FAB.VISUAL v0.9.0-alpha.0 · Ω11O\nUsage:\n  node bin/fab-visual.mjs demo [out.html]\n  node bin/fab-visual.mjs render <scene.json> <out.svg|out.html>\n  node bin/fab-visual.mjs validate <scene.json>\n  node bin/fab-visual.mjs audit-quantitative <source-locked-quantitative.json>\n  node bin/fab-visual.mjs anatomy-plan <scene.json>\n  node bin/fab-visual.mjs inspect-upstream <path>\n  node bin/fab-visual.mjs anatomy-verify\n  node bin/fab-visual.mjs anatomy-render <scene.json> <out.svg|out.html>\n  node bin/fab-visual.mjs anatomy-timeline [out.html]\n  node bin/fab-visual.mjs studio <scene.json> <out.html>\n  node bin/fab-visual.mjs gallery [output-directory]\n  node bin/fab-visual.mjs project <source.scene.json> <edited.scene.json> <fork-slug> <out.zip>\n  node bin/fab-visual.mjs interchange <scene.json> <reactflow|cytoscape|mermaid|dot> <out>\n  node bin/fab-visual.mjs interchange-import <reactflow|cytoscape> <graph.json> <source-scene.json> <out.json>\n  node bin/fab-visual.mjs gate <manifest.json>`);}
 function write(path,content){const p=resolve(path);mkdirSync(dirname(p),{recursive:true});writeFileSync(p,content);return p;}
 const [cmd,...args]=process.argv.slice(2);
 try {
   if (!cmd||cmd==='help'||cmd==='--help')help();
   else if(cmd==='demo'){const scene=policyScene(['START','POLICY_ESCALATE']);const p=args[0]||'dist/policy-machine.html';write(p,renderHtml(scene));console.log(JSON.stringify({output:resolve(p),claim:'EXPLANATORY',status:'GENERATED_NOT_RELEASED'}));}
   else if(cmd==='validate'){const s=JSON.parse(readFileSync(args[0],'utf8'));assertScene(s);console.log('SceneIR VALID');}
+  else if(cmd==='audit-quantitative'){
+    const path=args[0];
+    if(!path||args.length!==1)throw Error('usage: audit-quantitative <quantitative-contract.json>');
+    const bytes=readFileSync(path);
+    if(bytes.length>262144)throw Error('quantitative sidecar exceeds 256 KiB');
+    const report=auditQuantitativeContract(JSON.parse(bytes.toString('utf8')));
+    console.log(JSON.stringify(report,null,2));
+    if(report.status!=='PASS')process.exitCode=2;
+  }
   else if(cmd==='anatomy-plan'){const s=JSON.parse(readFileSync(args[0],'utf8'));console.log(JSON.stringify(anatomyPlan(s),null,2));}
   else if(cmd==='anatomy-verify'){const r=verifyAnatomyBlobs();console.log(JSON.stringify(r,null,2));if(!r.ok)process.exitCode=2;}
   else if(cmd==='anatomy-render'){const s=JSON.parse(readFileSync(args[0],'utf8')); const out=args[1];if(!out||!/(\.html|\.svg)$/i.test(out))throw Error('output must end .html or .svg');const svg=out.toLowerCase().endsWith('.svg');const content=svg?renderAnatomySvg(s):renderAnatomyHtml(s);const assessment=anatomySceneModel(s).audit;const receipt=witness({scene:s,format:svg?'svg':'html',bytes:content,renderer:'anatomy-exact-pinned-subset',checks:{'source':'PASS','model':assessment.model_evidence.status,'connections':assessment.connections.status,'independent_aabb':assessment.independent_analytic_aabb.ok?'PASS':'FAIL','sampled_depth':assessment.status,'upstream_full_suite':'NOT_RUN','visual_accessibility':'NOT_RUN'}});write(out,content);write(out+'.witness.json',JSON.stringify({...receipt,substantiveAudit:assessment},null,2)+'\n');console.log(JSON.stringify({output:resolve(out),audit:assessment,release:'HOLD'},null,2));}
