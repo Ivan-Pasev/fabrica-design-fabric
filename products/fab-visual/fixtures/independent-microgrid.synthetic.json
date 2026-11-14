@@ -1,0 +1,19 @@
+{
+  "schema": "fab.visual.independent-model-evaluation.v1",
+  "scope": "FIRST_PARTY_SYNTHETIC_EQUATION_ONLY",
+  "sourceSceneDigest": "sha256:9ae22ab08570d4ea8164c1246c712381c5ba5d063eb057e8b99e15b6c6a0c53e",
+  "sourceSceneId": "citizen-solar-illustrative-microgrid",
+  "sourceModel": {"id":"fab.visual.omega11l.energy","revision":"0.6.0-alpha.0"},
+  "equation": "SYNTHETIC_MICROGRID_BUS_BALANCE_V1",
+  "inputs": {
+    "pv":{"value":7,"unit":"kW"},
+    "batteryDischarge":{"value":3000,"unit":"W"},
+    "load":{"value":9,"unit":"kW"},
+    "conversionLoss":{"value":1000,"unit":"W"},
+    "duration":{"value":3600,"unit":"s"}
+  },
+  "expected": {
+    "netPower":{"value":0,"unit":"W","tolerance":0},
+    "netEnergy":{"value":0,"unit":"J","tolerance":0}
+  }
+}
