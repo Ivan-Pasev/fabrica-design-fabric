@@ -12,7 +12,7 @@ Paste this one URL in an IDE agent conversation:
 
 ## Portable agent skill location
 
-`skills/fab-visual-ide/SKILL.md` has standard skill name/description frontmatter and contains enough read-only agent instructions to be used as a reference in multiple IDE contexts. The execution-focused `products/fab-visual/skills/fab-visual/SKILL.md` remains the nested product skill. Native skill auto-discovery is **harness-dependent**; a URL alone cannot force a model to retrieve it or a host to activate it. The safe universal fallback is **one explicit natural-language prompt** referring to the entrypoint.
+`skills/fab-visual-ide/SKILL.md` has standard skill name/description frontmatter and contains enough read-only agent instructions to be used as a reference in multiple IDE contexts. The execution-focused `products/fab-visual/skills/fab-visual/SKILL.md` remains the nested product skill. Native skill auto-discovery is **harness-dependent**; a URL alone cannot force a model to retrieve it or a host to activate it. The safe universal fallback is **one explicit natural-language prompt** referring to the entrypoint. **Host authorization is not granted by a URL or by reading an agent skill.**
 
 Supported strategies when the IDE provides them:
 - **Codex/OpenAI or compatible tools:** follow the host's trusted `AGENTS.md` hierarchy; if user installs an Agent Skill, place it only in host-approved skills folders after reading source and with explicit consent.
