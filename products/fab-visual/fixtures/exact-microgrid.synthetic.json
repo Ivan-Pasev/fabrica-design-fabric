@@ -1,0 +1,18 @@
+{
+  "schema": "fab.visual.exact-interval.v1",
+  "scope": "FIRST_PARTY_SYNTHETIC_DECIMAL_INTERNAL_CONSISTENCY",
+  "sourceSceneDigest": "sha256:9ae22ab08570d4ea8164c1246c712381c5ba5d063eb057e8b99e15b6c6a0c53e",
+  "sourceSceneId": "citizen-solar-illustrative-microgrid",
+  "sourceModel": {"id":"fab.visual.omega11l.energy","revision":"0.6.0-alpha.0"},
+  "sourceRepresentation": "ANALOGICAL",
+  "equation": "SYNTHETIC_MICROGRID_BUS_BALANCE_V1",
+  "terms": [
+    {"id":"pv","magnitude":"7","uncertainty":"0.05","unit":"kW","direction":"IN"},
+    {"id":"battery","magnitude":"3000","uncertainty":"30","unit":"W","direction":"IN"},
+    {"id":"load","magnitude":"9","uncertainty":"0.04","unit":"kW","direction":"OUT"},
+    {"id":"loss","magnitude":"1000","uncertainty":"20","unit":"W","direction":"OUT"}
+  ],
+  "duration": {"value":"3600","unit":"s"},
+  "absoluteTolerance": {"value":"1","unit":"W"},
+  "expectedEnergy": {"value":"0","unit":"J","tolerance":"3600"}
+}
