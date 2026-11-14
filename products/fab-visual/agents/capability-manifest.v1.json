@@ -1,0 +1,100 @@
+{
+  "schema": "fab.visual.ide-capability-manifest.v1",
+  "name": "FAB.VISUAL",
+  "release": "HOLD",
+  "maturity": "EXPERIMENTAL_SOURCE_BRANCH",
+  "source": {
+    "repository": "https://github.com/Ivan-Pasev/fabrica-design-fabric",
+    "branch": "feature/fab-visual-omega11o-ide-science-skill",
+    "defaultBranchProductAvailability": "NOT_CURRENT",
+    "entrypoint": "IDE_START_HERE_FAB_VISUAL.md",
+    "runtimeDirectory": "products/fab-visual",
+    "skillPaths": [
+      "skills/fab-visual-ide/SKILL.md",
+      "products/fab-visual/skills/fab-visual/SKILL.md"
+    ],
+    "implementationHead": "CI_REQUIRED_CHECK_PR_40",
+    "originalAnatomy": {
+      "repository": "https://github.com/wheresryan22/anatomy",
+      "commit": "1482e8469b0a9e0d8cc18ea2740a01423d29ae80",
+      "license": "MIT",
+      "originalGitSourceBlobs": 173,
+      "vendoredOriginalBlobs": 5,
+      "executedFullUpstreamSuite": "NOT_RUN"
+    }
+  },
+  "capabilities": [
+    {
+      "id": "typed-sceneir",
+      "status": "IMPLEMENTED_SOURCE_TESTED",
+      "scope": "fab.scene.v0.2"
+    },
+    {
+      "id": "reference-svg-html",
+      "status": "IMPLEMENTED_SOURCE_TESTED",
+      "scope": "source-derived static SVG/HTML"
+    },
+    {
+      "id": "anatomy-isometric",
+      "status": "BOUNDED_SOURCE_SUBSET",
+      "scope": "ANALOGICAL-only extruded boxes, sampled depth and AABB"
+    },
+    {
+      "id": "offline-gallery-studio",
+      "status": "IMPLEMENTED_SOURCE_TESTED",
+      "scope": "first-party synthetic templates, local visual edits"
+    },
+    {
+      "id": "portable-source-anchored-zip",
+      "status": "IMPLEMENTED_SOURCE_TESTED",
+      "scope": "exact six-member STORE/CRC/SHA source-bound archive"
+    },
+    {
+      "id": "si-quantitative-audit",
+      "status": "CANDIDATE_REQUIRES_EXACT_HEAD_CI",
+      "scope": "declared numbers, SI dimensions, conservative uncertainty, finite-state graph"
+    },
+    {
+      "id": "math-camera-basis",
+      "status": "CANDIDATE_REQUIRES_EXACT_HEAD_CI",
+      "scope": "finite analytically orthonormal basis; not unique depth"
+    },
+    {
+      "id": "anatomy-complete-webgl-3d",
+      "status": "NOT_RUN",
+      "scope": "full upstream integration, runtime and GPU presentation"
+    },
+    {
+      "id": "physical-scientific-certification",
+      "status": "NOT_RUN",
+      "scope": "independent measured domain validation"
+    },
+    {
+      "id": "publisher-authentication",
+      "status": "NOT_PRESENT",
+      "scope": "external cryptographic signing"
+    },
+    {
+      "id": "host-autonomy",
+      "status": "NOT_AUTHORIZED",
+      "scope": "host IDE installation, shell, secrets, deployment"
+    }
+  ],
+  "localCommandsAuthorizedOnly": [
+    "cd products/fab-visual && node --test tests/*.test.mjs",
+    "cd products/fab-visual && node bin/fab-visual.mjs anatomy-verify",
+    "cd products/fab-visual && node bin/fab-visual.mjs audit-quantitative fixtures/quantitative-microgrid.synthetic.json"
+  ],
+  "reasoningDefaults": {
+    "mode": "READ_ONLY",
+    "scienceEvidence": "NOT_RUN",
+    "hostAuthorization": "NOT_RUN",
+    "release": "HOLD"
+  },
+  "intelligenceSources": [
+    "products/fab-visual/CONSTITUTION.md",
+    "products/fab-visual/UPSTREAM_LOCK.json",
+    "products/fab-visual/docs/MATH_LOGIC_PHYSICS_BOUNDARIES_OMEGA11O.md",
+    "products/fab-visual/docs/IDE_AUTONOMY_CONTRACT_OMEGA11O.md"
+  ]
+}
