@@ -61,3 +61,12 @@ Original upstream: `wheresryan22/anatomy` exact commit `1482e8469b0a9e0d8cc18ea2
 - Canonical Google Drive remains the independent research/control source; verify against the current Drive handoff before claiming a release.
 
 **All product/external execution, hardware/energy metrics, human authorization, production deployment and public v1 release: HOLD / NOT_RUN.**
+
+
+## Ω11P upgrade — source-bound analysis and portable reference-only bundle
+
+The new `audit-bound` command takes **two** explicit inputs: the authoritative original SceneIR and a source SHA-bound synthetic numeric sidecar. It reports source identity, strictly typed structural checks, nominal balance and outward-rounded uncertainty intervals. An `INCONCLUSIVE` result is a successful expression of insufficient evidence, not grounds for silent release.
+
+For IDEs where manually adding a skill is preferred, use `node products/fab-visual/bin/fab-visual.mjs ide-package --dry-run <new-target>` from the FAB.VISUAL product root (only if local Node execution is authorized). It performs a no-write plan; `--write` creates a separate reference-only package after specific user approval. It does **not** install executable runtime or automatically activate a skill in Codex, VS Code/Copilot, Claude, Gemini, Cursor, OpenCode or any other host.
+
+Read `products/fab-visual/docs/OMEGA11P_SOURCE_BOUND_SCIENCE_AND_IDE.md` for current claim boundaries and use the latest exact tested PR commit rather than assuming this mutable feature branch is an authenticated release.

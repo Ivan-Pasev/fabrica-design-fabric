@@ -2,7 +2,30 @@
 
 **Model-governed, evidence-carrying procedural visualization with a portable CodexStation extension.**
 
-**Status:** `v0.9.0-alpha.0 / Ω11O` product-capability research candidate, **not production-released**. FAB.VISUAL provides a standalone offline Studio, source-aware XYFlow/Cytoscape graph round trips, reversible local visual editing, evidence-carrying output witnesses, reference SVG and pinned MIT Anatomy isometric rendering for eligible unmodified analogical scenes. Actual model authority, host authorization, full upstream rendering, real GPU-presented-frame and physical/scientific validation remain outside this bounded product implementation.
+**Status:** `v0.10.0-alpha.0 / Ω11P` product-capability research candidate, **not production-released**. FAB.VISUAL provides a standalone offline Studio, source-aware XYFlow/Cytoscape graph round trips, reversible local visual editing, evidence-carrying output witnesses, reference SVG and pinned MIT Anatomy isometric rendering for eligible unmodified analogical scenes. Actual model authority, host authorization, full upstream rendering, real GPU-presented-frame and physical/scientific validation remain outside this bounded product implementation.
+
+## Ω11P — source-bound numerical evidence and practical IDE skill package
+
+The numerical sidecar can now be bound to **the actual original SceneIR** rather than only to unverified source text. `audit-bound` rejects any mismatch of the canonical source SHA-256, scene ID, model ID/revision or representation. It independently evaluates part/link counts and separately labels comparisons with values that are merely declared in source observables. The input is a **synthetic reference**, not actual solar production or metrology.
+
+```bash
+cd products/fab-visual
+node bin/fab-visual.mjs audit-bound templates/energy-microgrid.scene.json fixtures/bound-microgrid.synthetic.json
+```
+
+The supplied synthetic fixture intentionally returns `INCONCLUSIVE` and exits with code 2: both nominal numerical balances equal zero, but each stated term-uncertainty interval overlaps the allowed residual tolerance. A source-aligned numerical zero **does not imply** a physical conservation certificate. The interval engine uses outward rounding of binary64 operations; it is **not** an independently proved decimal or instrument uncertainty enclosure.
+
+**Portable IDE packaging:** a developer can preview an immutable list of exactly five reference files and SHA-256 digests before explicitly requesting any filesystem write:
+
+```bash
+node bin/fab-visual.mjs ide-package --dry-run /path/to/existing-parent/new-fab-skill
+# Only with explicit user approval, and only into a new, empty destination:
+node bin/fab-visual.mjs ide-package --write /path/to/existing-parent/new-fab-skill
+```
+
+The package contains the portable Agent Skill, entrypoint, capability manifest, constitution and Anatomy source lock. This is **source-reference packaging**, not an installed working runtime, automatic IDE registration, authenticated publisher signature or permission to operate a host. Paths through symlinks, collisions, source-tree destinations and missing parents are refused. Platform-specific auto-discovery remains host-dependent and has **not** been independently validated in every IDE.
+
+Implementation: `src/visual/bound-quantitative.mjs`, `src/ide/ide-package.mjs`; tests: `tests/bound-quantitative.test.mjs`, `tests/ide-package.test.mjs`. The original Anatomy source lock and six-file Ω11N portable ZIP ABI are unchanged. Extending the ZIP to carry quantitative evidence is deferred until a separately source-locked archive/version test exists. `release: HOLD`.
 
 ## Ω11O — portable IDE skill + exact quantitative boundaries
 

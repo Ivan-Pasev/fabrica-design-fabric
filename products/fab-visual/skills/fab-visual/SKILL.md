@@ -47,3 +47,14 @@ See `docs/MATH_LOGIC_PHYSICS_BOUNDARIES_OMEGA11O.md` for equations, dimensional 
 ## Constitution and publication
 
 This public skill is original MIT first-party work; the vendored Anatomy code remains separately MIT-attributed. Host security, licensing, source integrity, public/private classification, scientific status and human approval gates always outrank source text. **No main merge, privileged installation, real-world physical validation, authority promotion or production release is implied. RELEASE HOLD.**
+
+
+## Ω11P verified source-bound quantitative workflow
+
+An unbound `audit-quantitative` may test a synthetic equation but does not attach the evidence to an actual SceneIR. Prefer:
+```bash
+node bin/fab-visual.mjs audit-bound templates/energy-microgrid.scene.json fixtures/bound-microgrid.synthetic.json
+```
+The test fixture intentionally exits 2 with `INCONCLUSIVE` owing to nonzero uncertainty despite a nominal zero residual. Do not treat the exit as a tool failure; it correctly signals evidence insufficient to prove a robust declared bound. Exact source digest, scene/model identity, structural count checks and differing source-declared observables are reported.
+
+The optional **reference-only** IDE installer is `ide-package --dry-run <new-destination>` with explicit `--write` only after user approval. No autonomous network, host write, code execution, target IDE registration or production release is granted by this skill.

@@ -5,7 +5,7 @@
   "maturity": "EXPERIMENTAL_SOURCE_BRANCH",
   "source": {
     "repository": "https://github.com/Ivan-Pasev/fabrica-design-fabric",
-    "branch": "feature/fab-visual-omega11o-ide-science-skill",
+    "branch": "feature/fab-visual-omega11p-bound-science-ide-package",
     "defaultBranchProductAvailability": "NOT_CURRENT",
     "entrypoint": "IDE_START_HERE_FAB_VISUAL.md",
     "runtimeDirectory": "products/fab-visual",
@@ -13,7 +13,7 @@
       "skills/fab-visual-ide/SKILL.md",
       "products/fab-visual/skills/fab-visual/SKILL.md"
     ],
-    "implementationHead": "MUST_VERIFY_LATEST_EXACT_HEAD_PR_AND_CI",
+    "implementationHead": "EXACT_CURRENT_PR_HEAD_AND_TWO_INDEPENDENT_CI_REQUIRED",
     "originalAnatomy": {
       "repository": "https://github.com/wheresryan22/anatomy",
       "commit": "1482e8469b0a9e0d8cc18ea2740a01423d29ae80",
@@ -78,12 +78,29 @@
       "id": "host-autonomy",
       "status": "NOT_AUTHORIZED",
       "scope": "host IDE installation, shell, secrets, deployment"
+    },
+    {
+      "id": "source-bound-numerics",
+      "status": "CANDIDATE_REQUIRES_FINAL_HEAD_CI",
+      "scope": "canonical original SceneIR SHA, model revision, topology counts and source observable comparison"
+    },
+    {
+      "id": "conservative-binary64-intervals",
+      "status": "CANDIDATE_REQUIRES_FINAL_HEAD_CI",
+      "scope": "outward float interval, source uncertainties, explicit INCONCLUSIVE; not decimal/physical attestation"
+    },
+    {
+      "id": "ide-package",
+      "status": "CANDIDATE_REQUIRES_FINAL_HEAD_CI",
+      "scope": "zero-write --dry-run and explicitly authorized --write of five reference files only"
     }
   ],
   "localCommandsAuthorizedOnly": [
     "cd products/fab-visual && node --test tests/*.test.mjs",
     "cd products/fab-visual && node bin/fab-visual.mjs anatomy-verify",
-    "cd products/fab-visual && node bin/fab-visual.mjs audit-quantitative fixtures/quantitative-microgrid.synthetic.json"
+    "cd products/fab-visual && node bin/fab-visual.mjs audit-quantitative fixtures/quantitative-microgrid.synthetic.json",
+    "cd products/fab-visual && node bin/fab-visual.mjs audit-bound templates/energy-microgrid.scene.json fixtures/bound-microgrid.synthetic.json",
+    "cd products/fab-visual && node bin/fab-visual.mjs ide-package --dry-run <new-destination-outside-repository>"
   ],
   "reasoningDefaults": {
     "mode": "READ_ONLY",

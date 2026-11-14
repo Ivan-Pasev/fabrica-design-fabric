@@ -42,3 +42,10 @@ An audit result `status: PASS` is **internal numeric consistency only** with `ph
 Record original vs derivative source, exact Git commit, source/rights/provenance, numerical dimensions, evidence scope, negative tests, missing obligations, `NOT_RUN` fields, and `release: HOLD`. Default deliverable: a reproducible report or guarded patch draft; no implicit main merge or permission escalation.
 
 Read `products/fab-visual/docs/IDE_AUTONOMY_CONTRACT_OMEGA11O.md` and `products/fab-visual/docs/MATH_LOGIC_PHYSICS_BOUNDARIES_OMEGA11O.md` for the full human + agent boundary.
+
+
+## Ω11P source SHA binding and optional package
+
+The latest experimental `Ω11P` draft is **not merged into main**. For any scientific or engineering numeric claim, prefer `node bin/fab-visual.mjs audit-bound <trusted-scene> <bound-sidecar>` to the unbound Ω11O sample. This checks the canonical SceneIR SHA-256 and original model revision, then distinguishes nominal arithmetic PASS from outward binary64 uncertainty INCONCLUSIVE and actual physics NOT_RUN. It cannot authenticate an external measurement source.
+
+Agent-specific packaging is an **explicit local operation**, not automatic installation: `node bin/fab-visual.mjs ide-package --dry-run <new-destination>` is zero-write, while `--write <new-destination>` is permitted only if the actual human user authorizes the new package. It creates five source-reference files without installing executable runtime or registering with IDE hosts. Refuse existing directories, symlinks, source-tree paths, private files and automatic host writes. Consult `products/fab-visual/docs/OMEGA11P_SOURCE_BOUND_SCIENCE_AND_IDE.md`.
