@@ -98,6 +98,7 @@ function mermaid(scene){
 }
 function dotSafe(s){
   return '"'+String(s).replace(/\\/g,'\\\\').replace(/"/g,'\\"')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/[\r\n\t\v\f\u2028\u2029]/g,' ')
     .replace(/[\x00-\x1f\x7f]/g,' ')+'"';
 }
