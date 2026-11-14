@@ -114,7 +114,8 @@ test('interactive Studio contains actual reference, pinned isometric and inspect
   assert.ok(result.html.includes('id="flow-filter"'));
   assert.ok(result.html.includes('data-export="reactflow"'));
   assert.ok(result.html.includes('data-export="mermaid"'));
-  assert.ok(JSON.parse(result.html.match(/<script type="application\\/json" id="fab-studio-data">([\\s\\S]*?)<\\/script>/)[1]).svg2d.includes('class="part node'));
+  const payload=JSON.parse(result.html.split('id="fab-studio-data">')[1].split('</script>')[0]);
+  assert.ok(payload.svg2d.includes('class="part node'));
   assert.ok(result.html.includes('Pinned Anatomy'));
   assertHostHold(result.metadata);
 });
