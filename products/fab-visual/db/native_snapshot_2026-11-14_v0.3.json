@@ -1,0 +1,828 @@
+{
+  "schema": "fab.visual.native-gate-review-snapshot.v0.3",
+  "source_kind": "NATIVE_GOOGLE_SHEET_READBACK",
+  "source_sheet": "https://docs.google.com/spreadsheets/d/1Hn8MoTf-AFbcIZuQyskBneo4iPnA9y00HJWUrGJqn7M/edit",
+  "gate_range": "Gate Registry!A7:H49",
+  "evidence_range": "Evidence Sources!A2:E53",
+  "sheet_modified_time_at_read": "2026-11-14T08:56:59.962Z",
+  "provider_revision_token": "NOT_AVAILABLE",
+  "snapshot_date": "2026-11-14",
+  "authority": "NATIVE_SHEET_AUTHORITATIVE",
+  "baseline_db_sha256": "c54ee65951058f7ada58ce61e6cf3807f605620b244461808596677e6dce360e",
+  "baseline_archive": "https://drive.google.com/file/d/113zQH0b9JmFepw6FYgxuVwXdHVk-4gr3/view",
+  "baseline_gate_count": 37,
+  "baseline_evidence_count": 44,
+  "baseline_checkpoint_count": 8,
+  "new_gates": 6,
+  "new_evidence": 8,
+  "expected_gate_count": 43,
+  "expected_evidence_count": 52,
+  "expected_counts": {
+    "PASS": 23,
+    "FAIL": 6,
+    "NOT_RUN": 11,
+    "HOLD": 1,
+    "INCONCLUSIVE": 2
+  },
+  "revision_integrity": "READ_ONLY_MODIFIED_TIME_NOT_CAS",
+  "human_signature": "NOT_PRESENT",
+  "release": "HOLD",
+  "gates": [
+    {
+      "gate_id": "G10.1",
+      "predicate": "Pinned original Anatomy Git source integrity (173/173)",
+      "status": "PASS",
+      "evidence_class": "Provider + independent CI",
+      "evidence_uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/actions/runs/43505450256",
+      "change_authority": "None",
+      "next_proof": "Preserve original immutable source",
+      "implications": "Source acquired; no scientific claims"
+    },
+    {
+      "gate_id": "G10.2",
+      "predicate": "Native Anatomy upstream regression (290/290)",
+      "status": "PASS",
+      "evidence_class": "Original + independent CI",
+      "evidence_uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/actions/runs/43492008303",
+      "change_authority": "None",
+      "next_proof": "Trace cross-platform drift",
+      "implications": "Functional test scope only"
+    },
+    {
+      "gate_id": "G10.3",
+      "predicate": "Strict generated HTML byte parity (3 pages)",
+      "status": "FAIL",
+      "evidence_class": "Reproducibility comparison",
+      "evidence_uri": "https://drive.google.com/file/d/1YnYosKllvV1UaBuWW1I5YBdH-XREWSii/view",
+      "change_authority": "None",
+      "next_proof": "Platform trace and repeated builds",
+      "implications": "Release gate blocked"
+    },
+    {
+      "gate_id": "G10.4",
+      "predicate": "Bounded HTML numeric/orientation diagnosis",
+      "status": "PASS",
+      "evidence_class": "Narrow diagnostic only",
+      "evidence_uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/pull/25",
+      "change_authority": "None",
+      "next_proof": "Independent downstream visual comparison",
+      "implications": "Not equivalent to byte parity"
+    },
+    {
+      "gate_id": "G11.1",
+      "predicate": "Static segment-to-AABB oracle in PR #26",
+      "status": "PASS",
+      "evidence_class": "First-party source committed",
+      "evidence_uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/pull/26",
+      "change_authority": "Draft only",
+      "next_proof": "Independent real mesh/port oracle",
+      "implications": "Candidate only"
+    },
+    {
+      "gate_id": "G11.2",
+      "predicate": "Ω11A local synthetic Python tests (12/12)",
+      "status": "PASS",
+      "evidence_class": "Local synthetic tests",
+      "evidence_uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/pull/26",
+      "change_authority": "Draft only",
+      "next_proof": "Cross-implementation boundary cases",
+      "implications": "Does not validate physical geometry"
+    },
+    {
+      "gate_id": "G11.3",
+      "predicate": "Ω11A independent GitHub CI exact source head",
+      "status": "PASS",
+      "evidence_class": "GitHub Actions success",
+      "evidence_uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/actions/runs/43509708187",
+      "change_authority": "Draft only",
+      "next_proof": "Freeze artifact receipt",
+      "implications": "Only synthetic software gate"
+    },
+    {
+      "gate_id": "G11.4",
+      "predicate": "Original/rebuilt browser state visual comparison",
+      "status": "NOT_RUN",
+      "evidence_class": "No independent evidence",
+      "evidence_uri": "https://drive.google.com/file/d/1bwEvxqUrvfETUaqdm_ZuQ15TmtlKTl4k/view",
+      "change_authority": "None",
+      "next_proof": "Pinned Chrome, camera orbit, pixel/depth events",
+      "implications": "Visual parity unproven"
+    },
+    {
+      "gate_id": "G11.5",
+      "predicate": "Actual 3D mesh, swept tube and port clearance",
+      "status": "NOT_RUN",
+      "evidence_class": "AABB proxy insufficient",
+      "evidence_uri": "https://docs.google.com/document/d/1_8zD69uwhLN7LZDkQUdZ3tpzdXbT8FpNYkqI4bmgO78/edit",
+      "change_authority": "None",
+      "next_proof": "World transforms, mesh geometry, port orientation",
+      "implications": "Physical clearance unproven"
+    },
+    {
+      "gate_id": "G11.6",
+      "predicate": "Dynamic endpoint speed-bound provenance",
+      "status": "NOT_RUN",
+      "evidence_class": "User-declared bound only",
+      "evidence_uri": "https://docs.google.com/document/d/1_8zD69uwhLN7LZDkQUdZ3tpzdXbT8FpNYkqI4bmgO78/edit",
+      "change_authority": "None",
+      "next_proof": "Verified interval-wide velocity bounds",
+      "implications": "Motion CLEAR conditional"
+    },
+    {
+      "gate_id": "G11.7",
+      "predicate": "macOS/Linux Node/V8 output repeatability",
+      "status": "NOT_RUN",
+      "evidence_class": "Platform root cause unresolved",
+      "evidence_uri": "https://drive.google.com/file/d/1YnYosKllvV1UaBuWW1I5YBdH-XREWSii/view",
+      "change_authority": "None",
+      "next_proof": "Capture toolchain and repeated builds",
+      "implications": "Byte parity still FAIL"
+    },
+    {
+      "gate_id": "G11.8",
+      "predicate": "400% zoom, screen reader, Firefox/WebKit",
+      "status": "NOT_RUN",
+      "evidence_class": "Manual + browser evidence absent",
+      "evidence_uri": "https://drive.google.com/file/d/1bwEvxqUrvfETUaqdm_ZuQ15TmtlKTl4k/view",
+      "change_authority": "None",
+      "next_proof": "Assistive technology and cross-browser tests",
+      "implications": "Accessibility unproven"
+    },
+    {
+      "gate_id": "G11.9",
+      "predicate": "Real CodexStation/Antigravity host installation",
+      "status": "NOT_RUN",
+      "evidence_class": "Synthetic host only",
+      "evidence_uri": "https://docs.google.com/document/d/1alrjZfNzFflEkxjIUyY-XFBdM6Gcrmd0SzR6-5U7Hng/edit",
+      "change_authority": "None",
+      "next_proof": "Exact sanitized host copy + explicit consent",
+      "implications": "No runtime authority"
+    },
+    {
+      "gate_id": "G11.10",
+      "predicate": "Standalone dedicated FAB.VISUAL repository",
+      "status": "NOT_RUN",
+      "evidence_class": "Existing public draft only",
+      "evidence_uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/pull/26",
+      "change_authority": "None",
+      "next_proof": "Authorized repository creation route",
+      "implications": "PR is not a release"
+    },
+    {
+      "gate_id": "G11.11",
+      "predicate": "Scientific/engineering validation",
+      "status": "NOT_RUN",
+      "evidence_class": "No physical metrology evidence",
+      "evidence_uri": "https://docs.google.com/document/d/1_8zD69uwhLN7LZDkQUdZ3tpzdXbT8FpNYkqI4bmgO78/edit",
+      "change_authority": "None",
+      "next_proof": "Measured independent uncertainty budget",
+      "implications": "Scientific claim held"
+    },
+    {
+      "gate_id": "G11.12",
+      "predicate": "Production release admission",
+      "status": "HOLD",
+      "evidence_class": "Constitutional gate",
+      "evidence_uri": "https://docs.google.com/document/d/1taK4c7t0ZofPUAi8c6raOhJFlE6brQI3YXHOelehdhI/edit",
+      "change_authority": "None",
+      "next_proof": "All complete gates + authorization",
+      "implications": "Do not deploy/merge"
+    },
+    {
+      "gate_id": "G11.13",
+      "predicate": "Finite paired Chromium witness (3×3×2 states)",
+      "status": "PASS",
+      "evidence_class": "Independent source-pinned browser CI",
+      "evidence_uri": "https://drive.google.com/file/d/1VnETjF_IOIH7iyYF8q9KnMOpjr_Rwvim/view",
+      "change_authority": "Draft only",
+      "next_proof": "Camera/orbit/depth/visibility oracle",
+      "implications": "16 equal; 2 observed pixel deltas; no global equivalence"
+    },
+    {
+      "gate_id": "G11.14",
+      "predicate": "Cross-run visual reproducibility (same source/config)",
+      "status": "FAIL",
+      "evidence_class": "Two independent exact-head Chromium CI runs",
+      "evidence_uri": "https://drive.google.com/file/d/1Vuk8MgrYVdXO4PhJq_6niyDgKRLdMQyY/view",
+      "change_authority": "None",
+      "next_proof": "Deterministic camera/state control and cross-run replay",
+      "implications": "Two hover cases change classifications; source causality not proved"
+    },
+    {
+      "gate_id": "G11.15",
+      "predicate": "Independent Ω11C two-archive pixel forensics",
+      "status": "PASS",
+      "evidence_class": "Original SHA-checked CI artifact comparator",
+      "evidence_uri": "https://drive.google.com/file/d/1YZDnbVGd3JfkK0SK5k5M5ffJNqP-aWs6/view",
+      "change_authority": "Research draft only",
+      "next_proof": "State and platform causal trace",
+      "implications": "18 & 121 source-matched cross-run pixel drifts confirmed"
+    },
+    {
+      "gate_id": "G11.16",
+      "predicate": "Ω11C eight fresh Chromium processes / 24 screenshots",
+      "status": "PASS",
+      "evidence_class": "Exact-head independent CI with 173 Git-blob source lock",
+      "evidence_uri": "https://drive.google.com/file/d/1QvR0VE_d4n62TTI0VyD9YQrOwmiztY4U/view",
+      "change_authority": "Draft only",
+      "next_proof": "Separately classify cross-process pixel variation",
+      "implications": "Both cases executed; state identity not admitted"
+    },
+    {
+      "gate_id": "G11.17",
+      "predicate": "Authoritative camera/frame and depth-state identity",
+      "status": "NOT_RUN",
+      "evidence_class": "DOM fingerprints alone insufficient",
+      "evidence_uri": "https://docs.google.com/document/d/1txBUCNV2FqYyCcVxFURBXxIRQrPduT_AKHLS_UIXxD8/edit",
+      "change_authority": "None",
+      "next_proof": "Source-bound frame event and ray depth order",
+      "implications": "No physical or full 3D parity admission"
+    },
+    {
+      "gate_id": "G11.18",
+      "predicate": "Fresh-process pixel reproducibility of two flagged cases",
+      "status": "FAIL",
+      "evidence_class": "Independent eight-process Chromium replay",
+      "evidence_uri": "https://drive.google.com/file/d/1QvR0VE_d4n62TTI0VyD9YQrOwmiztY4U/view",
+      "change_authority": "None",
+      "next_proof": "Verify actual stage targeting, state event ID and CSS/runtime cause",
+      "implications": "Raptor pinned18 rebuilt33; turning pinned121 rebuilt0"
+    },
+    {
+      "gate_id": "G11.19",
+      "predicate": "Pinned-source full-size scene target selected, not icon",
+      "status": "PASS",
+      "evidence_class": "Ω11D independent stage-target CI",
+      "evidence_uri": "https://drive.google.com/file/d/1wUBqqS3KaCFpLJ7VsLWLim6DUyqdmGjO/view",
+      "change_authority": "Draft only",
+      "next_proof": "Link to verified camera frame ID",
+      "implications": "Raptor .rp-stage 932×900; turning .ts-stage 334×246"
+    },
+    {
+      "gate_id": "G11.20",
+      "predicate": "Actual-stage 8-process/24-frame replay execution",
+      "status": "PASS",
+      "evidence_class": "Exact-head independent CI & screenshot receipts",
+      "evidence_uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/actions/runs/43518842863",
+      "change_authority": "Draft only",
+      "next_proof": "Check scene-state causality across processes",
+      "implications": "All 4 source-side pairs stable within processes"
+    },
+    {
+      "gate_id": "G11.21",
+      "predicate": "Actual-stage cross-process screenshot reproducibility",
+      "status": "FAIL",
+      "evidence_class": "Independent source-staged Chromium replay",
+      "evidence_uri": "https://drive.google.com/file/d/1wUBqqS3KaCFpLJ7VsLWLim6DUyqdmGjO/view",
+      "change_authority": "None",
+      "next_proof": "Control true scene camera/frame/CSS state",
+      "implications": "Raptor pinned/rebuilt 968px each; turning rebuilt121px"
+    },
+    {
+      "gate_id": "G11.22",
+      "predicate": "Actual-stage pixel classification reproducible across CI runs",
+      "status": "FAIL",
+      "evidence_class": "Two successful same-source exact-head Chromium CI runs",
+      "evidence_uri": "https://drive.google.com/file/d/1U5KEgT0BE825-3iZvDIhY1SwSE_cYyUt/view",
+      "change_authority": "None",
+      "next_proof": "Source-bound frame event & raster deterministic control",
+      "implications": "Raptor FAIL twice; Turning FAIL first / PASS finite second"
+    },
+    {
+      "gate_id": "G11.23",
+      "predicate": "Ω11E independent synthetic camera-ray/triangle depth oracle",
+      "status": "PASS",
+      "evidence_class": "20 adversarial unit tests + exact-head CI",
+      "evidence_uri": "https://drive.google.com/file/d/1APOzuIOQokd2LwyelLV1bQmDdxFROdQt/view",
+      "change_authority": "Synthetic software only",
+      "next_proof": "Source-bound real mesh and camera state",
+      "implications": "Two-triangle front/back ordering; real geometry NOT_RUN"
+    },
+    {
+      "gate_id": "G11.24",
+      "predicate": "Ω11E SceneFrameWitness v0.1 graded declaration schema",
+      "status": "PASS",
+      "evidence_class": "JSON Schema 2020-12 + frame contract negatives",
+      "evidence_uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/actions/runs/43566085527",
+      "change_authority": "Declaration only",
+      "next_proof": "Independent runtime frame attestation",
+      "implications": "Forged RUNTIME_READBACK never admits actual renderer frame"
+    },
+    {
+      "gate_id": "G11.25",
+      "predicate": "Ω11F immutable source-to-disposable-derivative provenance",
+      "status": "PASS",
+      "evidence_class": "Same pinned 173 MIT blobs and 2 SHA-locked patch manifests across two CI runs",
+      "evidence_uri": "https://drive.google.com/file/d/1SwT6Uir_AsZlUnVMlrhgjI9AWUHSfgZr/view",
+      "change_authority": "Derivative research only",
+      "next_proof": "Observer perturbation and source-to-frame binding",
+      "implications": "Original checkout unmodified; exact patch hashes repeat"
+    },
+    {
+      "gate_id": "G11.26",
+      "predicate": "Ω11F actual Raptor tick / Turning controller-set update readout",
+      "status": "PASS",
+      "evidence_class": "20 adversarial tests and 8 browser processes in each exact-head CI",
+      "evidence_uri": "https://drive.google.com/file/d/1DNDkG11f8cPpxGVKcoa0jHLCrPJPtcYi/view",
+      "change_authority": "Instrumented copy only",
+      "next_proof": "Deterministic source-applied state checkpoint",
+      "implications": "Raptor 5–6 events; Turning 14–16; frame-present NOT_ADMITTED"
+    },
+    {
+      "gate_id": "G11.27",
+      "predicate": "Ω11F unmodified original observer isolation",
+      "status": "PASS",
+      "evidence_class": "Original Raptor/Turning browser runs without injected window hooks",
+      "evidence_uri": "https://drive.google.com/file/d/1SwT6Uir_AsZlUnVMlrhgjI9AWUHSfgZr/view",
+      "change_authority": "Original read-only only",
+      "next_proof": "Independent presented-renderer capture barrier",
+      "implications": "4 original processes per run had no derivative witness"
+    },
+    {
+      "gate_id": "G11.28",
+      "predicate": "Ω11F update sample count invariant across independent CI",
+      "status": "FAIL",
+      "evidence_class": "Two successful same-source/same-derivative Chromium jobs",
+      "evidence_uri": "https://drive.google.com/file/d/1DNDkG11f8cPpxGVKcoa0jHLCrPJPtcYi/view",
+      "change_authority": "Not evidence of model nondeterminism",
+      "next_proof": "Checkpoint by actual state not asynchronous wait completion",
+      "implications": "Raptor 5/5 vs 5/6; Turning 16/16 vs 14/15"
+    },
+    {
+      "gate_id": "G11.29",
+      "predicate": "Ω11G central SQLite evidence snapshot, source integrity and 48 tests",
+      "status": "PASS",
+      "evidence_class": "Two independent exact-head GitHub CI jobs + final SQL SHA",
+      "evidence_uri": "https://drive.google.com/file/d/1sqwS41WrB2AcbdBID-eA3eoPq4L-tLRW/view",
+      "change_authority": "Research-only portable DB",
+      "next_proof": "Reviewed native-sheet v0.2 reconciliation",
+      "implications": "32 gates +35 evidence imported, release HOLD"
+    },
+    {
+      "gate_id": "G11.30",
+      "predicate": "Ω11G twelve-process original/minimal/observing checkpoint ordinal=3",
+      "status": "PASS",
+      "evidence_class": "Two pinned-source Chromium 143 CI runs",
+      "evidence_uri": "https://drive.google.com/file/d/1jVWy-7cfbIQ6G-q3rENydabW0gouFxa3/view",
+      "change_authority": "Disposable derivative only",
+      "next_proof": "Controlled RAF clock and observer effect comparison",
+      "implications": "4 originals uninstrumented, 8 derivatives hit applied ordinal 3"
+    },
+    {
+      "gate_id": "G11.31",
+      "predicate": "Ω11G append-only ingestion of eight derivative checkpoint records",
+      "status": "PASS",
+      "evidence_class": "SQLite final receipt + foreign-key and source-hash checks",
+      "evidence_uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/actions/runs/43574181544",
+      "change_authority": "Evidence record only",
+      "next_proof": "Bind same-state and future reviewed source status events",
+      "implications": "4 minimal + 4 observing with source state SHA; no frame admission"
+    },
+    {
+      "gate_id": "G11.32",
+      "predicate": "Ω11G equal applied source-state across observers at controlled virtual time",
+      "status": "INCONCLUSIVE",
+      "evidence_class": "Uncontrolled RAF yields only serial equality, images still differ",
+      "evidence_uri": "https://drive.google.com/file/d/1jVWy-7cfbIQ6G-q3rENydabW0gouFxa3/view",
+      "change_authority": "No causal or frame identity inference",
+      "next_proof": "Virtual RAF, input-state and perturbation audit Ω11H",
+      "implications": "Applied serial 3 PASS; elapsed time/state equivalence INCONCLUSIVE"
+    },
+    {
+      "gate_id": "G11.33",
+      "predicate": "Central DB v0.2 reviewed status reconciliation / always-on service",
+      "status": "NOT_RUN",
+      "evidence_class": "Current SQLite is an offline versioned Sheet projection",
+      "evidence_uri": "https://docs.google.com/document/d/1p19irgvAUhOjQokzW0Bwdvc_KUVGGlwA05rIM-t3ic8/edit",
+      "change_authority": "No automated sync or server authority",
+      "next_proof": "Human-approved append-only reconciler and explicit deployment decision",
+      "implications": "Live native Sheet may exceed SQLite v0.1's 32 gate snapshot"
+    },
+    {
+      "gate_id": "G11.34",
+      "predicate": "Ω11H source-checked SQLite v0.2 reconcile exact 8-checkpoint Ω11G baseline",
+      "status": "PASS",
+      "evidence_class": "Exact archived source SHA, SQL integrity/foreign keys, 32/35 retained+5/9 appended",
+      "evidence_uri": "https://drive.google.com/file/d/113zQH0b9JmFepw6FYgxuVwXdHVk-4gr3/view",
+      "change_authority": "Offline source-stamped candidate",
+      "next_proof": "Native Sheet revision CAS and reviewed status admission",
+      "implications": "37 gates+44 evidence+8 checkpoints; release HOLD"
+    },
+    {
+      "gate_id": "G11.35",
+      "predicate": "Ω11H 25 new adversarial reconciliation and virtual-clock tests",
+      "status": "PASS",
+      "evidence_class": "Independent exact-head GitHub Actions, Python unittest",
+      "evidence_uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/actions/runs/43577574602",
+      "change_authority": "Software proof scope only",
+      "next_proof": "Expand source-bound browser semantic coverage",
+      "implications": "15 DB + 10 clock negatives PASS"
+    },
+    {
+      "gate_id": "G11.36",
+      "predicate": "Ω11H 12-process three-input synthetic RAF/IO/performance test clock",
+      "status": "PASS",
+      "evidence_class": "Two scenes × original/minimal/observer × two Chromium processes",
+      "evidence_uri": "https://drive.google.com/file/d/113zQH0b9JmFepw6FYgxuVwXdHVk-4gr3/view",
+      "change_authority": "TEST_ONLY_BROKEN_NATURAL_SEMANTICS",
+      "next_proof": "Verify source call graph/real browser timing semantics",
+      "implications": "16.667/33.333/50ms controlled test clock, no GPU frame proof"
+    },
+    {
+      "gate_id": "G11.37",
+      "predicate": "Ω11H finite test-clock observed source-state/DOM/screenshot repeatability",
+      "status": "PASS",
+      "evidence_class": "Machine receipt per-scene 12 Chromium process hashes",
+      "evidence_uri": "https://drive.google.com/file/d/113zQH0b9JmFepw6FYgxuVwXdHVk-4gr3/view",
+      "change_authority": "Finite synthetic experiment only",
+      "next_proof": "Adversarial perturbation & multiple independent run state fingerprint",
+      "implications": "Raptor & Turning state MATCH, DOM MATCH, pixel SHA MATCH"
+    },
+    {
+      "gate_id": "G11.38",
+      "predicate": "Ω11H source-natural runtime equivalence / absence of observer perturbation",
+      "status": "INCONCLUSIVE",
+      "evidence_class": "Synthetic RAF/IO/performance.now substitutes source input semantics",
+      "evidence_uri": "https://docs.google.com/document/d/1PuPIqj9cSLETWuTLrawjQIYC85QDjQ2e7dH84PYPIj8/edit",
+      "change_authority": "No causal zero-overhead claim",
+      "next_proof": "Source-verified timing coverage and observer-effect counterexamples",
+      "implications": "Matching synthetic captures cannot certify unmodified browser"
+    },
+    {
+      "gate_id": "G11.39",
+      "predicate": "Ω11H actual GPU-presented frame and real 3D mesh/depth validation",
+      "status": "NOT_RUN",
+      "evidence_class": "No independent source/compositor event + real geometry",
+      "evidence_uri": "https://docs.google.com/document/d/1PuPIqj9cSLETWuTLrawjQIYC85QDjQ2e7dH84PYPIj8/edit",
+      "change_authority": "No physical/scientific release authority",
+      "next_proof": "Source-bound renderer and mesh transforms/camera/units",
+      "implications": "Real frame NOT_ADMITTED; real depth NOT_RUN"
+    }
+  ],
+  "evidence": [
+    {
+      "title": "PR #26",
+      "scope": "Ω11A geometry oracle (four files)",
+      "result": "DRAFT",
+      "uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/pull/26",
+      "limitations": "Unmerged HEAD 45866a5a"
+    },
+    {
+      "title": "CI #43509708187",
+      "scope": "Independent synthetic geometry job",
+      "result": "PASS",
+      "uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/actions/runs/43509708187",
+      "limitations": "Synthetic software only"
+    },
+    {
+      "title": "Ω11A Decision",
+      "scope": "Native canonical research Doc",
+      "result": "UPDATED",
+      "uri": "https://docs.google.com/document/d/1_8zD69uwhLN7LZDkQUdZ3tpzdXbT8FpNYkqI4bmgO78/edit",
+      "limitations": "Source authority unchanged"
+    },
+    {
+      "title": "PR #25",
+      "scope": "Ω10B numeric diagnosis",
+      "result": "DRAFT",
+      "uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/pull/25",
+      "limitations": "Base ancestry for #26"
+    },
+    {
+      "title": "CI #43505450256",
+      "scope": "173 source lock; drift diagnostic",
+      "result": "PASS",
+      "uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/actions/runs/43505450256",
+      "limitations": "Does not prove byte parity"
+    },
+    {
+      "title": "NEXT_0007",
+      "scope": "Outstanding Ω11 visual/runtime gates",
+      "result": "OPEN",
+      "uri": "https://drive.google.com/file/d/1bwEvxqUrvfETUaqdm_ZuQ15TmtlKTl4k/view",
+      "limitations": "No unrun tests promoted"
+    },
+    {
+      "title": "START HERE",
+      "scope": "Canonical Drive continuity",
+      "result": "UPDATED",
+      "uri": "https://docs.google.com/document/d/1taK4c7t0ZofPUAi8c6raOhJFlE6brQI3YXHOelehdhI/edit",
+      "limitations": "Main unchanged"
+    },
+    {
+      "title": "PR #27",
+      "scope": "Ω11B source-pinned browser harness",
+      "result": "DRAFT",
+      "uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/pull/27",
+      "limitations": "Unmerged; no source/host mutation"
+    },
+    {
+      "title": "Ω11B Decision",
+      "scope": "Canonical source/claim gate",
+      "result": "CREATED",
+      "uri": "https://docs.google.com/document/d/1B_TclLyBBWVp5oer_ncyXWEPqXe2l-2DeDMBy6YNxBs/edit",
+      "limitations": "Browser CI not yet admitted"
+    },
+    {
+      "title": "Ω11B CI",
+      "scope": "18/18 finite Chromium comparisons; Chromium 143.0.7499.4",
+      "result": "PASS",
+      "uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/actions/runs/43512578186",
+      "limitations": "16 identical, 2 observed pixel differences; NOT universal parity"
+    },
+    {
+      "title": "Ω11B Evidence ZIP",
+      "scope": "Immutable exact-run screenshot, image-diff and hash archive",
+      "result": "VERIFIED",
+      "uri": "https://drive.google.com/file/d/1VnETjF_IOIH7iyYF8q9KnMOpjr_Rwvim/view",
+      "limitations": "SHA256 d26f4a99efd5c7f9909c276bad6f52c4a05b632a03163f6c58b59a186fa551e4"
+    },
+    {
+      "title": "Ω11B Repeat CI",
+      "scope": "Same HEAD, Chromium 143, same source/config",
+      "result": "PASS",
+      "uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/actions/runs/43512537839",
+      "limitations": "18/18 identical captured pairs on repeated job"
+    },
+    {
+      "title": "Ω11B Repeat archive",
+      "scope": "Independent same-SHA Chromium artifact",
+      "result": "VERIFIED",
+      "uri": "https://drive.google.com/file/d/1Vuk8MgrYVdXO4PhJq_6niyDgKRLdMQyY/view",
+      "limitations": "SHA256 747546e453f57b9d3fa9b1ab43e50d39601ffc01b5052754296dd9b1383c6c2c"
+    },
+    {
+      "title": "PR #28",
+      "scope": "Ω11C source-locked crossrun and fresh process",
+      "result": "DRAFT",
+      "uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/pull/28",
+      "limitations": "Unmerged stacked on PR #27"
+    },
+    {
+      "title": "Ω11C historical audit",
+      "scope": "Independent two archive forensic CI",
+      "result": "PASS",
+      "uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/actions/runs/43517298887",
+      "limitations": "Exact SHA readback, 18 cases, 2 cross-run differences"
+    },
+    {
+      "title": "Ω11C forensic ZIP",
+      "scope": "Hashed inspection overlays and machine receipt",
+      "result": "ARCHIVED",
+      "uri": "https://drive.google.com/file/d/1YZDnbVGd3JfkK0SK5k5M5ffJNqP-aWs6/view",
+      "limitations": "SHA256 a6a7ef8a58e858ac18631cbb5beb891d31d15bcb0f5b61fa93e65df4ec150b8f"
+    },
+    {
+      "title": "Ω11C fresh-process witness",
+      "scope": "8 Chromium processes / 24 screenshot source-locked replay",
+      "result": "PASS",
+      "uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/actions/runs/43517336087",
+      "limitations": "Both targeted cases fail cross-process pixels; camera/frame remains NOT_ADMITTED"
+    },
+    {
+      "title": "Ω11C replay archive",
+      "scope": "Pin, model hashes, page state and browser shots",
+      "result": "VERIFIED",
+      "uri": "https://drive.google.com/file/d/1QvR0VE_d4n62TTI0VyD9YQrOwmiztY4U/view",
+      "limitations": "Exact-source machine-readable receipt; release HOLD"
+    },
+    {
+      "title": "Ω11D PR #29",
+      "scope": "Source-defined .rp-stage and .ts-stage, scene-size and hover controls",
+      "result": "DRAFT",
+      "uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/pull/29",
+      "limitations": "Unmerged research candidate"
+    },
+    {
+      "title": "Ω11D stage CI",
+      "scope": "173-source lock, stage tests, eight fresh Chromium processes",
+      "result": "PASS",
+      "uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/actions/runs/43518842863",
+      "limitations": "Actual full-size stage identity verified; frame camera still NOT_ADMITTED"
+    },
+    {
+      "title": "Ω11D stage archive",
+      "scope": "24 screenshots, stage/CSS values, all test evidence",
+      "result": "VERIFIED",
+      "uri": "https://drive.google.com/file/d/1wUBqqS3KaCFpLJ7VsLWLim6DUyqdmGjO/view",
+      "limitations": "Cross-process pixel reproducibility still FAIL"
+    },
+    {
+      "title": "Ω11E NEXT_0010",
+      "scope": "Source-defined SceneFrameWitness ABI and ray-depth engineering plan",
+      "result": "PREPARED",
+      "uri": "https://docs.google.com/document/d/1hm-6s4-U4XOaZdNFKiuFeMQGUA4Cp6qTPJLXjok2mkA/edit",
+      "limitations": "Not implemented; independent geometrical witness NOT_RUN"
+    },
+    {
+      "title": "Ω11D repeat CI",
+      "scope": "Same exact source head independent stage proof",
+      "result": "PASS",
+      "uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/actions/runs/43518886954",
+      "limitations": "Raptor pixel repeat FAIL; turning-dial finite repeat PASS"
+    },
+    {
+      "title": "Ω11D repeat archive",
+      "scope": "Fresh 24-frame stage provenance, source & screenshot hashes",
+      "result": "VERIFIED",
+      "uri": "https://drive.google.com/file/d/1U5KEgT0BE825-3iZvDIhY1SwSE_cYyUt/view",
+      "limitations": "Turning classification changes across CI runs; admission HOLD"
+    },
+    {
+      "title": "PR #30",
+      "scope": "Ω11E proof-grade frame declaration and synthetic ray depth",
+      "result": "DRAFT",
+      "uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/pull/30",
+      "limitations": "Unmerged on Ω11D PR #29; original source immutable"
+    },
+    {
+      "title": "Ω11E exact-head CI",
+      "scope": "Original 173 source lock; 20 tests; schema and synthetic depth",
+      "result": "PASS",
+      "uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/actions/runs/43566085527",
+      "limitations": "No Anatomy runtime/camera/geometry admission"
+    },
+    {
+      "title": "Ω11E CI archive",
+      "scope": "Hashed software test receipts and synthetic depth JSON",
+      "result": "ARCHIVED",
+      "uri": "https://drive.google.com/file/d/1APOzuIOQokd2LwyelLV1bQmDdxFROdQt/view",
+      "limitations": "Original MIT source verified; release HOLD"
+    },
+    {
+      "title": "Ω11E canonical decision",
+      "scope": "Source-bound frame contract and claim limits",
+      "result": "SAVED",
+      "uri": "https://docs.google.com/document/d/1tN5RjNxKqKfqwxauzhwlJe58DwV5lBLxSn5B5OeT8Ng/edit",
+      "limitations": "Synthetic mathematical validation only"
+    },
+    {
+      "title": "PR #31",
+      "scope": "Ω11F pinned original and disposable derivative runtime hooks",
+      "result": "DRAFT",
+      "uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/pull/31",
+      "limitations": "Unmerged, original source immutable"
+    },
+    {
+      "title": "Ω11F first exact-head CI",
+      "scope": "20 tests PASS, immutable source and 8 Chromium observations",
+      "result": "PASS",
+      "uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/actions/runs/43569690863",
+      "limitations": "Only instrumented derivative application-state readout"
+    },
+    {
+      "title": "Ω11F first archive",
+      "scope": "Source-hash and browser-update evidence, screenshots",
+      "result": "VERIFIED",
+      "uri": "https://drive.google.com/file/d/1SwT6Uir_AsZlUnVMlrhgjI9AWUHSfgZr/view",
+      "limitations": "ZIP SHA256 6f1b57dc59e96f1fcaaf50f77b5b21e88edb58f4549de26ecf6965e2bcbbaa70"
+    },
+    {
+      "title": "Ω11F repeat exact-head CI",
+      "scope": "Independent source-matched updated-code execution",
+      "result": "PASS",
+      "uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/actions/runs/43569696203",
+      "limitations": "Update counts not identical to first CI"
+    },
+    {
+      "title": "Ω11F repeat archive",
+      "scope": "Second 8-process image/derived runtime receipt",
+      "result": "VERIFIED",
+      "uri": "https://drive.google.com/file/d/1DNDkG11f8cPpxGVKcoa0jHLCrPJPtcYi/view",
+      "limitations": "ZIP SHA256 d90d5ac7c062f72d6cee6c2edc3ffcc7814c076ee7a1f90d0f2062b3e89d521a"
+    },
+    {
+      "title": "Ω11F canonical decision",
+      "scope": "Original-vs-derivative attestation boundary",
+      "result": "VERIFIED",
+      "uri": "https://docs.google.com/document/d/15-jqy4b0nKDxW99rfpzqovnN1hwmvR5XjMOPo2oDW5k/edit",
+      "limitations": "Applied update PASS; renderer frame NOT_ADMITTED"
+    },
+    {
+      "title": "Ω11G NEXT_0012",
+      "scope": "Deterministic applied-state checkpoint and observer perturbation",
+      "result": "PREPARED",
+      "uri": "https://docs.google.com/document/d/1GWh5YPJ6PGYZnQ9ajL7FRoITkD5D5GT6cczXtPqXkE4/edit",
+      "limitations": "Not implemented, future gate"
+    },
+    {
+      "title": "PR #32",
+      "scope": "Ω11G central SQLite evidence DB + third-applied-update source checkpoint",
+      "result": "DRAFT",
+      "uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/pull/32",
+      "limitations": "Unmerged stacked research, no original or host changes"
+    },
+    {
+      "title": "Ω11G exact-head CI 1",
+      "scope": "48 adversarial tests; 12 Chromium processes; final 8 checkpoint rows",
+      "result": "PASS",
+      "uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/actions/runs/43574147186",
+      "limitations": "Same reviewed source head ec1e20ff9a846f8f34ad01f1d2751598517c6adc"
+    },
+    {
+      "title": "Ω11G exact-head archive 1",
+      "scope": "SHA-locked final SQLite DB + screenshots + machine receipts",
+      "result": "VERIFIED",
+      "uri": "https://drive.google.com/file/d/1sqwS41WrB2AcbdBID-eA3eoPq4L-tLRW/view",
+      "limitations": "Archive SHA256 889e4794a3e0d55983a53c0ec31581874815756106ee52b484379a9f592b5c11"
+    },
+    {
+      "title": "Ω11G exact-head CI 2",
+      "scope": "Independent identical-source repeat with third applied-update checkpoint",
+      "result": "PASS",
+      "uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/actions/runs/43574181544",
+      "limitations": "Controlled ordinal, uncontrolled RAF time; frame NOT_ADMITTED"
+    },
+    {
+      "title": "Ω11G exact-head archive 2",
+      "scope": "Second SHA-locked final SQLite DB + 12 browser observations",
+      "result": "VERIFIED",
+      "uri": "https://drive.google.com/file/d/1jVWy-7cfbIQ6G-q3rENydabW0gouFxa3/view",
+      "limitations": "Archive SHA256 7867a7a4d2178821dcb3177ce97c3628ac5f4de03ee6b6611f0d89a3acc3635f"
+    },
+    {
+      "title": "Central DB START HERE",
+      "scope": "Data dictionary, authority, SQLite CLI and release boundaries",
+      "result": "SAVED",
+      "uri": "https://docs.google.com/document/d/1p19irgvAUhOjQokzW0Bwdvc_KUVGGlwA05rIM-t3ic8/edit",
+      "limitations": "Sheet remains current gate authority, DB is reviewed offline snapshot"
+    },
+    {
+      "title": "Ω11G canonical decision",
+      "scope": "Source-locked evidence certificate and nonadmission predicates",
+      "result": "SAVED",
+      "uri": "https://docs.google.com/document/d/1bjyzS7lagrwkX3TkJg_PrLKodirySxeXXtT5a6uqzS0/edit",
+      "limitations": "48 tests PASS; real presented frame NOT_ADMITTED"
+    },
+    {
+      "title": "Central DB archive folder",
+      "scope": "Versioned research database snapshots and provenance",
+      "result": "ESTABLISHED",
+      "uri": "https://drive.google.com/drive/folders/1aaxBJfb1YnABgNuDhInMEueXisKlZO8v",
+      "limitations": "SQLite ZIP archival, no always-on server installed"
+    },
+    {
+      "title": "NEXT_0013 Ω11H",
+      "scope": "Virtual RAF, observer perturbation and status reconciler gate",
+      "result": "PREPARED",
+      "uri": "https://docs.google.com/document/d/1XKs9IOcZvn3uuKljA4wJRJ5aPjOZqH6XfgPz2MhTOx8/edit",
+      "limitations": "Not implemented; separate engineering and approval gates"
+    },
+    {
+      "title": "PR #33",
+      "scope": "Ω11H virtual clock and exact archived SQLite v0.2 reconciler",
+      "result": "DRAFT",
+      "uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/pull/33",
+      "limitations": "Unmerged stacked research; original MIT source untouched"
+    },
+    {
+      "title": "Ω11H exact-head CI",
+      "scope": "25 adversarial tests, 12 synthetic-clock browser cases, v0.2 database",
+      "result": "PASS",
+      "uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/actions/runs/43577574602",
+      "limitations": "No natural browser or GPU frame admission"
+    },
+    {
+      "title": "Ω11H exact-head archive",
+      "scope": "Native source hash, v0.2 SQLite and 12 controlled screenshots",
+      "result": "VERIFIED",
+      "uri": "https://drive.google.com/file/d/113zQH0b9JmFepw6FYgxuVwXdHVk-4gr3/view",
+      "limitations": "ZIP SHA256 186f6474fb104330d6c9bc387c3713128b70666ce74a07adefb51b9c13c05b1c"
+    },
+    {
+      "title": "Ω11H SQLite v0.2",
+      "scope": "37 source gates 44 evidence 8 inherited checkpoints",
+      "result": "VERIFIED",
+      "uri": "https://drive.google.com/file/d/113zQH0b9JmFepw6FYgxuVwXdHVk-4gr3/view",
+      "limitations": "106496 bytes; SHA256 c54ee65951058f7ada58ce61e6cf3807f605620b244461808596677e6dce360e"
+    },
+    {
+      "title": "Ω11H native decision",
+      "scope": "Test-only clock controlled-scope and source DB provenance",
+      "result": "SAVED",
+      "uri": "https://docs.google.com/document/d/1PuPIqj9cSLETWuTLrawjQIYC85QDjQ2e7dH84PYPIj8/edit",
+      "limitations": "Natural browser/observer equivalence unproven"
+    },
+    {
+      "title": "NEXT_0014 Ω11I",
+      "scope": "Source-to-Present Witness, timing coverage, DB revision-safe future gates",
+      "result": "PREPARED",
+      "uri": "https://docs.google.com/document/d/1UTs1WKcHZrbo3HSpL6tDV9jVdMmyESf-hhJI9iQ-4vs/edit",
+      "limitations": "Not implemented or release-authorized"
+    },
+    {
+      "title": "Ω11H native source snapshot",
+      "scope": "37-gate/44-evidence source-stamped review seed",
+      "result": "SOURCE_SNAPSHOT",
+      "uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/pull/33",
+      "limitations": "Modified-time only; provider CAS revision unavailable; no signature"
+    },
+    {
+      "title": "Ω11H first successful CI",
+      "scope": "Same virtual clock + SQLite migration before documentation update",
+      "result": "PASS",
+      "uri": "https://github.com/Ivan-Pasev/fabrica-design-fabric/actions/runs/43577483797",
+      "limitations": "Earlier reviewed head d91569d21d0dcf6d0045e5fac3b1190ea7297640"
+    }
+  ]
+}
