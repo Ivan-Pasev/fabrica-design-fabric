@@ -1,7 +1,7 @@
 name: FAB.VISUAL Ω11P Scene-Bound Science and Safe IDE Packaging
 on:
   push:
-    branches: ['feature/fab-visual-omega11p-ide-science-skill']
+    branches: ['feature/fab-visual-omega11p-bound-science-ide-package']
   pull_request:
     paths:
       - 'products/fab-visual/src/adapters/interchange.mjs'
