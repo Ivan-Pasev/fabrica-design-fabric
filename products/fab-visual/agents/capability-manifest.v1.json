@@ -13,7 +13,7 @@
       "skills/fab-visual-ide/SKILL.md",
       "products/fab-visual/skills/fab-visual/SKILL.md"
     ],
-    "implementationHead": "CI_REQUIRED_CHECK_PR_40",
+    "implementationHead": "MUST_VERIFY_LATEST_EXACT_HEAD_PR_AND_CI",
     "originalAnatomy": {
       "repository": "https://github.com/wheresryan22/anatomy",
       "commit": "1482e8469b0a9e0d8cc18ea2740a01423d29ae80",
@@ -51,12 +51,12 @@
     },
     {
       "id": "si-quantitative-audit",
-      "status": "CANDIDATE_REQUIRES_EXACT_HEAD_CI",
+      "status": "IMPLEMENTED_BOUNDED_CI_TESTED",
       "scope": "declared numbers, SI dimensions, conservative uncertainty, finite-state graph"
     },
     {
       "id": "math-camera-basis",
-      "status": "CANDIDATE_REQUIRES_EXACT_HEAD_CI",
+      "status": "IMPLEMENTED_BOUNDED_CI_TESTED",
       "scope": "finite analytically orthonormal basis; not unique depth"
     },
     {
