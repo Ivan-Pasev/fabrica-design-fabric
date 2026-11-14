@@ -39,7 +39,7 @@ V = (cos(a) cos(e), sin(a) cos(e), sin(e))
 | Speed | (0,1,-1,0,0,0,0) | `m/s` |
 | Frequency | (0,0,-1,0,0,0,0) | `Hz`, `kHz` |
 
-The parser rejects unknown / offset / semantically ambiguous units rather than silently treating `°C` like kelvin, `W` like `Wh`, or `kW/h` like `kW`. This is a **dimensional-compatibility check**, not a calculus engine.
+The exact machine-readable quantity names are `POWER`, `ENERGY`, `PRESSURE`, `CURRENT`, `SPEED`, `FREQUENCY` and the remaining explicit SI-basis dimensions (not arbitrary free-text labels). The parser rejects unknown / offset / semantically ambiguous units rather than silently treating `°C` like kelvin, `W` like `Wh`, or `kW/h` like `kW`. This is a **dimensional-compatibility check**, not a calculus engine.
 
 ### Numerical balance and uncertainty
 
