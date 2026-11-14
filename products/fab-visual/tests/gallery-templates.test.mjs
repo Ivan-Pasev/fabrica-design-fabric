@@ -136,6 +136,9 @@ test('each Studio compiled in the gallery is editable with original claim bounda
    const html=assets.find(x=>x.path===t.studio_path).content;
    assert.match(html,/id="edit-apply"/);
    assert.match(html,/id="edit-undo"/);
+   assert.match(html,/id="edit-link-select"/);
+   assert.match(html,/id="edit-remove-link"/);
+   assert.match(html,/data-export="lineage"/);
    assert.match(html,/id="graph-import-file"/);
    assert.match(html,/Release HOLD|release HOLD/);
    assert.equal(sha256(html),t.html_sha256);
