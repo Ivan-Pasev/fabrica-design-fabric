@@ -2,7 +2,6 @@
  * Ω11P Source-bound numerical and finite-model evidence.
  * No independent physics, metrology, human approval or publisher authentication.
  */
-import {createHash} from 'node:crypto';
 import {assertScene} from './contract.mjs';
 import {sha256,canonicalJSON} from './provenance.mjs';
 import {getUnit,auditQuantitativeContract} from './quantitative-audit.mjs';
