@@ -81,7 +81,7 @@ test('template validator refuses real measurements and unlabelled unit values',(
  const b=clone(x.scene);b.observables[0].evidence='PASS';
  expectReject(b,x);
  const c=clone(x.scene);c.observables[0].unit='';
- expectReject(c,x,/unit must be nonempty/);
+ expectReject(c,x,/explicit unit or 1 for dimensionless/);
 });
 test('template validator refuses wrong source profile or arbitrary domain classification',()=>{
  const x=data()[2],a=clone(x.scene);a.model.source_profile='LIVE_PRODUCTION';
