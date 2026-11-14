@@ -40,7 +40,9 @@ def witness(grade="SOURCE_STATIC",frame_token="frame-7"):
         "camera_projection":evidence({"frame_event_id":frame_token,"matrix":PROJECT},grade),
         "visible_part_ids":evidence(["component"],grade),
         "viewport":evidence([1,1],grade),
-        "renderer_version":evidence("test-only",grade)
+        "renderer_version":evidence("test-only",grade),
+        "time_or_state":evidence({"t":0},"DERIVED_WITH_ASSUMPTIONS"),
+        "witness_provenance":evidence("SYNTHETIC_TEST_FIXTURE")
     }
 
 
