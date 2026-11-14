@@ -12,6 +12,8 @@ import {canonicalJSON,sha256} from './provenance.mjs';
 import {inspectorParts,inspectorMarkup,inspectorCss,inspectorRuntime} from './semantic-inspector.mjs';
 import {renderAnatomySvg,anatomySceneModel} from '../adapters/anatomy-kernel.mjs';
 import {FORMATS,exportInterchange} from '../adapters/interchange.mjs';
+import {importGraphAgainstSource} from '../adapters/graph-import.mjs';
+import {studioEditorClient} from './editor-runtime.mjs';
 
 const escapeHtml=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const safeJSON=value=>JSON.stringify(value).replace(/</g,'\\u003c').replace(/>/g,'\\u003e')
@@ -46,6 +48,7 @@ const STUDIO_STYLE=[
 '.statusbar{padding:11px 17px;border-top:1px solid #d8e1eb;color:#425974;font-size:.86rem}',
 '.export-list{display:flex;flex-wrap:wrap;gap:8px}.export-list button{font-size:.88rem}',
 '.search{width:100%;padding:11px 12px;border:1px solid #839cb3;border-radius:9px}',
+'.edit-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:10px 0}.edit-grid label{display:grid;gap:3px;font-size:.83rem}.edit-grid input,.edit-grid select{width:100%;padding:8px;border:1px solid #849bb5;border-radius:8px}.edit-actions{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}.edit-actions button{min-height:40px}#edit-status{font-size:.85rem;min-height:3em;overflow-wrap:anywhere;background:#edf4fc;border-radius:8px;padding:9px}#edit-mode{font-size:.8rem;color:#4c6076}',
 'footer{margin-top:20px;color:#4b5d72;font-size:.82rem;max-width:100ch}',
 'details{margin:10px 0}summary{cursor:pointer;font-weight:600}',
 '@media(max-width:1000px){.workbench{grid-template-columns:1fr}.sidebar{grid-template-columns:repeat(2,minmax(0,1fr))}}',
@@ -205,7 +208,22 @@ export function renderStudio(scene,{title='FAB.VISUAL Studio · local scene expl
     '<h2>Component explorer</h2><label for="component-search">Find components by ID or label</label>',
     '<input class="search" id="component-search" type="search" placeholder="Search the model" autocomplete="off">',
     '<p id="search-count" role="status"></p>'+inspectorMarkup+'</section>',
-    '<section class="sidecard"><h2>Export and interoperability</h2>',
+    '<section class="sidecard"><h2>Offline visual editor</h2>',
+    '<p>Edit layout geometry and illustrative connections, undo/redo snapshots, or import a previously exported graph. Model approval and source authority cannot change.</p>',
+    '<p id="edit-mode">Original source view</p>',
+    '<label for="edit-part">Component</label><select id="edit-part" class="search"></select>',
+    '<div class="edit-grid"><label>X<input id="edit-x" type="number" step="any"></label><label>Y<input id="edit-y" type="number" step="any"></label>',
+    '<label>Width<input id="edit-w" type="number" min="0.01" step="any"></label><label>Height<input id="edit-h" type="number" min="0.01" step="any"></label></div>',
+    '<div class="edit-actions"><button type="button" id="edit-apply">Apply layout</button><button type="button" id="edit-undo">Undo</button><button type="button" id="edit-redo">Redo</button></div>',
+    '<p id="edit-history"></p><h3>Add illustrative connection</h3>',
+    '<div class="edit-grid"><label>From<select id="edit-from"></select></label><label>To<select id="edit-to"></select></label>',
+    '<label>Flow<select id="edit-flow"></select></label></div>',
+    '<button type="button" id="edit-add-link">Add connection</button>',
+    '<h3>Import source-anchored graph</h3>',
+    '<label>Graph format<select id="graph-import-format"><option value="reactflow">XYFlow / React Flow</option><option value="cytoscape">Cytoscape.js</option></select></label>',
+    '<label>Local JSON<input class="search" id="graph-import-file" type="file" accept=".json,application/json"></label>',
+    '<p id="edit-status" role="status" aria-live="polite"></p>',
+    '</section><section class="sidecard"><h2>Export and interoperability</h2>',
     '<p>Download model-derived, evidence-bounded artifacts. The original model is not modified.</p>',
     '<div class="export-list">',
     '<button type="button" data-export="svg">SVG</button>',
@@ -221,7 +239,8 @@ export function renderStudio(scene,{title='FAB.VISUAL Studio · local scene expl
     '<footer>FAB.VISUAL · no external runtime imports · semantic graph exports are not scientific proof, real metrology, executed authorization or GPU-presented-frame attestation. All releases HOLD.</footer>',
     '</main><script type="application/json" id="fab-studio-data">'+safeJSON(bundle)+'</script>',
     '<script>'+inspectorRuntime+'</script>',
-    '<script>('+studioClient.toString()+')();</script></body></html>'
+    '<script>('+studioClient.toString()+')();</script>',
+    '<script>('+studioEditorClient.toString()+')('+importGraphAgainstSource.toString()+');</script></body></html>'
   ];
   const html=page.join('');
   return {
