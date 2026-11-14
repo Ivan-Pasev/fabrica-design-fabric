@@ -179,8 +179,8 @@ async def run(args):
     report["runtime_readout_gate"]=("PASS_INSTRUMENTED_DERIVATIVE_ONLY"
                                  if not failures else "FAIL_OR_INCONCLUSIVE")
     report["failures"]=failures
-    report["scope"]="Disposable original-vs-test-derivative browser update observations; "+
-                     "not an independently attested presented renderer frame."
+    report["scope"]=("Disposable original-vs-test-derivative browser update observations; "
+                     "not an independently attested presented renderer frame.")
     (args.output/"OMEGA11F_RUNTIME_RECEIPT.json").write_text(
       json.dumps(report,sort_keys=True,indent=2)+"\n",encoding="utf8")
     print(json.dumps({"observations":len(report["observations"]),
