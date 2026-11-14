@@ -82,9 +82,10 @@ test('reject compression and illegal flags, both central and local',()=>{
  dv.setUint16(comp.length-22-46,8,true);
  assert.throws(()=>parseProjectZip(comp),/PROJECT_IMPORT_REJECT/);
 });
-test('reject binary ZIP entries and unreviewed extra archive members',()=>{
- assert.throws(()=>zipStore([{path:'readme.txt',content:'binary\0hidden'},
-  {path:'manifest.json',content:'{}'}]).some(()=>false),/unused impossible/);
+test('reject binary or NUL characters in ZIP text even with valid CRC32',()=>{
+ const altered=built();
+ const files=altered.files.map(f=>f.path==='readme.txt'?{...f,content:'invalid\0payload'}:f);
+ assert.throws(()=>parseProjectZip(zipStore(files)),/binary or NUL/);
 });
 test('reject ZIP traversal and unknown member names even with valid CRC',()=>{
  for(const name of ['../bad.json','escape.js','source/../original.scene.json','a/b.txt']){
