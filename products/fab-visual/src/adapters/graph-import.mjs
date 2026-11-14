@@ -18,8 +18,8 @@ export function importGraphAgainstSource(envelope,format,sourceScene,expectedSou
   const point=x=>finite(x)&&Math.abs(x)<=1000000;
   const eq=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
   if(!['reactflow','cytoscape'].includes(format))err('supported imports: reactflow and cytoscape');
-  if(!object(sourceScene)||!Array.isArray(sourceScene.parts)||!Array.isArray(sourceScene.links)||!object(sourceScene.model))err('validated seed scene required');
-  if(sourceScene.parts.length>300||sourceScene.links.length>800)err('bounded source scene exceeded');
+  if(!object(sourceScene)||!Array.isArray(sourceScene.parts)||!(sourceScene.links===undefined||Array.isArray(sourceScene.links))||!object(sourceScene.model))err('validated seed scene required');
+  if(sourceScene.parts.length>300||(sourceScene.links||[]).length>800)err('bounded source scene exceeded');
   if(!str(expectedSourceDigest)||!/^sha256:[0-9a-f]{64}$/.test(expectedSourceDigest))err('source digest missing');
   if(!object(envelope)||envelope.schema!=='fab.visual.interchange.v1')err('trusted interchange envelope required; arbitrary external JSON not admitted');
   if(envelope.target!==(format==='reactflow'?'xyflow.reactflow.nodes-edges.v1':'cytoscape.elements.v1'))err('interchange target mismatch');
@@ -85,7 +85,7 @@ export function importGraphAgainstSource(envelope,format,sourceScene,expectedSou
     const link={from,to,flow,...(fp===null?{}:{fromPort:fp}),...(tp===null?{}:{toPort:tp})};
     newLinks.push(link);
   }
-  const edgeChanged=!eq(newLinks,sourceScene.links);
+  const edgeChanged=!eq(newLinks,sourceScene.links||[]);
   const changed=changedParts.length>0||edgeChanged;
   const result={
     ...sourceScene,
