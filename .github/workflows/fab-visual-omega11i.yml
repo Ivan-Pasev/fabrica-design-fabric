@@ -1,0 +1,154 @@
+name: FAB.VISUAL Omega11I source-to-present boundary and v0.3 DB
+on:
+  push:
+    branches: ['feature/fab-visual-omega11i-render-boundary-db-v03']
+  pull_request:
+    paths:
+      - 'products/fab-visual/db/reconcile_native_v03.py'
+      - 'products/fab-visual/db/native_snapshot_2026-11-14_v0.3.json'
+      - 'products/fab-visual/scripts/omega11i-*.py'
+      - 'products/fab-visual/tests/test_omega11i_*.py'
+      - 'products/fab-visual/docs/OMEGA11I_*.md'
+      - '.github/workflows/fab-visual-omega11i.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source-locked-render-boundary-and-db:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 28
+    steps:
+      - name: Checkout exact candidate HEAD
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: fabrica
+          persist-credentials: false
+      - name: Checkout immutable original MIT Anatomy commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: wheresryan22/anatomy
+          ref: 1482e8469b0a9e0d8cc18ea2740a01423d29ae80
+          path: original
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Independently lock original 173 Git objects
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/omega11i
+          git -C fabrica rev-parse HEAD > evidence/omega11i/review-head.txt
+          git -C original rev-parse HEAD > evidence/omega11i/original-head.txt
+          python3 fabrica/products/fab-visual/scripts/omega10-upstream-lock.py \
+            --root original --commit 1482e8469b0a9e0d8cc18ea2740a01423d29ae80 \
+            --count 173 --output evidence/omega11i/173-source-lock.json \
+            > evidence/omega11i/173-source-summary.json
+          test -z "$(git -C original status --porcelain)"
+          { python3 --version; python3 -c 'import sqlite3;print("SQLite",sqlite3.sqlite_version)'; uname -a; } \
+            > evidence/omega11i/environment.txt
+      - name: Build source-backed timing/renderer coverage and strict GPU-present nonadmission
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 fabrica/products/fab-visual/scripts/omega11i-render-boundary.py \
+            --original original --output evidence/omega11i/SOURCE_RENDER_BOUNDARY.json \
+            > evidence/omega11i/source-audit-summary.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('evidence/omega11i/SOURCE_RENDER_BOUNDARY.json').read_text())
+          assert r['pass']=='PASS_SOURCE_CALLSITE_INVENTORY_ONLY'
+          assert r['actual_native_render_present']=='NOT_ADMITTED'
+          assert r['unmodified_browser_equivalence']=='NOT_ADMITTED'
+          assert r['physical_geometry']=='NOT_RUN'
+          assert r['sources']['raptor']['source_apis']['setTimeout']['count']>=1
+          assert r['sources']['raptor']['source_apis']['D.camera']['count']>=1
+          assert r['sources']['turning']['source_apis']['performance.now']['count']>=2
+          assert r['sources']['turning']['source_apis']['Date.now']['count']>=1
+          print('PINNED_SOURCE_RENDER_TIMING_INVENTORY_PASS; GPU_PRESENT_NOT_ADMITTED')
+          PY
+      - name: Fetch exact verified Ω11H v0.2 immutable SQLite source
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/14106807604/zip" \
+            > evidence/omega11i/pr33-verified-source-artifact.zip
+          mkdir -p previous
+          unzip -p evidence/omega11i/pr33-verified-source-artifact.zip FAB_VISUAL_OMEGA11H_v0.2.sqlite \
+            > previous/FAB_VISUAL_OMEGA11H_v0.2.sqlite
+          echo "c54ee65951058f7ada58ce61e6cf3807f605620b244461808596677e6dce360e  previous/FAB_VISUAL_OMEGA11H_v0.2.sqlite" | sha256sum -c -
+          python3 - <<'PY'
+          import sqlite3
+          with sqlite3.connect('previous/FAB_VISUAL_OMEGA11H_v0.2.sqlite') as db:
+              assert db.execute('PRAGMA integrity_check').fetchone()[0]=='ok'
+              assert db.execute('PRAGMA foreign_key_check').fetchall()==[]
+              assert db.execute('SELECT COUNT(*) FROM gate_events').fetchone()[0]==37
+              assert db.execute('SELECT COUNT(*) FROM evidence').fetchone()[0]==44
+              assert db.execute('SELECT COUNT(*) FROM checkpoint_events').fetchone()[0]==8
+          print('Ω11H_SOURCE_DB_37_44_8_VERIFIED')
+          PY
+      - name: Run all Ω11I source-audit and exact-base reconciliation adversarial checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          export FAB_VISUAL_V02_BASE="$PWD/previous/FAB_VISUAL_OMEGA11H_v0.2.sqlite"
+          python3 -m unittest discover -s fabrica/products/fab-visual/tests \
+            -p 'test_omega11i_*.py' -v 2>&1 | tee evidence/omega11i/adversarial-tests.log
+          if grep -E '(skipped=|FAILED|ERROR:)' evidence/omega11i/adversarial-tests.log; then
+            echo "Unexpected skipped or failed Ω11I tests" >&2
+            exit 2
+          fi
+      - name: Append six native gates and eight evidence entries on a fresh SQLite copy
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 fabrica/products/fab-visual/db/reconcile_native_v03.py \
+            --input previous/FAB_VISUAL_OMEGA11H_v0.2.sqlite \
+            --output evidence/omega11i/FAB_VISUAL_OMEGA11I_v0.3.sqlite \
+            --receipt evidence/omega11i/DB_V03_FINAL_RECEIPT.json \
+            > evidence/omega11i/v03-db-summary.json
+          python3 - <<'PY'
+          import hashlib,json,sqlite3
+          from pathlib import Path
+          path=Path('evidence/omega11i/FAB_VISUAL_OMEGA11I_v0.3.sqlite')
+          r=json.loads(Path('evidence/omega11i/DB_V03_FINAL_RECEIPT.json').read_text())
+          assert hashlib.sha256(path.read_bytes()).hexdigest()==r['candidate_db_sha256']
+          assert r['historical_gates_preserved']==37 and r['new_gates']==6 and r['total_gates']==43
+          assert r['historical_evidence_preserved']==44 and r['new_evidence']==8 and r['total_evidence']==52
+          assert r['checkpoint_ids_preserved']==8
+          assert r['authority']=='NATIVE_SHEET_AUTHORITATIVE'
+          assert r['provider_revision']=='NOT_AVAILABLE' and r['human_signature']=='NOT_PRESENT'
+          assert r['live_sync']=='NOT_IMPLEMENTED' and r['release']=='HOLD'
+          with sqlite3.connect(path) as db:
+              assert dict(db.execute('SELECT status,total FROM gate_counts'))=={
+                  'PASS':23,'FAIL':6,'NOT_RUN':11,'HOLD':1,'INCONCLUSIVE':2}
+              assert db.execute('SELECT count(*) FROM checkpoint_events').fetchone()[0]==8
+              assert db.execute('SELECT count(*) FROM gate_events').fetchone()[0]==43
+              assert db.execute('SELECT count(*) FROM evidence').fetchone()[0]==52
+              assert db.execute('SELECT count(*) FROM ci_runs').fetchone()[0]==3
+              assert db.execute('PRAGMA foreign_key_check').fetchall()==[]
+              assert db.execute('PRAGMA integrity_check').fetchone()[0]=='ok'
+          print('APPEND_ONLY_V03_RECONCILIATION_PASS; FINAL_SHA_PASS')
+          PY
+          test -z "$(git -C original status --porcelain)"
+      - name: Seal SHA256 provenance evidence
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/omega11i
+          git -C original status --porcelain > evidence/omega11i/original-status-final.txt
+          find evidence/omega11i -type f ! -name SHA256SUMS.txt -print0 \
+            | sort -z | xargs -0 -r sha256sum > evidence/omega11i/SHA256SUMS.txt
+          sha256sum -c evidence/omega11i/SHA256SUMS.txt
+      - name: Preserve evidence only - no merge/deploy
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: fab-visual-omega11i-source-render-db-v03
+          path: evidence/omega11i/
+          retention-days: 30
+          if-no-files-found: warn
