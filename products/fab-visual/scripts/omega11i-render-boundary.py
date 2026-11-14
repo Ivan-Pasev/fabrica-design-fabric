@@ -78,7 +78,7 @@ def analyze_source(name,raw):
     if name=="raptor":
         if occurrences["requestAnimationFrame"]["count"]<2 or occurrences["IntersectionObserver"]["count"]<1 or occurrences["setTimeout"]["count"]<1 or occurrences["D.camera"]["count"]<1:
             raise ValueError("source call graph changed outside audited minimal model")
-        if "G.layer(" not in text or "stage.style.transform" not in text:
+        if "glLayer(" not in text or "stage.style.transform" not in text:
             raise ValueError("renderer geometry/gl source anchor missing")
         context="GL_SHADER_LAYERS_PLUS_DOM_SVG_AND_STAGE_CSS"
     else:
