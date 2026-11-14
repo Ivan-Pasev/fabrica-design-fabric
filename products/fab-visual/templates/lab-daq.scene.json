@@ -1,0 +1,260 @@
+{
+  "schema": "fab.scene.v0.2",
+  "id": "gilc-laboratory-synthetic-daq",
+  "representation": "ANALOGICAL",
+  "model": {
+    "id": "fab.visual.omega11l.laboratory",
+    "revision": "0.6.0-alpha.0",
+    "authority": "FAB.VISUAL Ω11L first-party synthetic fixture — no external measurements or authorization",
+    "synthetic": true,
+    "source_profile": "FIRST_PARTY_SYNTHETIC_SCENE",
+    "units": "illustrative canvas coordinates; not metric distance",
+    "trace": [
+      "TEMPLATE_SOURCE_ONLY",
+      "NO_LIVE_DEVICE_OR_HOST"
+    ]
+  },
+  "template": {
+    "schema": "fab.visual.domain-template.v1",
+    "domain": "laboratory",
+    "title": "GILC · Experimental DAQ Topology",
+    "origin": "FIRST_PARTY_SYNTHETIC",
+    "licensing": "FAB.VISUAL first-party MIT source",
+    "source_status": "NOT_MEASURED",
+    "scope": "TOPOLOGY_ILLUSTRATION_ONLY",
+    "all_numeric_observables_are_synthetic": true,
+    "real_hardware_or_host_attestation": "NOT_RUN"
+  },
+  "parts": [
+    {
+      "id": "sample",
+      "label": "Synthetic sample inlet",
+      "x": 35,
+      "y": 175,
+      "w": 160,
+      "h": 88,
+      "ports": [
+        {
+          "id": "material-out",
+          "flow": "material"
+        }
+      ]
+    },
+    {
+      "id": "vessel",
+      "label": "Isolation chamber",
+      "x": 290,
+      "y": 175,
+      "w": 160,
+      "h": 88,
+      "ports": [
+        {
+          "id": "sample-in",
+          "flow": "material"
+        },
+        {
+          "id": "pump-in",
+          "flow": "material"
+        },
+        {
+          "id": "optical-out",
+          "flow": "signal"
+        },
+        {
+          "id": "pressure-out",
+          "flow": "signal"
+        },
+        {
+          "id": "isolation-in",
+          "flow": "control"
+        }
+      ]
+    },
+    {
+      "id": "pressure",
+      "label": "Pressure transducer",
+      "x": 555,
+      "y": 70,
+      "w": 165,
+      "h": 86,
+      "ports": [
+        {
+          "id": "pressure-in",
+          "flow": "signal"
+        },
+        {
+          "id": "daq-out",
+          "flow": "signal"
+        }
+      ]
+    },
+    {
+      "id": "optical",
+      "label": "Optical detector",
+      "x": 555,
+      "y": 285,
+      "w": 165,
+      "h": 86,
+      "ports": [
+        {
+          "id": "optical-in",
+          "flow": "signal"
+        },
+        {
+          "id": "daq-out",
+          "flow": "signal"
+        }
+      ]
+    },
+    {
+      "id": "daq",
+      "label": "Acquisition controller",
+      "x": 815,
+      "y": 175,
+      "w": 190,
+      "h": 91,
+      "ports": [
+        {
+          "id": "pressure-in",
+          "flow": "signal"
+        },
+        {
+          "id": "optical-in",
+          "flow": "signal"
+        }
+      ]
+    },
+    {
+      "id": "pump",
+      "label": "Vacuum pump (schematic)",
+      "x": 295,
+      "y": 445,
+      "w": 170,
+      "h": 86,
+      "ports": [
+        {
+          "id": "pump-out",
+          "flow": "material"
+        },
+        {
+          "id": "shutdown-in",
+          "flow": "control"
+        }
+      ]
+    },
+    {
+      "id": "interlock",
+      "label": "Safety interlock",
+      "x": 805,
+      "y": 445,
+      "w": 190,
+      "h": 86,
+      "ports": [
+        {
+          "id": "vessel-close",
+          "flow": "control"
+        },
+        {
+          "id": "pump-shutdown",
+          "flow": "control"
+        }
+      ]
+    }
+  ],
+  "links": [
+    {
+      "from": "sample",
+      "to": "vessel",
+      "flow": "material",
+      "fromPort": "material-out",
+      "toPort": "sample-in"
+    },
+    {
+      "from": "pump",
+      "to": "vessel",
+      "flow": "material",
+      "fromPort": "pump-out",
+      "toPort": "pump-in"
+    },
+    {
+      "from": "vessel",
+      "to": "pressure",
+      "flow": "signal",
+      "fromPort": "pressure-out",
+      "toPort": "pressure-in"
+    },
+    {
+      "from": "vessel",
+      "to": "optical",
+      "flow": "signal",
+      "fromPort": "optical-out",
+      "toPort": "optical-in"
+    },
+    {
+      "from": "pressure",
+      "to": "daq",
+      "flow": "signal",
+      "fromPort": "daq-out",
+      "toPort": "pressure-in"
+    },
+    {
+      "from": "optical",
+      "to": "daq",
+      "flow": "signal",
+      "fromPort": "daq-out",
+      "toPort": "optical-in"
+    },
+    {
+      "from": "interlock",
+      "to": "vessel",
+      "flow": "control",
+      "fromPort": "vessel-close",
+      "toPort": "isolation-in"
+    },
+    {
+      "from": "interlock",
+      "to": "pump",
+      "flow": "control",
+      "fromPort": "pump-shutdown",
+      "toPort": "shutdown-in"
+    }
+  ],
+  "observables": [
+    {
+      "id": "illustrative_sensor_channels",
+      "value": 2,
+      "unit": "1",
+      "source": "FAB.VISUAL Ω11L first-party synthetic fixture — no external measurements or authorization",
+      "evidence": "NOT_RUN"
+    },
+    {
+      "id": "pressure_reading",
+      "value": "NOT_MEASURED",
+      "unit": "Pa",
+      "source": "FAB.VISUAL Ω11L first-party synthetic fixture — no external measurements or authorization",
+      "evidence": "NOT_RUN"
+    },
+    {
+      "id": "dose_or_exposure",
+      "value": "NOT_ASSESSED",
+      "unit": "Sv",
+      "source": "FAB.VISUAL Ω11L first-party synthetic fixture — no external measurements or authorization",
+      "evidence": "NOT_RUN"
+    },
+    {
+      "id": "metrology_calibrated",
+      "value": false,
+      "source": "FAB.VISUAL Ω11L first-party synthetic fixture — no external measurements or authorization",
+      "evidence": "NOT_RUN"
+    }
+  ],
+  "audit": {
+    "empirical_validation": "NOT_RUN",
+    "real_host_verification": "NOT_RUN",
+    "scientific_admission": "NOT_RUN"
+  },
+  "claim": {
+    "status": "EXPLANATORY",
+    "interpretation": "Synthetic experimental instrumentation and interlock topology, not a constructed apparatus, measured experiment, laser-system safety design, sensor calibration, exposure determination, or physical reactor validation."
+  }
+}
