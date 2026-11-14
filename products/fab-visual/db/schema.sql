@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS checkpoint_events(
  source_head TEXT NOT NULL CHECK(length(source_head)=40),
  source_html_sha256 TEXT NOT NULL CHECK(length(source_html_sha256)=64),
  derivative_sha256 TEXT NOT NULL CHECK(length(derivative_sha256)=64),
- mode TEXT NOT NULL CHECK(mode IN ('NOOP_DERIVATIVE','OBSERVING_DERIVATIVE','CONTROLLED_FIXTURE')),
+ mode TEXT NOT NULL CHECK(mode IN ('MINIMAL_DERIVATIVE','OBSERVING_DERIVATIVE','CONTROLLED_FIXTURE')),
  applied_update_ordinal INTEGER NOT NULL CHECK(applied_update_ordinal>0),
  source_state_sha256 TEXT CHECK(source_state_sha256 IS NULL OR length(source_state_sha256)=64),
  frame_attestation TEXT NOT NULL CHECK(frame_attestation='NOT_ADMITTED'),
