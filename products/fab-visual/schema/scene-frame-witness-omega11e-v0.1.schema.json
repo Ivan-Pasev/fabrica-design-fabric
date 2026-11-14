@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://g-i-l-c.com/fab-visual/schema/scene-frame-witness-omega11e-v0.1.json",
+  "title": "FAB.VISUAL Ω11E SceneFrameWitness v0.1 — declaration schema (NOT independent provenance)",
+  "description": "A syntactically valid declared witness does not constitute a verified renderer frame. Independent runtime attestation is not implemented in Ω11E.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "source_commit",
+    "source_html_sha256",
+    "model_sha256",
+    "scene_id",
+    "frame_event_id",
+    "camera_pose",
+    "camera_projection",
+    "time_or_state",
+    "visible_part_ids",
+    "viewport",
+    "renderer_version",
+    "witness_provenance"
+  ],
+  "properties": {
+    "source_commit": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/evidence"
+        },
+        {
+          "properties": {
+            "value": {
+              "const": "1482e8469b0a9e0d8cc18ea2740a01423d29ae80"
+            }
+          }
+        }
+      ]
+    },
+    "source_html_sha256": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/evidence"
+        },
+        {
+          "properties": {
+            "value": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        }
+      ]
+    },
+    "model_sha256": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/evidence"
+        },
+        {
+          "properties": {
+            "value": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        }
+      ]
+    },
+    "scene_id": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/evidence"
+        },
+        {
+          "properties": {
+            "value": {
+              "enum": [
+                "raptor-light",
+                "turning-light"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "frame_event_id": {
+      "$ref": "#/$defs/evidence"
+    },
+    "camera_pose": {
+      "$ref": "#/$defs/evidence"
+    },
+    "camera_projection": {
+      "$ref": "#/$defs/evidence"
+    },
+    "time_or_state": {
+      "$ref": "#/$defs/evidence"
+    },
+    "visible_part_ids": {
+      "$ref": "#/$defs/evidence"
+    },
+    "viewport": {
+      "$ref": "#/$defs/evidence"
+    },
+    "renderer_version": {
+      "$ref": "#/$defs/evidence"
+    },
+    "witness_provenance": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/evidence"
+        },
+        {
+          "properties": {
+            "value": {
+              "enum": [
+                "SYNTHETIC_TEST_FIXTURE",
+                "UNATTESTED_SOURCE_DATA",
+                "DECLARED_RUNTIME_OBSERVATION"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "grade"
+      ],
+      "properties": {
+        "grade": {
+          "enum": [
+            "SOURCE_STATIC",
+            "RUNTIME_READBACK",
+            "DERIVED_WITH_ASSUMPTIONS",
+            "NOT_AVAILABLE"
+          ]
+        },
+        "value": {}
+      }
+    }
+  }
+}
