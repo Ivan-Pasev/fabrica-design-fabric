@@ -49,6 +49,15 @@ export function visualDiff(source,derived,sourceDigest){
      !eq(source.claim,derived.claim)||!eq(source.observables||[],derived.observables||[])||
      !eq(source.audit||{},derived.audit||{}))
     fail('source claim, observables or representation mutation');
+  const omit=new Set(['parts','links','model','id','visualEdit','fork']);
+  const structural=x=>Object.fromEntries(Object.entries(x).filter(([key])=>!omit.has(key)));
+  if(!eq(structural(source),structural(derived)))fail('source metadata or hidden authority field mutation');
+  if(derived.visualEdit&&
+     (derived.visualEdit.schema!=='fab.visual.visual-edit.v1'||
+      derived.visualEdit.sourceDigest!==sourceDigest||
+      derived.visualEdit.provenance!=='DERIVED_PRESENTATION_ONLY_NOT_MODEL_AUTHORITY'||
+      derived.visualEdit.release!=='HOLD'))
+      fail('untrusted visual edit provenance');
   const isFork=derived.fork!==undefined;
   if(!isFork){
     if(source.id!==derived.id||!eq(source.model,derived.model))fail('model authority drift');
@@ -219,7 +228,7 @@ export function projectFiles(source,current,history,sourceDigest,slug,diffFn,for
       schema:'fab.visual.local-edit-history.v1',sourceDigest,
       snapshots:history.map((s,i)=>({ordinal:i,scene:s})),
       publisherSignature:'NOT_PRESENT',release:'HOLD'})},
-    {path:'README.txt',content:
+    {path:'readme.txt',content:
       'FAB.VISUAL portable visual project (offline)\n'+
       'Original source remains unchanged. Derived scene is a VISUAL fork.\n'+
       'SHA-256 source digest is content correspondence, NOT publisher authentication.\n'+
