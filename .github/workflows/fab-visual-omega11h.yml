@@ -1,0 +1,162 @@
+name: FAB.VISUAL Omega11H virtual RAF and DB reconciliation
+on:
+  push:
+    branches: ['feature/fab-visual-omega11h-virtual-raf-db-reconcile']
+  pull_request:
+    paths:
+      - 'products/fab-visual/db/reconcile_native_v02.py'
+      - 'products/fab-visual/db/native_snapshot_2026-11-14_v0.2.json'
+      - 'products/fab-visual/scripts/omega11h-virtual-raf.py'
+      - 'products/fab-visual/tests/test_omega11h_*.py'
+      - '.github/workflows/fab-visual-omega11h.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source-checkpoint-db:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - name: Checkout exact review source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: fabrica
+          persist-credentials: false
+      - name: Checkout immutable original MIT Anatomy
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: wheresryan22/anatomy
+          ref: 1482e8469b0a9e0d8cc18ea2740a01423d29ae80
+          path: original
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Exact source lock before derivative creation
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/omega11h
+          git -C fabrica rev-parse HEAD > evidence/omega11h/head.txt
+          python3 fabrica/products/fab-visual/scripts/omega10-upstream-lock.py \
+            --root original --commit 1482e8469b0a9e0d8cc18ea2740a01423d29ae80 \
+            --count 173 --output evidence/omega11h/173-source-lock.json \
+            > evidence/omega11h/source-lock-summary.json
+          test -z "$(git -C original status --porcelain)"
+      - name: Fetch immutable exact Ω11G source artifact with read-only actions token
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/14105244206/zip" \
+            > evidence/omega11h/pr32-source-artifact.zip
+          mkdir -p previous
+          unzip -p evidence/omega11h/pr32-source-artifact.zip FAB_VISUAL_CENTRAL_v0.1.sqlite \
+            > previous/FAB_VISUAL_OMEGA11G_FINAL.sqlite
+          echo "c1d0a1293547183d4f22d1ee7d3b1026954c7a28ad066095de275e988267e693  previous/FAB_VISUAL_OMEGA11G_FINAL.sqlite" | sha256sum -c -
+          python3 - <<'PY'
+          import sqlite3
+          with sqlite3.connect('previous/FAB_VISUAL_OMEGA11G_FINAL.sqlite') as c:
+              assert c.execute('PRAGMA integrity_check').fetchone()[0]=='ok'
+              assert c.execute('SELECT COUNT(*) FROM checkpoint_events').fetchone()[0]==8
+              assert c.execute('SELECT COUNT(*) FROM gate_events').fetchone()[0]==32
+              assert c.execute('SELECT COUNT(*) FROM evidence').fetchone()[0]==35
+          print('ORIGINAL_OMEGA11G_DB_EIGHT_CHECKPOINTS_VERIFIED')
+          PY
+      - name: Execute source and v0.2 adversarial tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s fabrica/products/fab-visual/tests \
+            -p 'test_omega11h_*.py' -v 2>&1 | tee evidence/omega11h/adversarial-tests.log
+      - name: Reconcile 37 source gates and 44 evidence into copy only
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 fabrica/products/fab-visual/db/reconcile_native_v02.py \
+            --input previous/FAB_VISUAL_OMEGA11G_FINAL.sqlite \
+            --output evidence/omega11h/FAB_VISUAL_OMEGA11H_v0.2.sqlite \
+            --receipt evidence/omega11h/RECONCILIATION_RECEIPT.json \
+            > evidence/omega11h/reconcile-summary.json
+          python3 - <<'PY'
+          import json,sqlite3,hashlib
+          from pathlib import Path
+          p=Path('evidence/omega11h/FAB_VISUAL_OMEGA11H_v0.2.sqlite')
+          r=json.loads(Path('evidence/omega11h/RECONCILIATION_RECEIPT.json').read_text())
+          assert hashlib.sha256(p.read_bytes()).hexdigest()==r['candidate_db_sha256']
+          assert r['checkpoint_ids_preserved']==8
+          assert r['new_gates']==5 and r['new_evidence']==9
+          assert r['human_signature']=='NOT_PRESENT' and r['provider_revision']=='NOT_AVAILABLE'
+          assert r['live_sync']=='NOT_IMPLEMENTED' and r['release']=='HOLD'
+          with sqlite3.connect(p) as c:
+              assert dict(c.execute('SELECT status,total FROM gate_counts'))=={'PASS':19,'FAIL':6,'NOT_RUN':10,'HOLD':1,'INCONCLUSIVE':1}
+              assert c.execute('SELECT COUNT(*) FROM checkpoint_events').fetchone()[0]==8
+              assert c.execute('SELECT COUNT(*) FROM gate_events').fetchone()[0]==37
+              assert c.execute('SELECT COUNT(*) FROM evidence').fetchone()[0]==44
+              assert c.execute('PRAGMA integrity_check').fetchone()[0]=='ok'
+              assert c.execute('PRAGMA foreign_key_check').fetchall()==[]
+          print('EXACT_OMEGA11G_DB_APPEND_ONLY_OMEGA11H_V02_PASS')
+          PY
+      - name: Prepare exact source-locked minimal/observing derivatives
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp -a original derivative-minimal
+          cp -a original derivative-observing
+          python3 fabrica/products/fab-visual/scripts/omega11g-checkpoint-derivative.py \
+            --original original --minimal derivative-minimal --observing derivative-observing \
+            --receipt evidence/omega11h/DERIVATIVE_PROVENANCE.json \
+            > evidence/omega11h/derivative-summary.json
+          test -z "$(git -C original status --porcelain)"
+      - name: Install pinned Chromium test tooling
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --disable-pip-version-check 'playwright==1.57.0'
+          .venv/bin/python -m playwright install --with-deps chromium
+      - name: Execute 12 fully fresh three-step synthetic-RAF browser replays
+        shell: bash
+        run: |
+          set -euo pipefail
+          .venv/bin/python fabrica/products/fab-visual/scripts/omega11h-virtual-raf.py \
+            --original original --minimal derivative-minimal --observing derivative-observing \
+            --manifest evidence/omega11h/DERIVATIVE_PROVENANCE.json \
+            --output evidence/omega11h/clock \
+            > evidence/omega11h/clock-summary.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path('evidence/omega11h/clock/OMEGA11H_CLOCK_RECEIPT.json').read_text())
+          assert len(d['observations'])==12
+          assert d['source_applied_ordinal_gate']=='PASS_TEST_ONLY'
+          assert d['normal_browser_runtime_equivalence']=='NOT_ESTABLISHED'
+          assert d['observer_nonperturbation']=='NOT_ESTABLISHED'
+          assert d['gpu_presented_frame']=='NOT_ADMITTED'
+          assert d['real_mesh_depth']=='NOT_RUN' and d['release']=='HOLD'
+          assert all(x['clock_grade']=='PASS_TEST_ONLY_CLOCK_DRIVER' for x in d['observations'])
+          for x in d['controlled_state_comparisons']:
+              print('OBSERVED',x['scene'],x['observed_state_repeatability'],
+                    'DOM',x['minimal_vs_observed_stage_dom'],
+                    'PIXELS',x['minimal_vs_observed_screenshots'])
+          print('TEST_ONLY_SYNTHETIC_CLOCK_CONTROL_PASS; ACTUAL_RENDERER_NOT_ADMITTED')
+          PY
+          test -z "$(git -C original status --porcelain)"
+      - name: SHA256 evidence ledger after all attempted steps
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git -C original status --porcelain > evidence/omega11h/original-status-final.txt
+          find evidence/omega11h -type f ! -name SHA256SUMS.txt -print0 \
+            | sort -z | xargs -0 -r sha256sum > evidence/omega11h/SHA256SUMS.txt
+          sha256sum -c evidence/omega11h/SHA256SUMS.txt
+      - name: Archive research receipts, not a release
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: fab-visual-omega11h-raf-db-reconcile
+          path: evidence/omega11h/
+          if-no-files-found: warn
+          retention-days: 30
