@@ -1,3 +1,11 @@
+## v0.8.0-alpha.0 — Ω11N Defended ZIP Project Import and Local Revision Replay
+
+- Added real browser-only `.zip` project opener. Enforces canonical six-file ZIP STORE directory with CRC32, exact UTF-8 names, bounded entry sizes, no compression/decompression, no unsafe paths or additional payloads.
+- Added Web Crypto SHA-256 check of the original scene anchored to the standalone Studio's embedded source digest, plus byte-for-byte manifest, source, fork, diff, history and readme regeneration.
+- Added local revision-card gallery, source-versus-revision previews, previous/next buttons and explicit apply; failed imports preserve the current editor state.
+- Added 22 Node adversarial/functional checks and independent Chromium tests for all three domain Studios, including replay, foreign-template rejection and CRC corruption rejection.
+- Original MIT Anatomy source and host permissions unchanged; no DB migration, scientific model authority transfer, publisher signature or production release. HOLD.
+
 ## v0.7.0-alpha.0 — Ω11M Source Forks, Visual Diff and Portable Projects
 
 - Added visual-only derived SceneIR forks with distinct ID/revision, pinned source ancestry, preserved claims and source authority.
