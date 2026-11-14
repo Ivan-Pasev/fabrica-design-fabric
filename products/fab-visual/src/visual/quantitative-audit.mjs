@@ -74,6 +74,10 @@ export function auditQuantitativeContract(input){
   if(!input||input.schema!=='fab.visual.quantitative.v1'||
      input.scope!=='SOURCE_DEFINED_NUMERICAL_CONSISTENCY_ONLY')
     fail('exact quantitative schema and nonphysical scope required');
+  if(Object.keys(input).some(k=>!['schema','scope','source','balances','logic'].includes(k)))
+    fail('unreviewed top-level claims or fields forbidden');
+  if(Object.keys(input.source||{}).some(k=>!['id','kind'].includes(k)))
+    fail('unknown source authority fields forbidden');
   if(!Array.isArray(input.balances)||input.balances.length<1||input.balances.length>24)
     fail('1–24 explicit numerical balances required');
   if(!input.source||typeof input.source.id!=='string'||input.source.id.length>250||
@@ -82,6 +86,8 @@ export function auditQuantitativeContract(input){
   const ids=new Set(),results=[];
   for(const b of input.balances){
     if(!identifier(b?.id)||ids.has(b.id))fail('unique bounded balance IDs required');
+    if(Object.keys(b).some(k=>!['id','dimension','terms','tolerance'].includes(k)))
+      fail('unknown numerical balance claim field');
     ids.add(b.id);
     if(!Object.hasOwn(DIM,b.dimension))fail('unknown expected SI dimension');
     if(!Array.isArray(b.terms)||b.terms.length<2||b.terms.length>40)
@@ -95,8 +101,10 @@ export function auditQuantitativeContract(input){
     const termIds=new Set(),provenance=[];
     for(const t of b.terms){
       if(!identifier(t?.id)||termIds.has(t.id))fail('unique bounded term IDs required');
+      if(Object.keys(t).some(k=>!['id','value','unit','direction','uncertainty','source'].includes(k)))
+        fail('unknown term authority field');
       termIds.add(t.id);
-      if(!float(t.value)||!['IN','OUT'].includes(t.direction))
+      if(!float(t.value)||t.value<0||!['IN','OUT'].includes(t.direction))
         fail('finite signed contributions with IN/OUT required');
       const u=getUnit(t.unit);
       if(u.dimension!==b.dimension)fail('incommensurate unit: '+t.id);
