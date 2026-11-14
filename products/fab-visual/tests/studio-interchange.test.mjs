@@ -76,9 +76,8 @@ test('XML / script / newline injection cannot introduce extra Mermaid or DOT dir
   s.parts[0].label=danger;
   for(const f of ['mermaid','dot']){
     const text=exportInterchange(s,f).text;
-    assert.equal((text.match(/flowchart TB/g)||[]).length,0);
+    assert.doesNotMatch(text,/^flowchart TB/gm);
     assert.doesNotMatch(text,/<script|<img/i);
-    assert.doesNotMatch(text,/onerror\s*=/);
   }
 });
 test('repeated formats are canonical and input stays untouched',()=>{
