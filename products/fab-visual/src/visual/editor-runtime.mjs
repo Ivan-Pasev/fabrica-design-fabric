@@ -5,7 +5,7 @@
  *
  * Pure function body is embedded into the generated standalone HTML.
  */
-export function studioEditorClient(importGraphAgainstSource){
+export function studioEditorClient(importGraphAgainstSource,visualDiff,forkVisualScene,zipStore,projectFiles){
   'use strict';
   const data=JSON.parse(document.getElementById('fab-studio-data').textContent);
   const base=structuredClone(data.scene);
@@ -17,6 +17,13 @@ export function studioEditorClient(importGraphAgainstSource){
   const flow=document.getElementById('edit-flow');
   const linkSelect=document.getElementById('edit-link-select');
   const removeLink=document.getElementById('edit-remove-link');
+  const canvasConnect=document.getElementById('edit-canvas-connect');
+  const canvasStatus=document.getElementById('edit-canvas-status');
+  const forkSlug=document.getElementById('edit-fork-slug');
+  const diffToggle=document.getElementById('edit-diff-toggle');
+  const diffPanel=document.getElementById('edit-diff');
+  const revision=document.getElementById('edit-revision');
+  let connectMode=false,connectorOrigin=null;
   const fieldIds=['edit-x','edit-y','edit-w','edit-h'];
   const fields=fieldIds.map(id=>document.getElementById(id));
   const undo=document.getElementById('edit-undo'),redo=document.getElementById('edit-redo');
@@ -66,8 +73,7 @@ export function studioEditorClient(importGraphAgainstSource){
        JSON.stringify(scene.claim)!==JSON.stringify(base.claim))
       throw Error('Scientific/authorization model data cannot change');
   }
-  function edited(svgMode){
-    const s=snapshot();
+  function edited(s=snapshot()){
     const ns='http://www.w3.org/2000/svg',el=(name,attrs={})=>{
       const x=document.createElementNS(ns,name);
       for(const [k,v] of Object.entries(attrs))x.setAttribute(k,String(v));
@@ -102,16 +108,79 @@ export function studioEditorClient(importGraphAgainstSource){
     if([...linkSelect.options].some(option=>option.value===selected))linkSelect.value=selected;
     removeLink.disabled=linkSelect.options.length===0;
   }
+  function syncRevisionChoices(){
+    const wanted=String(index);
+    revision.replaceChildren();
+    for(const [i,s] of timeline.entries()){
+      const suffix=i===index?' (current)':'';
+      selectOption(revision,String(i),'Snapshot '+(i+1)+suffix);
+    }
+    revision.value=wanted;
+  }
+  function element(tag,className,value){
+    const node=document.createElement(tag);
+    if(className)node.className=className;
+    if(value!==undefined)node.textContent=value;
+    return node;
+  }
+  function presentDiff(){
+    if(diffPanel.hidden)return;
+    const ordinal=Number(revision.value);
+    const proposed=timeline[ordinal]||snapshot();
+    const report=visualDiff(base,proposed,data.sourceDigest);
+    diffPanel.replaceChildren();
+    diffPanel.appendChild(element('h4','', 'Source versus revision '+(ordinal+1)+' · VISUAL ONLY'));
+    const summary=element('p','',
+      report.move.length+' moved · '+report.resize.length+' resized · '+
+      report.addedLinks.length+' added links · '+report.removedLinks.length+
+      ' removed links · RELEASE HOLD');
+    diffPanel.appendChild(summary);
+    const pair=element('div','diff-pair');
+    for(const [caption,sc] of [['Original source',base],['Selected local revision',proposed]]){
+      const figure=element('figure','diff-panel');
+      figure.appendChild(element('figcaption','',caption));
+      figure.appendChild(edited(sc));
+      pair.appendChild(figure);
+    }
+    diffPanel.appendChild(pair);
+    const descriptions=[];
+    for(const move of report.move)descriptions.push(move.id+' moved from ('+move.from.x+','+move.from.y+') to ('+move.to.x+','+move.to.y+')');
+    for(const v of report.resize)descriptions.push(v.id+' resized from '+v.from.w+'×'+v.from.h+' to '+v.to.w+'×'+v.to.h);
+    for(const link of report.addedLinks)descriptions.push('Added '+link.flow+': '+link.from+' → '+link.to);
+    for(const link of report.removedLinks)descriptions.push('Removed '+link.flow+': '+link.from+' → '+link.to);
+    const list=element('ul','diff-list');
+    for(const row of (descriptions.length?descriptions:['No presentation changes in this snapshot'])){
+      list.appendChild(element('li','',row));
+    }
+    diffPanel.appendChild(list);
+    diffPanel.appendChild(element('p','','Model authority and original claim unchanged · no empirical validation · publisher signature NOT PRESENT'));
+  }
+  function syncCanvasTargets(){
+    for(const item of stage.querySelectorAll('[data-part],path[data-edge]')){
+      if(!item.hasAttribute('tabindex'))item.setAttribute('tabindex','0');
+      if(!item.hasAttribute('role')||item.getAttribute('role')==='group')item.setAttribute('role','button');
+      if(item.matches('path[data-edge]'))item.setAttribute('aria-label','Inspect illustrative connection '+item.getAttribute('data-edge'));
+    }
+  }
+  function highlightSelectedLink(){
+    const selected=linkSelect.value;
+    for(const p of stage.querySelectorAll('path[data-edge]'))
+      p.setAttribute('data-edit-selected',p.getAttribute('data-edge')===selected?'true':'false');
+  }
   function updateStatus(message){
     msg.textContent=message+' · VISUAL EDIT ONLY · original source/model unchanged · release HOLD';
     document.getElementById('edit-history').textContent=
       'Local snapshots '+(index+1)+' / '+timeline.length;
     undo.disabled=index===0;redo.disabled=index>=timeline.length-1;
     refreshLinkChoices();
+    syncRevisionChoices();
+    syncCanvasTargets();
+    highlightSelectedLink();
     dirty=JSON.stringify(snapshot())!==JSON.stringify(base);
     const unverifiedIsometric=[...document.querySelectorAll('button[data-view]')]
       .filter(btn=>btn.dataset.view!=='2d');
     for(const btn of unverifiedIsometric)btn.disabled=dirty||!data.iso;
+    presentDiff();
     document.getElementById('edit-mode').textContent=dirty?
       'Edited reference: Anatomy 3D disabled until validated recompile':'Original source view';
   }
@@ -123,6 +192,8 @@ export function studioEditorClient(importGraphAgainstSource){
     }else{
       document.querySelector('button[data-view="2d"]').click();
     }
+    syncCanvasTargets();
+    highlightSelectedLink();
     const box=scene.parts.find(p=>p.id===comp.value)||scene.parts[0];
     for(const [i,key] of ['x','y','w','h'].entries())fields[i].value=String(box[key]);
     document.getElementById('scene-state').textContent=dirty?
@@ -177,6 +248,101 @@ export function studioEditorClient(importGraphAgainstSource){
         operation:'connection_removal',link:{from:removed.from,to:removed.to,flow:removed.flow},release:'HOLD'};
       commit(s,'Removed illustrative '+removed.flow+' connection');
     }catch(e){updateStatus('REJECTED: '+e.message);}
+  });
+  function cancelCanvas(){
+    connectMode=false;connectorOrigin=null;canvasConnect.setAttribute('aria-pressed','false');
+    for(const node of stage.querySelectorAll('[data-connect-selected]'))
+      node.removeAttribute('data-connect-selected');
+  }
+  canvasConnect.addEventListener('click',()=>{
+    if(connectMode){cancelCanvas();canvasStatus.textContent='Canvas connection cancelled';}
+    else {
+      connectMode=true;connectorOrigin=null;canvasConnect.setAttribute('aria-pressed','true');
+      canvasStatus.textContent='Select source component by pointer, Enter or Space';
+    }
+  });
+  function chooseCanvasTarget(element){
+    const target=element.closest('[data-part]');
+    if(!target)return;
+    const id=target.getAttribute('data-part');
+    if(!base.parts.some(part=>part.id===id))return;
+    if(!connectMode){
+      comp.value=id;comp.dispatchEvent(new Event('change'));
+      canvasStatus.textContent='Selected source component '+id+'; activate connector mode to connect';
+      return;
+    }
+    if(!connectorOrigin){
+      connectorOrigin=id;from.value=id;
+      target.setAttribute('data-connect-selected','true');
+      canvasStatus.textContent='From '+id+': select target source component';
+      return;
+    }
+    if(id===connectorOrigin){
+      canvasStatus.textContent='Select a DIFFERENT target component';
+      return;
+    }
+    const origin=base.parts.find(p=>p.id===connectorOrigin),dest=base.parts.find(p=>p.id===id);
+    const common=[...limitedKinds].filter(kind=>
+      origin.ports?.some(p=>p.flow===kind)&&dest.ports?.some(p=>p.flow===kind));
+    if(!common.length){
+      canvasStatus.textContent='REJECTED: no compatible typed flow ports for '+connectorOrigin+' → '+id;
+      return;
+    }
+    const fromId=connectorOrigin;
+    from.value=fromId;to.value=id;flow.value=common[0];
+    cancelCanvas();
+    document.getElementById('edit-add-link').click();
+    canvasStatus.textContent='Illustrative '+common[0]+' connector selected: '+fromId+' → '+id;
+  }
+  function handleCanvasElement(target){
+    if(!(target instanceof Element))return;
+    const path=target.closest('path[data-edge]');
+    if(path){
+      const ordinal=Number(path.getAttribute('data-edge'));
+      if(Number.isInteger(ordinal)&&ordinal>=0&&ordinal<snapshot().links.length){
+        linkSelect.value=String(ordinal);
+        highlightSelectedLink();
+        const l=snapshot().links[ordinal];
+        canvasStatus.textContent='Selected illustrative '+l.flow+' connection '+l.from+' → '+l.to+
+          ' · use Remove selected connection to edit';
+      }
+      return;
+    }
+    if(target.closest('[data-part]'))chooseCanvasTarget(target);
+  }
+  stage.addEventListener('click',e=>handleCanvasElement(e.target));
+  stage.addEventListener('keydown',e=>{
+    if(e.key!=='Enter'&&e.key!==' ')return;
+    if(e.target instanceof Element&&e.target.closest('[data-part],path[data-edge]')){
+      e.preventDefault();handleCanvasElement(e.target);
+    }
+  });
+  linkSelect.addEventListener('change',highlightSelectedLink);
+  new MutationObserver(syncCanvasTargets).observe(stage,{childList:true,subtree:true});
+  diffToggle.addEventListener('click',()=>{
+    diffPanel.hidden=!diffPanel.hidden;
+    diffToggle.setAttribute('aria-expanded',String(!diffPanel.hidden));
+    presentDiff();
+  });
+  revision.addEventListener('change',presentDiff);
+  document.getElementById('edit-fork').addEventListener('click',()=>{
+    try{
+      visualDiff(base,snapshot(),data.sourceDigest);
+      const fork=forkVisualScene(snapshot(),forkSlug.value,data.sourceDigest);
+      const checked=visualDiff(base,fork,data.sourceDigest);
+      if(!checked.sourceAuthorityPreserved)throw Error('source model authority changed');
+      safeDownload('fork',JSON.stringify(fork,null,2)+'\n','json','application/json');
+      canvasStatus.textContent='Exported visual-only fork: '+fork.id+' · source unmodified · HOLD';
+    }catch(e){updateStatus('FORK REJECTED: '+e.message);}
+  });
+  document.getElementById('edit-project').addEventListener('click',()=>{
+    try{
+      const bundle=projectFiles(base,snapshot(),timeline,data.sourceDigest,
+         forkSlug.value,visualDiff,forkVisualScene);
+      const zip=zipStore(bundle.files);
+      safeDownload('project',zip,'zip','application/zip');
+      canvasStatus.textContent='Downloaded portable ZIP with original, fork, typed diff, timeline and manifest · HOLD';
+    }catch(e){updateStatus('PROJECT REJECTED: '+e.message);}
   });
   undo.addEventListener('click',()=>{
     if(index>0){index--;dirty=JSON.stringify(snapshot())!==JSON.stringify(base);drawCurrent();updateStatus('Undo');}
