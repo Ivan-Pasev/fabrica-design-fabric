@@ -25,3 +25,12 @@
 - `2D_PROJECTION_IS_NOT_DEPTH` — orthogonal basis checks for Anatomy isometric graphics do not reconstruct unique physical 3D geometry.
 - `IDE_REFERENCE_IS_NOT_INSTALLATION` — a public document, agent skill, `AGENTS.md` or network link never grants shell, write, secret, device or deployment capabilities.
 - `PINNED_BRANCH_IS_NOT_RELEASED_MAIN` — the experimental feature branch stays distinct from the older public `main` SkillFabric bootstrap. No main merge or public production authorization by inference.
+
+## Ω11P executable constitutional annex
+
+- `QUANTITATIVE_INPUT_IS_HASH_BOUND`: an auxiliary numerical model must cite the exact original SceneIR SHA-256, model ID/revision and representation before being compared.
+- `SOURCE_OBSERVABLE_IS_NOT_INDEPENDENT_SOLVER`: comparing source-declared observable values is not independently evaluating a domain physical model.
+- `INTERVAL_OVERLAP_IS_INCONCLUSIVE`: nominal residual zero with a wide uncertainty interval never becomes a robust PASS.
+- `BINARY_FLOAT_INTERVAL_IS_NOT_FORMAL_DECIMAL_PROOF`: outward binary64 rounding is bounded to declared binary64 values and assumptions.
+- `IDE_INSTALL_IS_EXPLICIT`: preview-only by default; no symlink traversal, overwrite, source-tree write or permission escalation.
+- `LEGACY_ZIP_SCHEMA_IS_UNCHANGED`: scientific evidence is not silently appended to the signed/unsigned six-entry local project ZIP and no publisher auth inferred.
