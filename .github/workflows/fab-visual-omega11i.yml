@@ -134,6 +134,57 @@ jobs:
           print('APPEND_ONLY_V03_RECONCILIATION_PASS; FINAL_SHA_PASS')
           PY
           test -z "$(git -C original status --porcelain)"
+      - name: Create separately SHA-identified minimal and full test derivatives
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp -a original derivative-minimal
+          cp -a original derivative-observing
+          python3 fabrica/products/fab-visual/scripts/omega11g-checkpoint-derivative.py \
+            --original original --minimal derivative-minimal --observing derivative-observing \
+            --receipt evidence/omega11i/DERIVATIVE_SOURCE_MANIFEST.json \
+            > evidence/omega11i/derivative-provenance-summary.json
+          test -z "$(git -C original status --porcelain)"
+      - name: Install pinned Chromium test replay toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --disable-pip-version-check 'playwright==1.57.0'
+          .venv/bin/python -m playwright install --with-deps chromium
+      - name: Observe source-linked draw API calls in twelve fresh test-clock processes
+        shell: bash
+        run: |
+          set -euo pipefail
+          .venv/bin/python fabrica/products/fab-visual/scripts/omega11i-render-observer.py \
+            --original original --minimal derivative-minimal --observing derivative-observing \
+            --manifest evidence/omega11i/DERIVATIVE_SOURCE_MANIFEST.json \
+            --output evidence/omega11i/runtime \
+            > evidence/omega11i/browser-draw-observer-summary.json
+          .venv/bin/python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('evidence/omega11i/runtime/OMEGA11I_RENDER_API_RECEIPT.json').read_text())
+          assert r['execution']=='PASS_FINITE_API_INTERCEPTION_ONLY'
+          assert len(r['observations'])==12
+          assert len(r['side_summary'])==6
+          assert r['source_page_html_mutation']=='NONE'
+          assert r['observer_mutation']=='TEST_ONLY_RUNTIME_JS_PROTOTYPE_INTERCEPTION'
+          assert r['actual_gpu_present']=='NOT_ADMITTED'
+          assert r['geometry_or_depth']=='NOT_RUN'
+          assert r['webgl_api_calls_mean_presented_frame'] is False
+          assert r['actual_renderer_equivalence']=='NOT_ADMITTED'
+          assert r['release']=='HOLD'
+          assert all(x['probe_grade']=='PASS_BOUNDED_API_CALL_CAPTURE_NOT_GPU_PRESENT' for x in r['observations'])
+          assert all(x['clock_grade']=='PASS_TEST_ONLY_CLOCK_DRIVER' for x in r['observations'])
+          assert all(x['source_applied_grade'] in ('PASS_ORIGINAL_UNINSTRUMENTED_TEST_CLOCK','PASS_FIXED_APPLICATION_ORDINAL_ONLY') for x in r['observations'])
+          for entry in r['side_summary']:
+              print(entry['scene'],entry['side'],'draw calls',entry['draw_api_calls'],
+                    'contexts',entry['canvas_context_requests'],
+                    'image_same',entry['screenshot_sha_equal'])
+          print('SOURCE_LINKED_RENDER_API_PROBE_PASS; GPU_PRESENT_NOT_ADMITTED')
+          PY
+          test -z "$(git -C original status --porcelain)"
       - name: Seal SHA256 provenance evidence
         if: always()
         shell: bash
