@@ -78,6 +78,19 @@ async def run(root,out):
                 assert await page.locator("button[data-view='isometric']").is_disabled()
                 assert await page.locator("button[data-view='compare']").is_disabled()
                 assert "VISUAL EDIT ONLY" in await page.locator("#edit-status").inner_text()
+                # Remove a selected illustrative connection and verify that
+                # its exact source link can be recovered through undo/redo.
+                assert await page.locator("#edit-link-select option").count()==x["links"]
+                await page.locator("#edit-link-select").select_option(str(x["links"]-1))
+                await page.locator("#edit-remove-link").click()
+                assert await page.locator("#stage path[data-edge]").count()==x["links"]-1
+                assert "Removed illustrative" in await page.locator("#edit-status").inner_text()
+                await page.locator("#edit-undo").click()
+                assert await page.locator("#stage path[data-edge]").count()==x["links"]
+                await page.locator("#edit-redo").click()
+                assert await page.locator("#stage path[data-edge]").count()==x["links"]-1
+                await page.locator("#edit-undo").click()
+                assert await page.locator("#stage path[data-edge]").count()==x["links"]
                 async with page.expect_download() as pending:
                     await page.locator('button[data-export="scene"]').click()
                 item=await pending.value
@@ -90,6 +103,19 @@ async def run(root,out):
                 assert loaded["model"]["synthetic"] is True
                 assert loaded["parts"][0]["x"]==before+14
                 assert all(o["evidence"]=="NOT_RUN" for o in loaded["observables"])
+                async with page.expect_download() as pending:
+                    await page.locator('button[data-export="lineage"]').click()
+                hist_download=await pending.value
+                history_target=out/(key+"-local-history.json")
+                await hist_download.save_as(history_target)
+                history=json.loads(history_target.read_text())
+                assert history["schema"]=="fab.visual.local-edit-history.v1"
+                assert history["release"]=="HOLD"
+                assert history["publisherSignature"]=="NOT_PRESENT"
+                assert history["gpuPresentedFrame"]=="NOT_ADMITTED"
+                assert history["currentOrdinal"]>=1
+                assert history["snapshots"][0]["scene"]["id"]==x["id"]
+                assert history["modelAuthority"]==loaded["model"]["authority"]
                 await page.locator("#edit-undo").click()
                 assert float(await page.locator(f'#stage g[data-part="{first}"] rect').get_attribute("x"))==before
                 await page.locator("#edit-redo").click()
@@ -100,7 +126,8 @@ async def run(root,out):
                   "scene_sha256":x["scene_sha256"],"edited_scene_sha256":sha(target),
                   "edited_screenshot_sha256":sha(capture),
                   "source_claim":"EXPLANATORY","edit_provenance":"DERIVED_VISUAL_ONLY",
-                  "browser_actions":"NAVIGATE_EDIT_DOWNLOAD_UNDO_REDO",
+                  "edit_history_sha256":sha(history_target),
+                  "browser_actions":"NAVIGATE_EDIT_REMOVE_UNDO_REDO_DOWNLOAD_HISTORY",
                   "source_authority_unchanged":True,"release":"HOLD"})
                 await page.goto((root/"index.html").as_uri(),wait_until="load")
             assert len(receipt["source_templates"])==3
