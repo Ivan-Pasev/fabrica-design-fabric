@@ -1,3 +1,12 @@
+## v0.5.0-alpha.0 — Ω11K Source-Anchored Graph Imports + Reversible Studio
+
+- Added dual XYFlow/Cytoscape graph import with explicit original SceneIR anchor, checksum comparison, source/claim/status/typed port consistency, derivative `visualEdit` provenance, loss reports and SHA receipts.
+- Added Studio local visual editor: numeric component layout, illustrative source-typed links, up to 32 reversible undo/redo snapshots and local JSON import with negative authority checks.
+- Edited scene export includes updated SceneIR, SVG, XYFlow and Cytoscape. Legacy isometric/compare view becomes unavailable after edits until source-locked geometry is revalidated. Mermaid/DOT are refused after editing rather than exported stale.
+- Added independent browser tests for source-anchored imports, forged authorization rejection, undo/redo, typed link creation and local downloads, plus adversarial Node and CLI round-trip tests.
+- Model source authority remains unchanged; snapshot hashes are not authenticated publisher signatures. No external graph-editor runtime imported and no Google Drive database migration.
+- Release HOLD.
+
 ## v0.4.0-alpha.0 — Ω11J Product Studio and Interchange (research preview)
 
 - Added standalone, offline `studio` HTML workbench for validated SceneIR, combining reference SVG, pinned Anatomy isometric, synchronized compare magnification, semantic part search/inspection, flow filters and six user-initiated local downloads.
