@@ -1,0 +1,158 @@
+name: FAB.VISUAL Omega11G central DB + ordinal checkpoint
+on:
+  push:
+    branches: ['feature/fab-visual-omega11g-central-db-checkpoint']
+  pull_request:
+    paths:
+      - 'products/fab-visual/db/**'
+      - 'products/fab-visual/scripts/omega11g-*.py'
+      - 'products/fab-visual/tests/test_omega11g_*.py'
+      - '.github/workflows/fab-visual-omega11g.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  central-database-and-checkpoint:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 38
+    steps:
+      - name: Checkout exact FAB.VISUAL research candidate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: fabrica
+          persist-credentials: false
+      - name: Independently checkout immutable original MIT Anatomy
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: wheresryan22/anatomy
+          ref: 1482e8469b0a9e0d8cc18ea2740a01423d29ae80
+          path: original
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Verify all 173 original source blobs before any derivative
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/omega11g
+          git -C fabrica rev-parse HEAD > evidence/omega11g/review-head.txt
+          git -C original rev-parse HEAD > evidence/omega11g/original-head.txt
+          { python3 --version; python3 -c 'import sqlite3;print("SQLite",sqlite3.sqlite_version)'; uname -a; } > evidence/omega11g/environment.txt
+          python3 fabrica/products/fab-visual/scripts/omega10-upstream-lock.py \
+            --root original --commit 1482e8469b0a9e0d8cc18ea2740a01423d29ae80 \
+            --count 173 --output evidence/omega11g/173-source-lock.json \
+            > evidence/omega11g/173-source-summary.json
+          test -z "$(git -C original status --porcelain)"
+      - name: Build immutable constitutional SQLite central DB snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 fabrica/products/fab-visual/db/build_registry.py \
+            --output evidence/omega11g/FAB_VISUAL_CENTRAL_v0.1.sqlite \
+            --receipt evidence/omega11g/DB_SNAPSHOT_RECEIPT.json \
+            > evidence/omega11g/database-status.json
+          python3 - <<'PY'
+          import hashlib,json,sqlite3
+          from pathlib import Path
+          base=Path('evidence/omega11g')
+          db=base/'FAB_VISUAL_CENTRAL_v0.1.sqlite'
+          receipt=json.loads((base/'DB_SNAPSHOT_RECEIPT.json').read_text())
+          assert hashlib.sha256(db.read_bytes()).hexdigest()==receipt['database_sha256']
+          with sqlite3.connect(db) as conn:
+              counts=dict(conn.execute("SELECT status,total FROM gate_counts"))
+              assert counts=={'PASS':16,'FAIL':6,'NOT_RUN':9,'HOLD':1}
+              assert conn.execute('PRAGMA integrity_check').fetchone()[0]=='ok'
+              assert conn.execute('PRAGMA foreign_key_check').fetchall()==[]
+              assert conn.execute('SELECT count(*) FROM checkpoint_events').fetchone()[0]==0
+          assert receipt['sheet_authoritative_for_current_gate_status'] is True
+          assert receipt['frame_attestation']=='NOT_ADMITTED'
+          assert receipt['release']=='HOLD'
+          print('CENTRAL_SQLITE_SNAPSHOT_PASS; NATIVE_SHEET_GATE_AUTHORITY_UNCHANGED')
+          PY
+      - name: Run DB and source checkpoint adversarial checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover \
+            -s fabrica/products/fab-visual/tests \
+            -p 'test_omega11g_*.py' -v \
+            2>&1 | tee evidence/omega11g/adversarial-tests.log
+      - name: Create two separate source-locked test-only derivatives
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp -a original derivative-minimal
+          cp -a original derivative-observing
+          python3 fabrica/products/fab-visual/scripts/omega11g-checkpoint-derivative.py \
+            --original original --minimal derivative-minimal --observing derivative-observing \
+            --receipt evidence/omega11g/CHECKPOINT_VARIANTS.json \
+            > evidence/omega11g/derivative-status.json
+          test -z "$(git -C original status --porcelain)"
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('evidence/omega11g/CHECKPOINT_VARIANTS.json').read_text())
+          assert r['checkpoint_target']==3 and len(r['variants'])==4
+          assert r['original_untouched'] is True
+          assert all(v['original_html_sha256']!=v['derivative_html_sha256'] for v in r['variants'].values())
+          assert r['frame_attestation']=='NOT_ADMITTED' and r['release']=='HOLD'
+          print('SEPARATE_SOURCE_HASHED_MINIMAL_AND_OBSERVING_DERIVATIVES_PASS')
+          PY
+      - name: Install source-isolated Chromium 143-compatible replay toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --disable-pip-version-check 'playwright==1.57.0'
+          .venv/bin/python -m playwright install --with-deps chromium
+      - name: Run twelve independent original/minimal/observer Chromium processes
+        shell: bash
+        run: |
+          set -euo pipefail
+          .venv/bin/python fabrica/products/fab-visual/scripts/omega11g-checkpoint-browser.py \
+            --original original \
+            --minimal derivative-minimal --observing derivative-observing \
+            --manifest evidence/omega11g/CHECKPOINT_VARIANTS.json \
+            --output evidence/omega11g/browser \
+            > evidence/omega11g/browser-summary.json
+          .venv/bin/python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('evidence/omega11g/browser/OMEGA11G_CHECKPOINT_BROWSER.json').read_text())
+          assert r['fixed_applied_update_gate']=='PASS_DERIVATIVE_ORDINAL_ONLY'
+          assert len(r['observations'])==12
+          assert r['renderer_presented_frame']=='NOT_ADMITTED'
+          assert r['applied_state_equivalence']=='INCONCLUSIVE_UNCONTROLLED_RAF_TIME'
+          assert r['real_anatomy_geometry_depth']=='NOT_RUN'
+          assert r['historical_byte_parity']=='FAIL'
+          assert r['historical_visual_reproducibility']=='FAIL'
+          assert r['release']=='HOLD'
+          for x in r['observations']:
+              assert not x['errors'] and not x['blocked_external_requests']
+              if x['side']=='original':
+                  assert x['classification']=='PASS_ORIGINAL_UNINSTRUMENTED'
+                  assert x['checkpoint'] is None
+              else:
+                  assert x['classification']=='PASS_FIXED_APPLICATION_ORDINAL_ONLY'
+                  assert x['checkpoint']['serial']==3 and x['checkpoint']['done'] is True
+          print('CONTROLLED_APPLIED_ORDINAL_3_PASS; FULL_FRAME_NOT_ADMITTED')
+          PY
+          test -z "$(git -C original status --porcelain)"
+      - name: Re-verify source and hash evidence without rewriting gate statuses
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/omega11g
+          git -C original status --porcelain > evidence/omega11g/original-tree-status-final.txt
+          find evidence/omega11g -type f ! -name SHA256SUMS.txt -print0 \
+            | sort -z | xargs -0 -r sha256sum > evidence/omega11g/SHA256SUMS.txt
+          sha256sum -c evidence/omega11g/SHA256SUMS.txt
+      - name: Publish encrypted-free research evidence artifact, no release
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: fab-visual-omega11g-central-db-checkpoint
+          path: evidence/omega11g/
+          retention-days: 30
+          if-no-files-found: warn
