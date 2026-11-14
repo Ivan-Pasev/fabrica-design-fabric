@@ -1,0 +1,240 @@
+{
+  "schema": "fab.scene.v0.2",
+  "id": "citizen-solar-illustrative-microgrid",
+  "representation": "ANALOGICAL",
+  "model": {
+    "id": "fab.visual.omega11l.energy",
+    "revision": "0.6.0-alpha.0",
+    "authority": "FAB.VISUAL Ω11L first-party synthetic fixture — no external measurements or authorization",
+    "synthetic": true,
+    "source_profile": "FIRST_PARTY_SYNTHETIC_SCENE",
+    "units": "illustrative canvas coordinates; not metric distance",
+    "trace": [
+      "TEMPLATE_SOURCE_ONLY",
+      "NO_LIVE_DEVICE_OR_HOST"
+    ]
+  },
+  "template": {
+    "schema": "fab.visual.domain-template.v1",
+    "domain": "energy",
+    "title": "Citizen Solar · Microgrid Topology",
+    "origin": "FIRST_PARTY_SYNTHETIC",
+    "licensing": "FAB.VISUAL first-party MIT source",
+    "source_status": "NOT_MEASURED",
+    "scope": "TOPOLOGY_ILLUSTRATION_ONLY",
+    "all_numeric_observables_are_synthetic": true,
+    "real_hardware_or_host_attestation": "NOT_RUN"
+  },
+  "parts": [
+    {
+      "id": "pv",
+      "label": "Solar array",
+      "x": 35,
+      "y": 95,
+      "w": 170,
+      "h": 86,
+      "ports": [
+        {
+          "id": "dc-out",
+          "flow": "energy",
+          "unit": "illustrative"
+        },
+        {
+          "id": "telemetry",
+          "flow": "information"
+        }
+      ]
+    },
+    {
+      "id": "battery",
+      "label": "Battery storage",
+      "x": 35,
+      "y": 335,
+      "w": 170,
+      "h": 86,
+      "ports": [
+        {
+          "id": "dc-out",
+          "flow": "energy"
+        },
+        {
+          "id": "dc-in",
+          "flow": "energy"
+        },
+        {
+          "id": "dispatch",
+          "flow": "control"
+        }
+      ]
+    },
+    {
+      "id": "dc-bus",
+      "label": "DC aggregation bus",
+      "x": 290,
+      "y": 172,
+      "w": 170,
+      "h": 92,
+      "ports": [
+        {
+          "id": "pv-in",
+          "flow": "energy"
+        },
+        {
+          "id": "battery-in",
+          "flow": "energy"
+        },
+        {
+          "id": "dc-out",
+          "flow": "energy"
+        }
+      ]
+    },
+    {
+      "id": "inverter",
+      "label": "Grid-forming inverter",
+      "x": 560,
+      "y": 172,
+      "w": 174,
+      "h": 92,
+      "ports": [
+        {
+          "id": "dc-in",
+          "flow": "energy"
+        },
+        {
+          "id": "ac-out",
+          "flow": "energy"
+        },
+        {
+          "id": "setpoint",
+          "flow": "control"
+        }
+      ]
+    },
+    {
+      "id": "load",
+      "label": "Illustrative load",
+      "x": 825,
+      "y": 172,
+      "w": 175,
+      "h": 92,
+      "ports": [
+        {
+          "id": "ac-in",
+          "flow": "energy"
+        }
+      ]
+    },
+    {
+      "id": "dispatch",
+      "label": "Local dispatch controller",
+      "x": 355,
+      "y": 435,
+      "w": 210,
+      "h": 90,
+      "ports": [
+        {
+          "id": "telemetry-in",
+          "flow": "information"
+        },
+        {
+          "id": "battery-command",
+          "flow": "control"
+        },
+        {
+          "id": "inverter-command",
+          "flow": "control"
+        }
+      ]
+    }
+  ],
+  "links": [
+    {
+      "from": "pv",
+      "to": "dc-bus",
+      "flow": "energy",
+      "fromPort": "dc-out",
+      "toPort": "pv-in"
+    },
+    {
+      "from": "battery",
+      "to": "dc-bus",
+      "flow": "energy",
+      "fromPort": "dc-out",
+      "toPort": "battery-in"
+    },
+    {
+      "from": "dc-bus",
+      "to": "inverter",
+      "flow": "energy",
+      "fromPort": "dc-out",
+      "toPort": "dc-in"
+    },
+    {
+      "from": "inverter",
+      "to": "load",
+      "flow": "energy",
+      "fromPort": "ac-out",
+      "toPort": "ac-in"
+    },
+    {
+      "from": "pv",
+      "to": "dispatch",
+      "flow": "information",
+      "fromPort": "telemetry",
+      "toPort": "telemetry-in"
+    },
+    {
+      "from": "dispatch",
+      "to": "battery",
+      "flow": "control",
+      "fromPort": "battery-command",
+      "toPort": "dispatch"
+    },
+    {
+      "from": "dispatch",
+      "to": "inverter",
+      "flow": "control",
+      "fromPort": "inverter-command",
+      "toPort": "setpoint"
+    }
+  ],
+  "observables": [
+    {
+      "id": "topology_part_count",
+      "value": 6,
+      "unit": "1",
+      "source": "FAB.VISUAL Ω11L first-party synthetic fixture — no external measurements or authorization",
+      "evidence": "NOT_RUN"
+    },
+    {
+      "id": "site_export_power",
+      "value": "NOT_CALCULATED",
+      "unit": "kW",
+      "source": "FAB.VISUAL Ω11L first-party synthetic fixture — no external measurements or authorization",
+      "evidence": "NOT_RUN"
+    },
+    {
+      "id": "battery_soc",
+      "value": "NOT_MEASURED",
+      "unit": "%",
+      "source": "FAB.VISUAL Ω11L first-party synthetic fixture — no external measurements or authorization",
+      "evidence": "NOT_RUN"
+    },
+    {
+      "id": "grid_connected",
+      "value": false,
+      "source": "FAB.VISUAL Ω11L first-party synthetic fixture — no external measurements or authorization",
+      "evidence": "NOT_RUN"
+    }
+  ],
+  "audit": {
+    "empirical_validation": "NOT_RUN",
+    "real_host_verification": "NOT_RUN",
+    "scientific_admission": "NOT_RUN"
+  },
+  "claim": {
+    "status": "EXPLANATORY",
+    "interpretation": "Synthetic topology for discussing solar generation, battery storage, power conversion and dispatch; no production energy yield, LCOE, grid connection, meter reading, safety approval or physical performance is established."
+  }
+}

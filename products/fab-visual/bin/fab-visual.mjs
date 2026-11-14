@@ -11,9 +11,10 @@ import {renderAnatomySvg,renderAnatomyHtml,anatomySceneModel,verifyAnatomyBlobs}
 import {renderAnatomyTimeline} from '../src/adapters/anatomy-timeline.mjs';
 import { gate } from '../src/gate.mjs';
 import { renderStudio } from '../src/visual/studio.mjs';
+import {buildGalleryBundle} from '../src/visual/gallery.mjs';
 import { exportInterchange, FORMATS } from '../src/adapters/interchange.mjs';
 import { importInterchange } from '../src/adapters/graph-import.mjs';
-function help(){console.log(`FAB.VISUAL v0.5.0-alpha.0 · Ω11K\nUsage:\n  node bin/fab-visual.mjs demo [out.html]\n  node bin/fab-visual.mjs render <scene.json> <out.svg|out.html>\n  node bin/fab-visual.mjs validate <scene.json>\n  node bin/fab-visual.mjs anatomy-plan <scene.json>\n  node bin/fab-visual.mjs inspect-upstream <path>\n  node bin/fab-visual.mjs anatomy-verify\n  node bin/fab-visual.mjs anatomy-render <scene.json> <out.svg|out.html>\n  node bin/fab-visual.mjs anatomy-timeline [out.html]\n  node bin/fab-visual.mjs studio <scene.json> <out.html>\n  node bin/fab-visual.mjs interchange <scene.json> <reactflow|cytoscape|mermaid|dot> <out>\n  node bin/fab-visual.mjs interchange-import <reactflow|cytoscape> <graph.json> <source-scene.json> <out.json>\n  node bin/fab-visual.mjs gate <manifest.json>`);}
+function help(){console.log(`FAB.VISUAL v0.6.0-alpha.0 · Ω11L\nUsage:\n  node bin/fab-visual.mjs demo [out.html]\n  node bin/fab-visual.mjs render <scene.json> <out.svg|out.html>\n  node bin/fab-visual.mjs validate <scene.json>\n  node bin/fab-visual.mjs anatomy-plan <scene.json>\n  node bin/fab-visual.mjs inspect-upstream <path>\n  node bin/fab-visual.mjs anatomy-verify\n  node bin/fab-visual.mjs anatomy-render <scene.json> <out.svg|out.html>\n  node bin/fab-visual.mjs anatomy-timeline [out.html]\n  node bin/fab-visual.mjs studio <scene.json> <out.html>\n  node bin/fab-visual.mjs gallery [output-directory]\n  node bin/fab-visual.mjs interchange <scene.json> <reactflow|cytoscape|mermaid|dot> <out>\n  node bin/fab-visual.mjs interchange-import <reactflow|cytoscape> <graph.json> <source-scene.json> <out.json>\n  node bin/fab-visual.mjs gate <manifest.json>`);}
 function write(path,content){const p=resolve(path);mkdirSync(dirname(p),{recursive:true});writeFileSync(p,content);return p;}
 const [cmd,...args]=process.argv.slice(2);
 try {
@@ -25,6 +26,22 @@ try {
   else if(cmd==='anatomy-render'){const s=JSON.parse(readFileSync(args[0],'utf8')); const out=args[1];if(!out||!/(\.html|\.svg)$/i.test(out))throw Error('output must end .html or .svg');const svg=out.toLowerCase().endsWith('.svg');const content=svg?renderAnatomySvg(s):renderAnatomyHtml(s);const assessment=anatomySceneModel(s).audit;const receipt=witness({scene:s,format:svg?'svg':'html',bytes:content,renderer:'anatomy-exact-pinned-subset',checks:{'source':'PASS','model':assessment.model_evidence.status,'connections':assessment.connections.status,'independent_aabb':assessment.independent_analytic_aabb.ok?'PASS':'FAIL','sampled_depth':assessment.status,'upstream_full_suite':'NOT_RUN','visual_accessibility':'NOT_RUN'}});write(out,content);write(out+'.witness.json',JSON.stringify({...receipt,substantiveAudit:assessment},null,2)+'\n');console.log(JSON.stringify({output:resolve(out),audit:assessment,release:'HOLD'},null,2));}
   else if(cmd==='anatomy-timeline'){const events=['START','POLICY_ESCALATE','HUMAN_APPROVE','RELEASE'];const snaps=[policyScene([])];for(let i=1;i<=events.length;i++)snaps.push(policyScene(events.slice(0,i)));const out=args[0]||'dist/anatomy-timeline.html';const content=renderAnatomyTimeline(snaps);write(out,content);console.log(JSON.stringify({output:resolve(out),frames:snaps.length,source:'PINNED_ANATOMY',release:'HOLD'}));}
   else if(cmd==='inspect-upstream'){const r=inspectAnatomy(args[0]);console.log(JSON.stringify(r,null,2));if(!r.ok)process.exitCode=2;}
+  else if(cmd==='gallery'){
+    const target=resolve(args[0]||'dist/gallery');
+    const protectedRoots=['src','templates','vendor','fixtures','bin','tests','extensions']
+      .map(name=>resolve(name));
+    if(protectedRoots.some(root=>target===root||target.startsWith(root+'/')))
+      throw Error('gallery output cannot write inside source code or original templates');
+    const {assets,manifest}=buildGalleryBundle();
+    for(const file of assets){
+      if(!/^(?:studios\/[a-z][a-z0-9-]*\.html|scenes\/[a-z][a-z0-9-]*\.scene\.json|previews\/[a-z][a-z0-9-]*\.svg|index\.html|gallery\.manifest\.json)$/.test(file.path))
+        throw Error('unexpected gallery artifact name');
+      write(resolve(target,file.path),file.content);
+    }
+    console.log(JSON.stringify({gallery:resolve(target,'index.html'),
+      files:assets.length,templates:manifest.templates.map(x=>x.id),
+      release:'HOLD',externalRuntime:false},null,2));
+  }
   else if(cmd==='studio'){
     const input=args[0],out=args[1];
     if(!input||!out||!/\.html$/i.test(out))throw Error('usage: studio <scene.json> <output.html>');

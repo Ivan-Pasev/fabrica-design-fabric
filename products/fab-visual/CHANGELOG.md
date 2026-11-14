@@ -1,3 +1,12 @@
+## v0.6.0-alpha.0 — Ω11L Typed Domain Templates and Offline Gallery
+
+- Added three first-party source-labelled synthetic SceneIR templates: Citizen Solar microgrid, laboratory DAQ/interlocks, and CodexStation evidence/approval orchestration.
+- Added one-command offline Gallery with searchable categories, three standalone editable Studios, three original SceneIR sources, three SVG previews and SHA manifest.
+- Explicit numeric units, observation source, empirical NOT_RUN/NOT_MEASURED and no real authorization; verified source-locked previous Anatomy MIT source remains unchanged.
+- Added full Node and independent Chromium browser gallery/edit/download negative controls; source package now includes templates and fixtures.
+- Added reversible illustrative link deletion and user-triggered local edit-history JSON; inherited browser tests now poll DOM status without CSP-blocked eval.
+- No external runtime code, managed DB sync, host writes, production merge, measured physics or public release. Release HOLD.
+
 ## v0.5.0-alpha.0 — Ω11K Source-Anchored Graph Imports + Reversible Studio
 
 - Added dual XYFlow/Cytoscape graph import with explicit original SceneIR anchor, checksum comparison, source/claim/status/typed port consistency, derivative `visualEdit` provenance, loss reports and SHA receipts.

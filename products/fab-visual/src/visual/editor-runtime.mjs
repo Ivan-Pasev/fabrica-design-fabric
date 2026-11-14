@@ -15,6 +15,8 @@ export function studioEditorClient(importGraphAgainstSource){
   const from=document.getElementById('edit-from');
   const to=document.getElementById('edit-to');
   const flow=document.getElementById('edit-flow');
+  const linkSelect=document.getElementById('edit-link-select');
+  const removeLink=document.getElementById('edit-remove-link');
   const fieldIds=['edit-x','edit-y','edit-w','edit-h'];
   const fields=fieldIds.map(id=>document.getElementById(id));
   const undo=document.getElementById('edit-undo'),redo=document.getElementById('edit-redo');
@@ -92,11 +94,20 @@ export function studioEditorClient(importGraphAgainstSource){
     }
     return root;
   }
+  function refreshLinkChoices(){
+    const selected=linkSelect.value;
+    linkSelect.replaceChildren();
+    for(const [i,edge] of snapshot().links.entries())
+      selectOption(linkSelect,String(i),edge.from+' → '+edge.to+' ('+edge.flow+')');
+    if([...linkSelect.options].some(option=>option.value===selected))linkSelect.value=selected;
+    removeLink.disabled=linkSelect.options.length===0;
+  }
   function updateStatus(message){
     msg.textContent=message+' · VISUAL EDIT ONLY · original source/model unchanged · release HOLD';
     document.getElementById('edit-history').textContent=
       'Local snapshots '+(index+1)+' / '+timeline.length;
     undo.disabled=index===0;redo.disabled=index>=timeline.length-1;
+    refreshLinkChoices();
     dirty=JSON.stringify(snapshot())!==JSON.stringify(base);
     const unverifiedIsometric=[...document.querySelectorAll('button[data-view]')]
       .filter(btn=>btn.dataset.view!=='2d');
@@ -153,6 +164,18 @@ export function studioEditorClient(importGraphAgainstSource){
         provenance:'DERIVED_PRESENTATION_ONLY_NOT_MODEL_AUTHORITY',
         operation:'connection_layout',release:'HOLD'};
       commit(s,'Created illustrative '+link.flow+' connection');
+    }catch(e){updateStatus('REJECTED: '+e.message);}
+  });
+  removeLink.addEventListener('click',()=>{
+    try{
+      const ordinal=Number(linkSelect.value);
+      if(!Number.isInteger(ordinal)||ordinal<0||ordinal>=snapshot().links.length)
+        throw Error('Choose an existing illustrative connection');
+      const s=copy(snapshot()),removed=s.links.splice(ordinal,1)[0];
+      s.visualEdit={schema:'fab.visual.visual-edit.v1',sourceDigest:data.sourceDigest,
+        provenance:'DERIVED_PRESENTATION_ONLY_NOT_MODEL_AUTHORITY',
+        operation:'connection_removal',link:{from:removed.from,to:removed.to,flow:removed.flow},release:'HOLD'};
+      commit(s,'Removed illustrative '+removed.flow+' connection');
     }catch(e){updateStatus('REJECTED: '+e.message);}
   });
   undo.addEventListener('click',()=>{
@@ -219,10 +242,21 @@ export function studioEditorClient(importGraphAgainstSource){
   }
   document.addEventListener('click',event=>{
     const b=event.target.closest('button[data-export]');
-    if(!b||!dirty)return;
+    if(!b||(!dirty&&b.dataset.export!=='lineage'))return;
     const kind=b.dataset.export;
     event.preventDefault();event.stopImmediatePropagation();
-    if(kind==='scene')safeDownload(kind,JSON.stringify(snapshot(),null,2)+'\n','json','application/json');
+    if(kind==='lineage'){
+      const history={schema:'fab.visual.local-edit-history.v1',
+        sourceDigest:data.sourceDigest,sourceSceneId:base.id,
+        modelAuthority:base.model.authority,
+        mode:'LOCAL_VISUAL_PRESENTATION_ONLY_NOT_AUTHORITY',
+        currentOrdinal:index,
+        snapshots:timeline.map((x,i)=>({ordinal:i,scene:x})),
+        publisherSignature:'NOT_PRESENT',gpuPresentedFrame:'NOT_ADMITTED',
+        realWorldValidity:'NOT_RUN',release:'HOLD'};
+      safeDownload('lineage',JSON.stringify(history,null,2)+'\n','json','application/json');
+    }
+    else if(kind==='scene')safeDownload(kind,JSON.stringify(snapshot(),null,2)+'\n','json','application/json');
     else if(kind==='svg')safeDownload(kind,edited().outerHTML,'svg','image/svg+xml');
     else if(kind==='reactflow'||kind==='cytoscape')safeDownload(kind,derivedGraph(kind),'json','application/json');
     else updateStatus('Export '+kind+' requires CLI recompile; refusing stale original output');

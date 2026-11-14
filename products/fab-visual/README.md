@@ -2,7 +2,7 @@
 
 **Model-governed, evidence-carrying procedural visualization with a portable CodexStation extension.**
 
-**Status:** `v0.5.0-alpha.0 / Ω11K` product-capability research candidate, **not production-released**. FAB.VISUAL provides a standalone offline Studio, source-aware XYFlow/Cytoscape graph round trips, reversible local visual editing, evidence-carrying output witnesses, reference SVG and pinned MIT Anatomy isometric rendering for eligible unmodified analogical scenes. Actual model authority, host authorization, full upstream rendering, real GPU-presented-frame and physical/scientific validation remain outside this bounded product implementation.
+**Status:** `v0.6.0-alpha.0 / Ω11L` product-capability research candidate, **not production-released**. FAB.VISUAL provides a standalone offline Studio, source-aware XYFlow/Cytoscape graph round trips, reversible local visual editing, evidence-carrying output witnesses, reference SVG and pinned MIT Anatomy isometric rendering for eligible unmodified analogical scenes. Actual model authority, host authorization, full upstream rendering, real GPU-presented-frame and physical/scientific validation remain outside this bounded product implementation.
 
 ## Architecture
 
@@ -61,6 +61,29 @@ node bin/fab-visual.mjs interchange fixtures/policy-scene.json dot dist/scene.do
 The Studio uses validated `fab.scene.v0.2`, no external runtime dependencies, and a restrictive no-network page policy. Its six local download options are SVG, original SceneIR JSON, XYFlow JSON, Cytoscape JSON, Mermaid, and Graphviz DOT. The scene hash and output hash are recorded in adjacent witness files. Graph adapters are original independent format projections, **not copied source code or runtime integrations** from XYFlow/Cytoscape/Mermaid. Format consumers still require compatibility checks against their actual installed versions.
 
 The Anatomy view is available only for eligible `ANALOGICAL` scenes that pass the current bounded sampled/isometric source-audit. `FORMAL` and `PHYSICAL` scenes retain a safe 2D model-derived view and do not gain a 3D scientific or physical certification. Studio, graph data and downloaded scenes cannot authorize real CodexStation actions or change the release HOLD. See `docs/OMEGA11J_PRODUCT_STUDIO_DECISION.md` and `docs/THIRD_PARTY_CAPABILITY_PORTFOLIO_OMEGA11J.md`.
+
+## Ω11L — three practical domain systems in a portable offline gallery
+
+Run one command from `products/fab-visual`:
+
+```bash
+node bin/fab-visual.mjs gallery dist/gallery
+# Open dist/gallery/index.html directly in your browser.
+```
+
+Output: one searchable, filterable offline `index.html`, three editable Studio HTML files in `studios/`, their original SceneIR JSON in `scenes/`, three SVG previews in `previews/`, and a SHA-256-linked `gallery.manifest.json`. All these files work together when the generated folder is kept intact. The gallery is not a single self-contained HTML file; the individual three Studios are each standalone.
+
+The gallery has three FIRST_PARTY_SYNTHETIC domain templates:
+
+- **Citizen Solar microgrid:** PV, battery, DC bus, inverter, load and dispatch, with typed energy, information and control links. Energy yield, site grid export and storage state of charge are NOT_CALCULATED / NOT_MEASURED.
+- **GILC laboratory DAQ:** sample, chamber, pressure transducer, optical detector, DAQ, vacuum pump and interlock with typed material, signal and control connections. Pressure, exposure, metrology calibration and equipment safety are NOT_MEASURED / NOT_ASSESSED / NOT_RUN.
+- **CodexStation evidence/approval:** synthetic request, planner, research, independent verifier, policy, human approval and blocked execution. There is no live connected agent or authorization; execution remains BLOCKED.
+
+Every scene carries a source-label and explicit units for numeric observables; all empirical status is NOT_RUN. The gallery is a capability demonstration, NOT a measured engineering system, installed apparatus, scientific paper, operational agent authorization or external connected service. The templates are original first-party source and do not copy new external renderer/editor runtimes.
+
+Open a domain's editable Studio from the gallery; move or resize components, add or remove typed illustrative links, undo/redo, download explicit local edit-history JSON, and export edited SceneIR / SVG / XYFlow / Cytoscape. Editing disables stale original Anatomy 3D/compare visualizations until recompilation and audit. No hidden server, DB migration, external network request or public deployment is involved. Scientific validation and production release remain **HOLD**.
+
+The Gallery's source contract is `src/visual/gallery.mjs`, source models live in `templates/*.scene.json`, automated negative tests in `tests/gallery-templates.test.mjs`, and browser end-to-end verification in `scripts/gallery-browser-smoke.py`.
 
 ## Ω11K — source-anchored graph import and reversible local editing
 
