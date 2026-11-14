@@ -1,3 +1,11 @@
+## v0.10.0-alpha.0 — Ω11P Source-Bound Quantitative Model and Controlled IDE Skill Packaging
+
+- Added `audit-bound <trusted.scene.json> <bound-quantitative.json>`: canonical SHA-256 against the separately loaded SceneIR, exact scene/model/revision/representation identity, structural part/link count or explicitly labelled source-observable comparison; rejects modified original claim, topology, model authority and all unsigned release spoofing.
+- Distinguished nominal signed SI arithmetic PASS from **outward binary64 term-uncertainty interval** categories WITHIN_DECLARED_BOUNDS / OUTSIDE_DECLARED_BOUNDS / INCONCLUSIVE_OVERLAP. Correctly returns INCONCLUSIVE and a nonzero CLI exit when synthetic source intervals cross the stated tolerance. Inputs and decimal conversion are not formally proven real-number enclosures.
+- Added opt-in `ide-package --dry-run <destination>` (no writes) and `ide-package --write <destination>` (explicit new directory only, no existing target, no source tree, no symlink ancestry, only five fixed source reference files and evidence). No installer script, GitHub checkout, external network or executable host plugin.
+- Added 25 bound-science adversarial/functional tests and 12 IDE-package permission/collision tests, preserving prior 236 regressions and source-locked browser workflows.
+- No embedded science sidecar in legacy six-file project ZIP, no calibrated physical system verification, no independent model-solver or verified external IDE registration; all remain NOT_RUN / DEFERRED and release HOLD.
+
 ## v0.9.0-alpha.0 — Ω11O Public IDE Skill Bridge, Mathematics and Source-Locked Anatomy Review
 
 - Added public one-link `IDE_START_HERE_FAB_VISUAL.md` and Agent Skills `skills/fab-visual-ide/SKILL.md` with machine-readable scope/claim/permission manifest, nested product skill, targeted Copilot instructions and explicit unmerged-branch limitation.
