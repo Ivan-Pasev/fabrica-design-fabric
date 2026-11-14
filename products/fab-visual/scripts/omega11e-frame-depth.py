@@ -219,7 +219,8 @@ def frame_contract(witness):
     """Validate declared evidence form, never accept an untrusted claim as proof."""
     required=("source_commit","source_html_sha256","model_sha256","scene_id",
               "frame_event_id","camera_pose","camera_projection",
-              "visible_part_ids","viewport","renderer_version")
+              "visible_part_ids","viewport","renderer_version",
+              "time_or_state","witness_provenance")
     if not isinstance(witness,dict):
         raise ValueError("typed frame witness required")
     for key in required:
@@ -230,6 +231,9 @@ def frame_contract(witness):
         x=witness[key].get("value")
         if type(x)!=str or len(x)!=64 or any(v not in "0123456789abcdef" for v in x):
             raise ValueError(f"{key}: SHA256 required")
+    if witness["witness_provenance"].get("value") not in ("SYNTHETIC_TEST_FIXTURE",
+            "UNATTESTED_SOURCE_DATA", "DECLARED_RUNTIME_OBSERVATION"):
+        raise ValueError("unsupported witness provenance")
     scene=witness["scene_id"].get("value")
     if type(scene)!=str or scene not in ("raptor-light","turning-light"):
         raise ValueError("unrecognized pinned scene identity")
