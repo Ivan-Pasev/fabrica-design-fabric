@@ -86,10 +86,11 @@ export async function canonicalProjectDigest(scene){
 }
 
 export async function admitProjectArchive(bytes,expectedSource,expectedDigest,
-  visualDiff,forkVisualScene,projectFiles,canonicalProjectDigest){
+  visualDiff,forkVisualScene,projectFiles,canonicalProjectDigest,parseProjectZip){
   const fail=s=>{throw Error('PROJECT_ADMISSION_HOLD: '+s)};
   if(typeof visualDiff!=='function'||typeof forkVisualScene!=='function'||
-     typeof projectFiles!=='function'||typeof canonicalProjectDigest!=='function')
+     typeof projectFiles!=='function'||typeof canonicalProjectDigest!=='function'||
+     typeof parseProjectZip!=='function')
     fail('required source-checked contracts unavailable');
   if(!expectedSource||typeof expectedDigest!=='string'||!/^sha256:[0-9a-f]{64}$/.test(expectedDigest))
     fail('original trusted Studio anchor required');
