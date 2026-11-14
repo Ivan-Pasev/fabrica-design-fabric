@@ -14,6 +14,7 @@ import {renderAnatomySvg,anatomySceneModel} from '../adapters/anatomy-kernel.mjs
 import {FORMATS,exportInterchange} from '../adapters/interchange.mjs';
 import {importGraphAgainstSource} from '../adapters/graph-import.mjs';
 import {studioEditorClient} from './editor-runtime.mjs';
+import {forkVisualScene,visualDiff,zipStore,projectFiles} from './project.mjs';
 
 const escapeHtml=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const safeJSON=value=>JSON.stringify(value).replace(/</g,'\\u003c').replace(/>/g,'\\u003e')
@@ -51,6 +52,14 @@ const STUDIO_STYLE=[
 '.edit-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:10px 0}.edit-grid label{display:grid;gap:3px;font-size:.83rem}.edit-grid input,.edit-grid select{width:100%;padding:8px;border:1px solid #849bb5;border-radius:8px}.edit-actions{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}.edit-actions button{min-height:40px}#edit-status{font-size:.85rem;min-height:3em;overflow-wrap:anywhere;background:#edf4fc;border-radius:8px;padding:9px}#edit-mode{font-size:.8rem;color:#4c6076}',
 'footer{margin-top:20px;color:#4b5d72;font-size:.82rem;max-width:100ch}',
 'details{margin:10px 0}summary{cursor:pointer;font-weight:600}',
+'.project-tools{margin:13px 0;border:1px solid #cad8e5;background:#f4f8fc;border-radius:12px;padding:12px}',
+'.project-tools label{display:grid;gap:4px;font-size:.8rem}.project-tools input{width:100%;padding:9px;border:1px solid #92a9c0;border-radius:8px}',
+'.project-actions{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}.project-actions button{min-height:41px}',
+'.visual-diff{border:1px solid #c8d7e6;border-radius:10px;padding:12px;background:#fff;margin-top:12px}',
+'.diff-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.diff-panel{min-width:0;max-height:280px;overflow:auto;border:1px solid #d2dce7;border-radius:8px;padding:7px}.diff-panel svg{width:100%;height:auto}',
+'.diff-list{padding-left:20px;font-size:.83rem;color:#344e68}.diff-list li{margin:4px 0}',
+'#stage [data-flow][role="button"]{cursor:pointer}#stage [data-flow][data-edit-selected="true"]{stroke:#cc5d18;stroke-width:5}',
+'#stage [data-part][role="button"]{cursor:pointer}#stage [data-part][data-connect-selected="true"] rect{stroke:#d87a16;stroke-width:4}',
 '@media(max-width:1000px){.workbench{grid-template-columns:1fr}.sidebar{grid-template-columns:repeat(2,minmax(0,1fr))}}',
 '@media(max-width:640px){main{padding:12px}.overview{grid-template-columns:repeat(2,minmax(0,1fr))}.sidebar{grid-template-columns:1fr}.compare-grid{grid-template-columns:1fr}.visual-scroll{min-height:200px;max-height:60vh}}',
 '@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}',
@@ -221,6 +230,17 @@ export function renderStudio(scene,{title='FAB.VISUAL Studio · local scene expl
     '<button type="button" id="edit-add-link">Add connection</button>',
     '<label for="edit-link-select">Existing connection</label><select id="edit-link-select" class="search"></select>',
     '<button type="button" id="edit-remove-link">Remove selected connection</button>',
+    '<div class="project-tools" aria-label="Source-preserving project actions">',
+    '<h3>Canvas connectors and local projects</h3>',
+    '<p>Use the canvas or keyboard to select source-defined nodes and existing flows; actions stay illustrative.</p>',
+    '<button type="button" id="edit-canvas-connect" aria-pressed="false">Connect nodes on canvas</button>',
+    '<p id="edit-canvas-status" role="status" aria-live="polite">Select an edge to inspect it, or activate connector mode.</p>',
+    '<label for="edit-fork-slug">Local fork identifier<input id="edit-fork-slug" maxlength="40" pattern="[a-z0-9][a-z0-9-]*" value="experiment"></label>',
+    '<div class="project-actions"><button type="button" id="edit-fork">Download fork SceneIR</button>',
+    '<button type="button" id="edit-project">Download project ZIP</button>',
+    '<button type="button" id="edit-diff-toggle" aria-expanded="false">Compare source / current</button></div>',
+    '<div id="edit-diff" class="visual-diff" hidden></div>',
+    '</div>',
     '<h3>Import source-anchored graph</h3>',
     '<label>Graph format<select id="graph-import-format"><option value="reactflow">XYFlow / React Flow</option><option value="cytoscape">Cytoscape.js</option></select></label>',
     '<label>Local JSON<input class="search" id="graph-import-file" type="file" accept=".json,application/json"></label>',
@@ -243,7 +263,8 @@ export function renderStudio(scene,{title='FAB.VISUAL Studio · local scene expl
     '</main><script type="application/json" id="fab-studio-data">'+safeJSON(bundle)+'</script>',
     '<script>'+inspectorRuntime+'</script>',
     '<script>('+studioClient.toString()+')();</script>',
-    '<script>('+studioEditorClient.toString()+')('+importGraphAgainstSource.toString()+');</script></body></html>'
+    '<script>('+studioEditorClient.toString()+')('+importGraphAgainstSource.toString()+','+
+       visualDiff.toString()+','+forkVisualScene.toString()+','+zipStore.toString()+','+projectFiles.toString()+');</script></body></html>'
   ];
   const html=page.join('');
   return {
