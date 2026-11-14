@@ -22,6 +22,14 @@ async def run(args):
         context=await browser.new_context(viewport={"width":1400,"height":1100},
             device_scale_factor=1,accept_downloads=True,color_scheme="light",reduced_motion="reduce")
         page=await context.new_page()
+        async def await_status(fragment):
+            # Strict page CSP forbids unsafe-eval: use protocol DOM text polling.
+            for _ in range(100):
+                if fragment in await page.locator("#edit-status").inner_text():
+                    return
+                await asyncio.sleep(0.08)
+            raise AssertionError("Editor status not reached: "+fragment)
+
         page.on("pageerror",lambda e:record["errors"].append(str(e)[:500]))
         async def intercept(route):
             url=route.request.url
@@ -42,7 +50,7 @@ async def run(args):
             # strict original SceneIR/model/claim/source digest and exact edges.
             await page.locator("#graph-import-format").select_option("reactflow")
             await page.locator("#graph-import-file").set_input_files(str(args.reactflow))
-            await page.wait_for_function("document.querySelector('#edit-status').textContent.includes('Imported unmodified')")
+            await await_status("Imported unmodified")
             assert await page.locator("button[data-view='compare']").is_enabled()
             record["browser_actions"].append("SOURCE_ANCHORED_XYFLOW_EXACT_IMPORT")
 
@@ -104,7 +112,7 @@ async def run(args):
             tampered.write_text(json.dumps(bad))
             await page.locator("#graph-import-format").select_option("reactflow")
             await page.locator("#graph-import-file").set_input_files(str(tampered))
-            await page.wait_for_function("document.querySelector('#edit-status').textContent.includes('IMPORT REJECTED')")
+            await await_status("IMPORT REJECTED")
             assert await page.locator("#stage [data-part='intake'] rect").get_attribute("x")=="92"
             record["browser_actions"].append("FORGED_AUTHORIZATION_IMPORT_BLOCKED")
 
@@ -115,7 +123,7 @@ async def run(args):
             modified=output/"modified-xyflow.json"
             modified.write_text(json.dumps(changed))
             await page.locator("#graph-import-file").set_input_files(str(modified))
-            await page.wait_for_function("document.querySelector('#edit-status').textContent.includes('Imported reactflow derivative')")
+            await await_status("Imported reactflow derivative")
             assert await page.locator("#stage [data-part='intake'] rect").get_attribute("x")=="76"
             record["browser_actions"].append("DIFFERENTIAL_XYFLOW_IMPORT")
 
@@ -125,7 +133,7 @@ async def run(args):
             changedcy.write_text(json.dumps(cy))
             await page.locator("#graph-import-format").select_option("cytoscape")
             await page.locator("#graph-import-file").set_input_files(str(changedcy))
-            await page.wait_for_function("document.querySelector('#edit-status').textContent.includes('Imported cytoscape derivative')")
+            await await_status("Imported cytoscape derivative")
             assert await page.locator("#stage [data-part='intake'] rect").get_attribute("x")=="55"
             record["browser_actions"].append("DIFFERENTIAL_CYTOSCAPE_IMPORT")
 
