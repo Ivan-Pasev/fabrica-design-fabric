@@ -2,7 +2,7 @@
 
 **Model-governed, evidence-carrying procedural visualization with a portable CodexStation extension.**
 
-**Status:** `v0.7.0-alpha.0 / Ω11M` product-capability research candidate, **not production-released**. FAB.VISUAL provides a standalone offline Studio, source-aware XYFlow/Cytoscape graph round trips, reversible local visual editing, evidence-carrying output witnesses, reference SVG and pinned MIT Anatomy isometric rendering for eligible unmodified analogical scenes. Actual model authority, host authorization, full upstream rendering, real GPU-presented-frame and physical/scientific validation remain outside this bounded product implementation.
+**Status:** `v0.8.0-alpha.0 / Ω11N` product-capability research candidate, **not production-released**. FAB.VISUAL provides a standalone offline Studio, source-aware XYFlow/Cytoscape graph round trips, reversible local visual editing, evidence-carrying output witnesses, reference SVG and pinned MIT Anatomy isometric rendering for eligible unmodified analogical scenes. Actual model authority, host authorization, full upstream rendering, real GPU-presented-frame and physical/scientific validation remain outside this bounded product implementation.
 
 ## Architecture
 
@@ -61,6 +61,25 @@ node bin/fab-visual.mjs interchange fixtures/policy-scene.json dot dist/scene.do
 The Studio uses validated `fab.scene.v0.2`, no external runtime dependencies, and a restrictive no-network page policy. Its six local download options are SVG, original SceneIR JSON, XYFlow JSON, Cytoscape JSON, Mermaid, and Graphviz DOT. The scene hash and output hash are recorded in adjacent witness files. Graph adapters are original independent format projections, **not copied source code or runtime integrations** from XYFlow/Cytoscape/Mermaid. Format consumers still require compatibility checks against their actual installed versions.
 
 The Anatomy view is available only for eligible `ANALOGICAL` scenes that pass the current bounded sampled/isometric source-audit. `FORMAL` and `PHYSICAL` scenes retain a safe 2D model-derived view and do not gain a 3D scientific or physical certification. Studio, graph data and downloaded scenes cannot authorize real CodexStation actions or change the release HOLD. See `docs/OMEGA11J_PRODUCT_STUDIO_DECISION.md` and `docs/THIRD_PARTY_CAPABILITY_PORTFOLIO_OMEGA11J.md`.
+
+## Ω11N — reopen and replay your actual portable visual project
+
+From the offline Gallery, open one of the three source-labelled domain Studios. In **Open portable project ZIP**, choose a `.zip` previously exported from the **same original Studio scene**.
+
+On a successful import, the Studio checks the six-file ZIP structure and CRC32 without decompressing, the exact original source SceneIR against its locally compiled anchor, canonical SHA-256 via the browser Web Crypto API, fork ID/revision ancestry, every history snapshot and the current visual diff. It independently regenerates all six project files and requires byte-exact agreement. Without cryptographic hashing support or on any mismatch, import is rejected rather than silently trusted.
+
+After verification, use the **local revision cards** and Previous/Next controls to preview a historical version in the two-panel visual diff. Press **Apply selected revision** to activate it locally; undo/redo and subsequent visual edits remain available. Rejected wrong-template ZIPs, corrupt entries, false release/approval metadata and stale source digests retain the existing editable scene. All import data is rendered as text/model structure rather than evaluated as script; no network request or host command is executed.
+
+The importer is intentionally strict: only the exact six-entry uncompressed Ω11M **ZIP STORE** layout is accepted. Third-party ZIP utilities may rewrite entry metadata and are not guaranteed to pass; export directly from the Studio or `fab-visual project` CLI. ZIP CRC32 detects accidental damage, not malicious publishers. An exact source SHA-256 match proves byte-content correspondence with the currently opened Studio scene, not publisher authentication or model legitimacy.
+
+### Local workflow
+
+1. Open `dist/gallery/index.html`, then an editable Studio.
+2. Change an illustrative layout and click **Download project ZIP**.
+3. Reload that same Studio; choose the ZIP under **Open portable project ZIP**.
+4. Select a revision card, inspect the source-versus-revision diff, and apply it locally.
+
+Implementation: `src/visual/project-import.mjs`, `src/visual/editor-runtime.mjs` and `src/visual/studio.mjs`. Adversarial tests: `tests/project-import.test.mjs`. Real browser acceptance: `scripts/project-import-browser-smoke.py`. Domain projects remain synthetic/illustrative. Real hardware performance, scientific proof, independent GPU-presented frame, external publisher signature, actual host authorization and public release remain NOT_RUN / NOT_ADMITTED / HOLD.
 
 ## Ω11M — local visual forks, actual revision diffs and portable ZIP projects
 

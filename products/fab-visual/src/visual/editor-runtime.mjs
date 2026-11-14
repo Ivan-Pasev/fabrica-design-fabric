@@ -5,7 +5,8 @@
  *
  * Pure function body is embedded into the generated standalone HTML.
  */
-export function studioEditorClient(importGraphAgainstSource,visualDiff,forkVisualScene,zipStore,projectFiles){
+export function studioEditorClient(importGraphAgainstSource,visualDiff,forkVisualScene,zipStore,projectFiles,
+  admitProjectArchive,canonicalProjectDigest,parseProjectZip){
   'use strict';
   const data=JSON.parse(document.getElementById('fab-studio-data').textContent);
   const base=structuredClone(data.scene);
@@ -23,6 +24,14 @@ export function studioEditorClient(importGraphAgainstSource,visualDiff,forkVisua
   const diffToggle=document.getElementById('edit-diff-toggle');
   const diffPanel=document.getElementById('edit-diff');
   const revision=document.getElementById('edit-revision');
+  const projectImport=document.getElementById('edit-project-import-file');
+  const projectStatus=document.getElementById('edit-project-import-status');
+  const replayCards=document.getElementById('edit-replay-cards');
+  const replayPrev=document.getElementById('edit-replay-prev');
+  const replayNext=document.getElementById('edit-replay-next');
+  const replayApply=document.getElementById('edit-replay-apply');
+  let replayOrdinal=0;
+  let importedProject=null;
   let connectMode=false,connectorOrigin=null;
   const fieldIds=['edit-x','edit-y','edit-w','edit-h'];
   const fields=fieldIds.map(id=>document.getElementById(id));
@@ -344,6 +353,89 @@ export function studioEditorClient(importGraphAgainstSource,visualDiff,forkVisua
       canvasStatus.textContent='Downloaded portable ZIP with original, fork, typed diff, timeline and manifest · HOLD';
     }catch(e){updateStatus('PROJECT REJECTED: '+e.message);}
   });
+  function replayCardsRefresh(){
+    const source=timeline;
+    replayCards.replaceChildren();
+    if(replayOrdinal>=source.length)replayOrdinal=source.length-1;
+    for(const [ordinal,scene] of source.entries()){
+      const btn=document.createElement('button');
+      btn.type='button';
+      btn.dataset.replayOrdinal=String(ordinal);
+      btn.setAttribute('aria-current',String(ordinal===replayOrdinal));
+      const before=visualDiff(base,scene,data.sourceDigest);
+      btn.textContent='R'+ordinal+' · '+(before.changed?'Visual changes':'Source');
+      btn.addEventListener('click',()=>selectReplay(ordinal));
+      replayCards.appendChild(btn);
+    }
+    replayPrev.disabled=replayOrdinal<=0;
+    replayNext.disabled=replayOrdinal>=source.length-1;
+    replayApply.disabled=replayOrdinal===index;
+  }
+  function selectReplay(next){
+    if(!Number.isInteger(next)||next<0||next>=timeline.length)
+      throw Error('invalid bounded replay ordinal');
+    replayOrdinal=next;
+    revision.value=String(next);
+    if(diffPanel.hidden){
+      diffPanel.hidden=false;
+      diffToggle.setAttribute('aria-expanded','true');
+    }
+    presentDiff();
+    replayCardsRefresh();
+    projectStatus.textContent='Previewing R'+next+' of '+(timeline.length-1)+
+      ' · source untouched · apply to activate · RELEASE HOLD';
+  }
+  replayPrev.addEventListener('click',()=>selectReplay(Math.max(0,replayOrdinal-1)));
+  replayNext.addEventListener('click',()=>selectReplay(Math.min(timeline.length-1,replayOrdinal+1)));
+  replayApply.addEventListener('click',()=>{
+    if(replayOrdinal<0||replayOrdinal>=timeline.length)return;
+    index=replayOrdinal;
+    dirty=JSON.stringify(snapshot())!==JSON.stringify(base);
+    drawCurrent();
+    updateStatus('Applied replay revision R'+index);
+    replayCardsRefresh();
+    projectStatus.textContent='Applied locally derived R'+index+
+      ' · original source/claims unchanged · RELEASE HOLD';
+  });
+  projectImport.addEventListener('change',async()=>{
+    const file=projectImport.files?.[0];
+    if(!file)return;
+    projectStatus.textContent='Checking local ZIP CRC32, SHA-256, source identity and timeline…';
+    try{
+      if(file.size<22||file.size>12000000)throw Error('ZIP file outside 22B–12MB bound');
+      const candidate=await admitProjectArchive(
+        new Uint8Array(await file.arrayBuffer()),base,data.sourceDigest,
+        visualDiff,forkVisualScene,projectFiles,canonicalProjectDigest,parseProjectZip);
+      for(const scene of candidate.history)checkLocal(scene);
+      // Atomic state replacement after every ZIP, hash, diff, model and source check succeeds.
+      const newTimeline=candidate.history.map(copy);
+      const current=candidate.currentOrdinal;
+      const oldTimeline=timeline,oldIndex=index,oldReplay=replayOrdinal;
+      try{
+        timeline=newTimeline;
+        index=current;
+        replayOrdinal=current;
+        importedProject=candidate;
+        dirty=JSON.stringify(snapshot())!==JSON.stringify(base);
+        drawCurrent();
+        updateStatus('Accepted LOCAL source-anchored visual project · '+candidate.slug);
+        replayCardsRefresh();
+      }catch(err){
+        timeline=oldTimeline;index=oldIndex;replayOrdinal=oldReplay;
+        dirty=JSON.stringify(snapshot())!==JSON.stringify(base);
+        drawCurrent();updateStatus('Rejected project and restored prior local state');
+        throw err;
+      }
+      projectStatus.textContent='SOURCE-BOUND LOCAL PROJECT ACCEPTED · '+candidate.history.length+
+        ' revisions · SHA-256 checked · '+candidate.evidence+
+        ' · publisher signature NOT PRESENT · RELEASE HOLD';
+    }catch(error){
+      projectStatus.textContent='PROJECT REJECTED: '+String(error.message).slice(0,220)+
+        ' · existing editable state retained · RELEASE HOLD';
+    }finally{
+      projectImport.value='';
+    }
+  });
   undo.addEventListener('click',()=>{
     if(index>0){index--;dirty=JSON.stringify(snapshot())!==JSON.stringify(base);drawCurrent();updateStatus('Undo');}
   });
@@ -429,4 +521,5 @@ export function studioEditorClient(importGraphAgainstSource,visualDiff,forkVisua
   },true);
   comp.dispatchEvent(new Event('change'));
   updateStatus('Original scene loaded. Make a local visual edit.');
+  replayCardsRefresh();
 }

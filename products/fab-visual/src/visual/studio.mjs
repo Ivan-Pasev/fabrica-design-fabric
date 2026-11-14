@@ -15,6 +15,7 @@ import {FORMATS,exportInterchange} from '../adapters/interchange.mjs';
 import {importGraphAgainstSource} from '../adapters/graph-import.mjs';
 import {studioEditorClient} from './editor-runtime.mjs';
 import {forkVisualScene,visualDiff,zipStore,projectFiles} from './project.mjs';
+import {parseProjectZip,canonicalProjectDigest,admitProjectArchive} from './project-import.mjs';
 
 const escapeHtml=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const safeJSON=value=>JSON.stringify(value).replace(/</g,'\\u003c').replace(/>/g,'\\u003e')
@@ -59,6 +60,11 @@ const STUDIO_STYLE=[
 '.diff-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.diff-panel{min-width:0;max-height:280px;overflow:auto;border:1px solid #d2dce7;border-radius:8px;padding:7px}.diff-panel svg{width:100%;height:auto}',
 '.diff-list{padding-left:20px;font-size:.83rem;color:#344e68}.diff-list li{margin:4px 0}',
 '#stage [data-flow][role="button"]{cursor:pointer}#stage [data-flow][data-edit-selected="true"]{stroke:#cc5d18;stroke-width:5}',
+'.import-replay{margin:12px 0;padding:12px;border:1px solid #b9cedc;border-radius:12px;background:#edf5fb}',
+'.import-replay input{width:100%;max-width:100%;padding:8px}.replay-strip{display:flex;gap:7px;flex-wrap:wrap;margin:9px 0}',
+'.replay-strip button{font-size:.78rem;padding:8px 11px}.replay-strip button[aria-current=true]{background:#245f8b;color:#fff}',
+'.replay-actions{display:flex;gap:6px;flex-wrap:wrap}.replay-actions button{min-height:40px}',
+'.replay-status{font-size:.79rem;overflow-wrap:anywhere;white-space:pre-line}',
 '#stage [data-part][role="button"]{cursor:pointer}#stage [data-part][data-connect-selected="true"] rect{stroke:#d87a16;stroke-width:4}',
 '@media(max-width:1000px){.workbench{grid-template-columns:1fr}.sidebar{grid-template-columns:repeat(2,minmax(0,1fr))}}',
 '@media(max-width:640px){main{padding:12px}.overview{grid-template-columns:repeat(2,minmax(0,1fr))}.sidebar{grid-template-columns:1fr}.compare-grid{grid-template-columns:1fr}.visual-scroll{min-height:200px;max-height:60vh}}',
@@ -242,6 +248,16 @@ export function renderStudio(scene,{title='FAB.VISUAL Studio · local scene expl
     '<label for="edit-revision">Compare revision<select id="edit-revision"></select></label>',
     '<div id="edit-diff" class="visual-diff" hidden></div>',
     '</div>',
+    '<section class="import-replay" aria-label="Open and replay offline portable project">',
+    '<h3>Open portable project ZIP</h3>',
+    '<p>Choose a local FAB.VISUAL project. Its original scene, SHA-256, fork, history and all ZIP entries must match before admission. No publisher authentication or live execution.</p>',
+    '<label for="edit-project-import-file">Local project ZIP<input id="edit-project-import-file" type="file" accept=".zip,application/zip"></label>',
+    '<p id="edit-project-import-status" class="replay-status" role="status" aria-live="polite">No project opened · RELEASE HOLD</p>',
+    '<div id="edit-replay-cards" class="replay-strip" role="group" aria-label="Local revision cards"></div>',
+    '<div class="replay-actions"><button type="button" id="edit-replay-prev" disabled>Previous</button>',
+    '<button type="button" id="edit-replay-next" disabled>Next</button>',
+    '<button type="button" id="edit-replay-apply" disabled>Apply selected revision</button></div>',
+    '</section>',
     '<h3>Import source-anchored graph</h3>',
     '<label>Graph format<select id="graph-import-format"><option value="reactflow">XYFlow / React Flow</option><option value="cytoscape">Cytoscape.js</option></select></label>',
     '<label>Local JSON<input class="search" id="graph-import-file" type="file" accept=".json,application/json"></label>',
@@ -265,7 +281,8 @@ export function renderStudio(scene,{title='FAB.VISUAL Studio · local scene expl
     '<script>'+inspectorRuntime+'</script>',
     '<script>('+studioClient.toString()+')();</script>',
     '<script>('+studioEditorClient.toString()+')('+importGraphAgainstSource.toString()+','+
-       visualDiff.toString()+','+forkVisualScene.toString()+','+zipStore.toString()+','+projectFiles.toString()+');</script></body></html>'
+       visualDiff.toString()+','+forkVisualScene.toString()+','+zipStore.toString()+','+projectFiles.toString()+','+
+       admitProjectArchive.toString()+','+canonicalProjectDigest.toString()+','+parseProjectZip.toString()+');</script></body></html>'
   ];
   const html=page.join('');
   return {

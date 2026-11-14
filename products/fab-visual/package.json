@@ -1,6 +1,6 @@
 {
   "name": "@fab-sys/fab-visual",
-  "version": "0.7.0-alpha.0",
+  "version": "0.8.0-alpha.0",
   "type": "module",
   "private": false,
   "description": "Evidence-carrying model-to-visual reference runtime and portable CodexStation extension; experimental, not production verified",
