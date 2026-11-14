@@ -59,6 +59,12 @@ async def run(path,out):
             await page.locator("button[data-view='compare']").click()
             assert await page.locator("#stage .compare-grid figure").count()==2
             assert await page.locator("#stage g[data-part]").count()==8
+            await page.locator("#zoom-in").click()
+            widths=await page.locator("#stage svg").evaluate_all("els => els.map(el => el.style.width)")
+            assert widths==["150%","150%"],widths
+            await page.locator("#zoom-reset").click()
+            widths=await page.locator("#stage svg").evaluate_all("els => els.map(el => el.style.width)")
+            assert widths==["100%","100%"],widths
             shot=out/"studio-comparison.png"
             await page.screenshot(path=str(shot),animations="disabled")
             log["screenshots"]["compare_sha256"]=sha(shot)
