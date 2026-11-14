@@ -8,7 +8,7 @@ import {resolve,relative,dirname,parse,join,isAbsolute} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
 const fail=s=>{throw Error('IDE_PACKAGE_HOLD: '+s)};
-const root=resolve(dirname(fileURLToPath(import.meta.url)),'../../..');
+const root=resolve(dirname(fileURLToPath(import.meta.url)),'../../../..');
 const sources=[
 {src:'skills/fab-visual-ide/SKILL.md',dst:'SKILL.md'},
 {src:'IDE_START_HERE_FAB_VISUAL.md',dst:'IDE_START_HERE_FAB_VISUAL.md'},
