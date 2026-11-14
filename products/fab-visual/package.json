@@ -25,8 +25,7 @@
     "gallery": "node bin/fab-visual.mjs gallery dist/gallery",
     "project": "node bin/fab-visual.mjs project templates/energy-microgrid.scene.json templates/energy-microgrid.scene.json local-study dist/energy-project.zip",
     "audit:quantitative": "node bin/fab-visual.mjs audit-quantitative fixtures/quantitative-microgrid.synthetic.json",
-    "audit:bound": "node bin/fab-visual.mjs audit-bound templates/energy-microgrid.scene.json fixtures/bound-microgrid.synthetic.json",
-    "ide:plan": "node bin/fab-visual.mjs ide-package --dry-run ../../dist/ide-preview"
+    "audit:bound": "node bin/fab-visual.mjs audit-bound templates/energy-microgrid.scene.json fixtures/bound-microgrid.synthetic.json"
   },
   "engines": {
     "node": ">=20.10.0"
