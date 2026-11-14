@@ -1,7 +1,7 @@
 name: FAB.VISUAL Ω11N Product Studio and Interchange
 on:
   push:
-    branches: ['feature/fab-visual-omega11n-fork-diff-project']
+    branches: ['feature/fab-visual-omega11n-project-import-replay']
   pull_request:
     paths:
       - 'products/fab-visual/src/adapters/interchange.mjs'
