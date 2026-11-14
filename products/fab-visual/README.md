@@ -2,7 +2,7 @@
 
 **Model-governed, evidence-carrying procedural visualization with a portable CodexStation extension.**
 
-**Status:** `v0.3.0-alpha.0 / Ω5` engineering candidate; **54 local tests pass**; no production release. The independent renderer and a **genuine 4-module pinned Anatomy isometric renderer** execute. The complete 173-blob Anatomy repository and its browser/3D test suites are not fully reproduced. No scientific certification is implied.
+**Status:** `v0.4.0-alpha.0 / Ω11J` functionality candidate; independent Node/browser acceptance evidence archived per exact GitHub Actions head, **no production release**. FAB.VISUAL now includes a standalone offline Studio combining a reference SVG renderer and **actual pinned Anatomy isometric renderer**, plus dependency-free graph interoperability. The 173-file full upstream browser and 3D assurance suite is not reproduced by this product; no scientific certification is implied.
 
 ## Architecture
 
@@ -42,6 +42,25 @@ node bin/fab-visual.mjs gate examples/codexstation-policy/manifest.json
 ```
 
 The `demo` produces an independently generated HTML/SVG analogy of synthetic CodexStation authorization states. The generic renderer also emits a SHA-256 evidence receipt with `release: HOLD`.
+
+## New in Ω11J — usable offline Studio and interoperable graph exports
+
+Create a self-contained visual workbench from **any valid SceneIR**. The Studio is a product UI: locally inspect real source-defined components, search by component label or ID, filter flow types, zoom diagrams, switch between the reference 2D and source-pinned Anatomy isometric views when eligible, compare their renderings, and download source/graph outputs without a web connection.
+
+```bash
+cd products/fab-visual
+node bin/fab-visual.mjs studio fixtures/policy-scene.json dist/fab-visual-studio.html
+# Open dist/fab-visual-studio.html locally in your browser.
+
+node bin/fab-visual.mjs interchange fixtures/policy-scene.json reactflow dist/scene.reactflow.json
+node bin/fab-visual.mjs interchange fixtures/policy-scene.json cytoscape dist/scene.cytoscape.json
+node bin/fab-visual.mjs interchange fixtures/policy-scene.json mermaid dist/scene.mmd
+node bin/fab-visual.mjs interchange fixtures/policy-scene.json dot dist/scene.dot
+```
+
+The Studio uses validated `fab.scene.v0.2`, no external runtime dependencies, and a restrictive no-network page policy. Its six local download options are SVG, original SceneIR JSON, XYFlow JSON, Cytoscape JSON, Mermaid, and Graphviz DOT. The scene hash and output hash are recorded in adjacent witness files. Graph adapters are original independent format projections, **not copied source code or runtime integrations** from XYFlow/Cytoscape/Mermaid. Format consumers still require compatibility checks against their actual installed versions.
+
+The Anatomy view is available only for eligible `ANALOGICAL` scenes that pass the current bounded sampled/isometric source-audit. `FORMAL` and `PHYSICAL` scenes retain a safe 2D model-derived view and do not gain a 3D scientific or physical certification. Studio, graph data and downloaded scenes cannot authorize real CodexStation actions or change the release HOLD. See `docs/OMEGA11J_PRODUCT_STUDIO_DECISION.md` and `docs/THIRD_PARTY_CAPABILITY_PORTFOLIO_OMEGA11J.md`.
 
 ## Interactive timeline
 

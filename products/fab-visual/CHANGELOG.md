@@ -1,3 +1,11 @@
+## v0.4.0-alpha.0 — Ω11J Product Studio and Interchange (research preview)
+
+- Added standalone, offline `studio` HTML workbench for validated SceneIR, combining reference SVG, pinned Anatomy isometric, synchronized compare magnification, semantic part search/inspection, flow filters and six user-initiated local downloads.
+- Added dependency-free `interchange` graph exports to XYFlow JSON, Cytoscape JSON, Mermaid and Graphviz DOT with explicit lossy-semantics status and SHA-256 evidence receipts.
+- Added real Chromium smoke tests for the Studio UI, offline navigation, search, both renderers, compare zoom and all six downloads; existing full Node test suite preserved.
+- License portfolio records upstream Git SHA and verified MIT status without embedding unreviewed third-party runtime code.
+- No host installation, upstream rewriting, release authorization, physical/scientific rendering claim or managed DB deployment. Release HOLD.
+
 # Changelog
 
 ## 0.2.0-alpha.0 — 2026-11-13
