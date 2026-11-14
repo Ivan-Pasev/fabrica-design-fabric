@@ -2,7 +2,7 @@
 
 **Model-governed, evidence-carrying procedural visualization with a portable CodexStation extension.**
 
-**Status:** `v0.4.0-alpha.0 / Ω11J` functionality candidate; independent Node/browser acceptance evidence archived per exact GitHub Actions head, **no production release**. FAB.VISUAL now includes a standalone offline Studio combining a reference SVG renderer and **actual pinned Anatomy isometric renderer**, plus dependency-free graph interoperability. The 173-file full upstream browser and 3D assurance suite is not reproduced by this product; no scientific certification is implied.
+**Status:** `v0.5.0-alpha.0 / Ω11K` product-capability research candidate, **not production-released**. FAB.VISUAL provides a standalone offline Studio, source-aware XYFlow/Cytoscape graph round trips, reversible local visual editing, evidence-carrying output witnesses, reference SVG and pinned MIT Anatomy isometric rendering for eligible unmodified analogical scenes. Actual model authority, host authorization, full upstream rendering, real GPU-presented-frame and physical/scientific validation remain outside this bounded product implementation.
 
 ## Architecture
 
@@ -61,6 +61,26 @@ node bin/fab-visual.mjs interchange fixtures/policy-scene.json dot dist/scene.do
 The Studio uses validated `fab.scene.v0.2`, no external runtime dependencies, and a restrictive no-network page policy. Its six local download options are SVG, original SceneIR JSON, XYFlow JSON, Cytoscape JSON, Mermaid, and Graphviz DOT. The scene hash and output hash are recorded in adjacent witness files. Graph adapters are original independent format projections, **not copied source code or runtime integrations** from XYFlow/Cytoscape/Mermaid. Format consumers still require compatibility checks against their actual installed versions.
 
 The Anatomy view is available only for eligible `ANALOGICAL` scenes that pass the current bounded sampled/isometric source-audit. `FORMAL` and `PHYSICAL` scenes retain a safe 2D model-derived view and do not gain a 3D scientific or physical certification. Studio, graph data and downloaded scenes cannot authorize real CodexStation actions or change the release HOLD. See `docs/OMEGA11J_PRODUCT_STUDIO_DECISION.md` and `docs/THIRD_PARTY_CAPABILITY_PORTFOLIO_OMEGA11J.md`.
+
+## Ω11K — source-anchored graph import and reversible local editing
+
+Open the generated Studio locally and use **Offline visual editor** to move or resize source-defined components, create illustrative typed connections, undo/redo up to 32 local edits, and import exported XYFlow or Cytoscape JSON. The Studio can download the **edited** SceneIR, 2D SVG, XYFlow and Cytoscape projections; Mermaid/DOT are intentionally blocked after an edit to avoid offering stale original outputs. Recompile edited SceneIR through the CLI to regenerate those two graph formats. The original source file is not overwritten.
+
+For portable CLI imports, the source SceneIR is required as an explicit authority anchor:
+
+```bash
+node bin/fab-visual.mjs studio fixtures/policy-scene.json dist/fab-visual-studio.html
+node bin/fab-visual.mjs interchange fixtures/policy-scene.json reactflow dist/scene.reactflow.json
+node bin/fab-visual.mjs interchange-import reactflow dist/scene.reactflow.json fixtures/policy-scene.json dist/roundtrip.scene.json
+node bin/fab-visual.mjs interchange fixtures/policy-scene.json cytoscape dist/scene.cytoscape.json
+node bin/fab-visual.mjs interchange-import cytoscape dist/scene.cytoscape.json fixtures/policy-scene.json dist/cytoscape.roundtrip.scene.json
+```
+
+Each import checks the versioned interchange envelope, source SHA-256 digest, model identity/revision/authority, original observables and claim, source component identities, stable hierarchy/status, typed ports, finite geometry, endpoints and flow types. A changed graph produces a derivative with `visualEdit` provenance plus `.import-report.json` and `.witness.json`. A matching `source_digest` is **self-reported correspondence**, not a cryptographically authenticated external publisher signature. Arbitrary unversioned third-party editor JSON is currently **rejected** rather than silently elevated to trusted SceneIR. XYFlow and Cytoscape editor runtime round-trip ABI verification remains a separate test obligation.
+
+**Critical renderer boundary:** after any local visual edit, the Studio deliberately disables the original Anatomy isometric and compare views because their geometry would be stale. The edited reference 2D drawing is model-derived presentation only. Recompile from edited SceneIR to attempt bounded Anatomy audit; never assume real 3D part clearance, physics, formal proof or actual authorization. The current implementation is offline; there is no shared collaboration session, persistent service or automatic Google Drive / central DB sync.
+
+See `docs/OMEGA11K_EDITABLE_STUDIO_DECISION.md` and `tests/graph-import.test.mjs` for formalized acceptance and adverse cases.
 
 ## Interactive timeline
 
