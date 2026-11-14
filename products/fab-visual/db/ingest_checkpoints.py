@@ -74,6 +74,8 @@ def ingest(database,manifest_path,browser_path,head_path,run_id,receipt_path):
             raise ValueError("JavaScript error or blocked remote source in evidence")
         if side=="original":
             originals+=1
+            if x.get("html_sha256")!=original_sha[scene]:
+                raise ValueError("unmodified original browser HTML hash mismatch")
             if x.get("checkpoint") is not None or x.get("classification")!="PASS_ORIGINAL_UNINSTRUMENTED":
                 raise ValueError("original contamination")
             continue
