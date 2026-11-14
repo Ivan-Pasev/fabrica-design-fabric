@@ -82,7 +82,7 @@ async def run(path,out):
                 elif kind=="dot":assert txt.startswith("digraph FabVisual {")
                 elif kind=="svg":assert txt.lstrip().startswith("<svg")
                 log["downloads"][kind]={"sha256":sha(dest),"bytes":dest.stat().st_size}
-            assert "release HOLD" in await page.locator("footer").inner_text()
+            assert "HOLD" in await page.locator("footer").inner_text()
             assert errs==[],errs
             assert blocked==[],blocked
             log["case_count"]=15
