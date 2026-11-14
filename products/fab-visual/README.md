@@ -2,7 +2,7 @@
 
 **Model-governed, evidence-carrying procedural visualization with a portable CodexStation extension.**
 
-**Status:** `v0.6.0-alpha.0 / Ω11L` product-capability research candidate, **not production-released**. FAB.VISUAL provides a standalone offline Studio, source-aware XYFlow/Cytoscape graph round trips, reversible local visual editing, evidence-carrying output witnesses, reference SVG and pinned MIT Anatomy isometric rendering for eligible unmodified analogical scenes. Actual model authority, host authorization, full upstream rendering, real GPU-presented-frame and physical/scientific validation remain outside this bounded product implementation.
+**Status:** `v0.7.0-alpha.0 / Ω11M` product-capability research candidate, **not production-released**. FAB.VISUAL provides a standalone offline Studio, source-aware XYFlow/Cytoscape graph round trips, reversible local visual editing, evidence-carrying output witnesses, reference SVG and pinned MIT Anatomy isometric rendering for eligible unmodified analogical scenes. Actual model authority, host authorization, full upstream rendering, real GPU-presented-frame and physical/scientific validation remain outside this bounded product implementation.
 
 ## Architecture
 
@@ -61,6 +61,28 @@ node bin/fab-visual.mjs interchange fixtures/policy-scene.json dot dist/scene.do
 The Studio uses validated `fab.scene.v0.2`, no external runtime dependencies, and a restrictive no-network page policy. Its six local download options are SVG, original SceneIR JSON, XYFlow JSON, Cytoscape JSON, Mermaid, and Graphviz DOT. The scene hash and output hash are recorded in adjacent witness files. Graph adapters are original independent format projections, **not copied source code or runtime integrations** from XYFlow/Cytoscape/Mermaid. Format consumers still require compatibility checks against their actual installed versions.
 
 The Anatomy view is available only for eligible `ANALOGICAL` scenes that pass the current bounded sampled/isometric source-audit. `FORMAL` and `PHYSICAL` scenes retain a safe 2D model-derived view and do not gain a 3D scientific or physical certification. Studio, graph data and downloaded scenes cannot authorize real CodexStation actions or change the release HOLD. See `docs/OMEGA11J_PRODUCT_STUDIO_DECISION.md` and `docs/THIRD_PARTY_CAPABILITY_PORTFOLIO_OMEGA11J.md`.
+
+## Ω11M — local visual forks, actual revision diffs and portable ZIP projects
+
+From the generated offline Gallery, open any domain Studio and use Fork SceneIR, Compare source / current, the revision selector, Connect nodes on canvas, and Download project ZIP. This is functional local model-derived visualization, not an authorized model editor or a connected service.
+
+**Fork:** supply a lowercase slug such as `research-01`. The exported `--fork-research-01` SceneIR has a distinct visual revision and an explicit source ID, revision and SHA-256 ancestry record. Original source model authority, claims and observables stay unchanged. Publisher signature status remains NOT_PRESENT.
+
+**Visual diff:** switch between actual source-versus-revision 2D diagrams; inspect changed positions and sizes and typed links added/removed. These are illustrative canvas coordinates rather than metrology. Source-audited Anatomy isometric and comparison remain disabled after a visual edit until recompiled.
+
+**Canvas connectors:** use pointer or Enter/Space on accessible source-defined SVG nodes and flow paths. Connector mode admits only compatible source port-flow categories; removing links and other edits remain undoable. No host authorization or empirical data is modified.
+
+**Portable project:** the offline ZIP contains `manifest.json`, `source/original.scene.json`, `derived/fork.scene.json`, `evidence/visual-diff.json`, `evidence/edit-history.json`, and `readme.txt`. ZIP CRC32 is only a transport-integrity check, NOT a publisher signature. To inspect a project, unzip it locally; the Studio does not yet import whole ZIP archives as trusted projects.
+
+```bash
+cd products/fab-visual
+node bin/fab-visual.mjs gallery dist/gallery
+node bin/fab-visual.mjs project templates/energy-microgrid.scene.json templates/energy-microgrid.scene.json research-01 dist/energy-project.zip
+```
+
+The CLI also emits `dist/energy-project.zip.witness.json` with a SHA-256 checksum. Only canonical valid source SceneIR and visual-only derivatives may be packed. Invalid scene authority changes, malformed slugs, path traversal, unsafe link types, and forged scientific/approval fields are rejected by contract tests.
+
+Implementation: `src/visual/project.mjs`, `src/visual/editor-runtime.mjs`. Tests: `tests/project.test.mjs`, `scripts/project-browser-smoke.py`. The original pinned MIT Anatomy source stays unchanged; no new external runtime, DB migration, live host installation, scientific or physical certification or production release. Release HOLD.
 
 ## Ω11L — three practical domain systems in a portable offline gallery
 
