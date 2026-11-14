@@ -94,8 +94,7 @@ def verify_baseline(con,old_sha,snapshot):
         raise ValueError("legacy evidence row changed: refusing non-append reconciliation")
     prior_checkpoints=[r[0] for r in con.execute("SELECT checkpoint_id FROM checkpoint_events ORDER BY rowid")]
     n=len(prior_checkpoints)
-    if n not in (0,8) or (old_sha==ALLOWED_BASE_SHA.__iter__().__next__() and n!=0):
-        # The exact digest allowlist is checked; v0.1 has zero, Ω11G final has eight.
+    if n not in (0,8) or (old_sha=="f9ad50dee5eb38481cd49cf6a3c2f6c9fd73799aa6f6f0fb2a931f881d1b23d1" and n!=0):
         raise ValueError("unexpected prior checkpoint count")
     if old_sha=="c1d0a1293547183d4f22d1ee7d3b1026954c7a28ad066095de275e988267e693" and n!=8:
         raise ValueError("eight prior verified checkpoints must survive")
