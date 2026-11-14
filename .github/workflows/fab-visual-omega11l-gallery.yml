@@ -1,7 +1,7 @@
 name: FAB.VISUAL Ω11L Product Studio and Interchange
 on:
   push:
-    branches: ['feature/fab-visual-omega11l-product-studio-interchange']
+    branches: ['feature/fab-visual-omega11l-domain-gallery']
   pull_request:
     paths:
       - 'products/fab-visual/src/adapters/interchange.mjs'
@@ -218,7 +218,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: fab-visual-omega11l-studio-product
+          name: fab-visual-omega11l-domain-gallery
           path: evidence/omega11l/
           if-no-files-found: warn
           retention-days: 30
