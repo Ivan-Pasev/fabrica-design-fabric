@@ -40,7 +40,7 @@ const STUDIO_STYLE=[
 '.compare-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:8px}',
 '.compare-grid figure{margin:0;border:1px solid #c8d6e7;border-radius:10px;overflow:hidden;min-width:0}',
 '.compare-grid figcaption{padding:8px 10px;background:#eaf0f7;font-size:.8rem;font-weight:750}',
-'.compare-grid svg{width:100%!important}',
+'.compare-grid svg{width:100%}',
 '.sidebar{display:grid;gap:16px}.sidecard{padding:17px}.sidecard h2{font-size:1rem;margin:0 0 8px}',
 '.sidecard p,.sidecard pre{overflow-wrap:anywhere}.sidecard pre{white-space:pre-wrap;font-size:.8rem}',
 '.statusbar{padding:11px 17px;border-top:1px solid #d8e1eb;color:#425974;font-size:.86rem}',
@@ -133,6 +133,16 @@ function studioClient(){
       if(node){event.preventDefault();inspector.focusPart(node.dataset.part);markSelected(node.dataset.part);}
     }
   });
+  // Keep both reference and Anatomy panes at the same magnification in Compare.
+  // Inspector owns first-svg zoom; this listener copies its confirmed width.
+  for(const zoomControl of document.querySelectorAll('#zoom-in,#zoom-out,#zoom-reset')){
+    zoomControl.addEventListener('click',()=>{
+      if(view!=='compare')return;
+      const svgs=[...stage.querySelectorAll('svg')];
+      if(svgs.length<2)return;
+      for(const other of svgs.slice(1))other.style.width=svgs[0].style.width;
+    });
+  }
   filter.addEventListener('change',applyFilter);
   search.addEventListener('input',updateSearch);
   paint('2d');
