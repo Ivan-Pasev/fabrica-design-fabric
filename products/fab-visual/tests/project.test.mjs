@@ -37,7 +37,7 @@ test('Ω11M source-preserving fork creates distinct visual ID/revision and exact
 test('fork refuses empty/malformed/unsafe slug, nested forks and source SHA corruption',()=>{
  for(const slug of ['', '../pass', 'UPPER', 'has space', 'a'.repeat(41),'end-','é','x\\y'])
    assert.throws(()=>forkVisualScene(base,slug,digest),/VISUAL_FORK_REJECT/);
- assert.throws(()=>forkVisualScene(base,'ok','sha256:'+'0'.repeat(62)),/digest/);
+ assert.throws(()=>forkVisualScene(base,'ok','sha256:'+'0'.repeat(62)),/source SHA-256 required/);
  assert.throws(()=>forkVisualScene(forkVisualScene(base,'ok',digest),'again',digest),/nested fork/);
 });
 test('fork rejects synthetic science claim escalation and unauthorized large model',()=>{
