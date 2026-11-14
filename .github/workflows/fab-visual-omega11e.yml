@@ -1,0 +1,106 @@
+name: FAB.VISUAL Omega11E synthetic frame and ray-depth contract
+on:
+  push:
+    branches: ['feature/fab-visual-omega11e-frame-depth-contract']
+  pull_request:
+    paths:
+      - 'products/fab-visual/scripts/omega11e-frame-depth.py'
+      - 'products/fab-visual/tests/test_omega11e_frame_depth.py'
+      - 'products/fab-visual/schema/scene-frame-witness-omega11e-v0.1.schema.json'
+      - 'products/fab-visual/docs/OMEGA11E_FRAME_DEPTH_DECISION.md'
+      - '.github/workflows/fab-visual-omega11e.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  independent-synthetic-frame-depth:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - name: Checkout unmerged FAB.VISUAL research HEAD
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: fabrica
+      - name: Independently lock exact original MIT Anatomy source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: wheresryan22/anatomy
+          ref: 1482e8469b0a9e0d8cc18ea2740a01423d29ae80
+          persist-credentials: false
+          fetch-depth: 1
+          path: original
+      - name: Verify all original tracked Git blobs and record runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/omega11e
+          python3 fabrica/products/fab-visual/scripts/omega10-upstream-lock.py \
+            --root original --commit 1482e8469b0a9e0d8cc18ea2740a01423d29ae80 \
+            --count 173 --output evidence/omega11e/173-blob-lock.json \
+            > evidence/omega11e/source-lock-status.json
+          test -z "$(git -C original status --porcelain)"
+          { python3 --version; uname -a; } > evidence/omega11e/runtime.txt
+          git -C fabrica rev-parse HEAD > evidence/omega11e/review-head.txt
+          git -C original rev-parse HEAD > evidence/omega11e/original-head.txt
+      - name: Validate witness JSON schema and negative-control unit tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --disable-pip-version-check 'jsonschema==4.25.1'
+          .venv/bin/python - <<'PY'
+          import json
+          from pathlib import Path
+          from jsonschema import Draft202012Validator
+          schema=json.loads(Path('fabrica/products/fab-visual/schema/scene-frame-witness-omega11e-v0.1.schema.json').read_text())
+          Draft202012Validator.check_schema(schema)
+          assert schema['properties']['source_commit']['allOf'][1]['properties']['value']['const']=='1482e8469b0a9e0d8cc18ea2740a01423d29ae80'
+          assert len(schema['required'])==12
+          print('JSON_SCHEMA_META_VALID; ORIGINAL_SOURCE_PIN_LOCKED; REAL_FRAME_NOT_ADMITTED')
+          PY
+          .venv/bin/python -m unittest discover \
+            -s fabrica/products/fab-visual/tests -p 'test_omega11e_frame_depth.py' -v \
+            2>&1 | tee evidence/omega11e/adversarial-tests.log
+      - name: Independently execute finite synthetic ray-depth fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          .venv/bin/python fabrica/products/fab-visual/scripts/omega11e-frame-depth.py \
+            --output evidence/omega11e/SYNTHETIC_DEPTH_RECEIPT.json \
+            > evidence/omega11e/synthetic-summary.json
+          .venv/bin/python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('evidence/omega11e/SYNTHETIC_DEPTH_RECEIPT.json').read_text())
+          assert r['upstream_pin']=='1482e8469b0a9e0d8cc18ea2740a01423d29ae80'
+          assert r['test_scope']=='SYNTHETIC_STANDALONE_ONLY'
+          assert r['synthetic_depth_case']['state']=='FINITE_RAY_HIT'
+          assert [x['part_id'] for x in r['synthetic_depth_case']['ordered_hits']]==['front','back']
+          assert r['real_renderer_frame']=='NOT_ADMITTED'
+          assert r['real_anatomy_camera']=='NOT_ADMITTED'
+          assert r['real_anatomy_occlusion']=='NOT_RUN'
+          assert r['real_anatomy_geometry']=='NOT_RUN'
+          assert r['byte_parity']=='FAIL'
+          assert r['historical_pixel_repeatability']=='FAIL'
+          assert r['release']=='HOLD'
+          print('SYNTHETIC_RAY_DEPTH_PASS; ACTUAL_RENDERER_FRAME_NOT_ADMITTED; RELEASE_HOLD')
+          PY
+          test -z "$(git -C original status --porcelain)"
+      - name: Cryptographically fingerprint every evidence member
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          find evidence/omega11e -type f ! -name SHA256SUMS.txt -print0 |
+            sort -z | xargs -0 -r sha256sum > evidence/omega11e/SHA256SUMS.txt
+          sha256sum -c evidence/omega11e/SHA256SUMS.txt
+      - name: Archive research-only source-locked synthetic receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: fab-visual-omega11e-synthetic-frame-depth
+          path: evidence/omega11e/
+          retention-days: 30
+          if-no-files-found: warn
