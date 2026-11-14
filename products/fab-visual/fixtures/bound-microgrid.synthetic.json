@@ -1,0 +1,167 @@
+{
+  "schema": "fab.visual.bound-quantitative.v1",
+  "scope": "SOURCE_LOCKED_INTERNAL_CONSISTENCY_ONLY",
+  "sourceSceneDigest": "sha256:9ae22ab08570d4ea8164c1246c712381c5ba5d063eb057e8b99e15b6c6a0c53e",
+  "sourceSceneId": "citizen-solar-illustrative-microgrid",
+  "sourceModel": {
+    "id": "fab.visual.omega11l.energy",
+    "revision": "0.6.0-alpha.0"
+  },
+  "sourceRepresentation": "ANALOGICAL",
+  "quantitative": {
+    "schema": "fab.visual.quantitative.v1",
+    "scope": "SOURCE_DEFINED_NUMERICAL_CONSISTENCY_ONLY",
+    "source": {
+      "id": "fab.visual.synthetic.microgrid.energy-balance.v1",
+      "kind": "SYNTHETIC_EXAMPLE"
+    },
+    "balances": [
+      {
+        "id": "power_bus",
+        "dimension": "POWER",
+        "terms": [
+          {
+            "id": "pv",
+            "value": 7,
+            "unit": "kW",
+            "direction": "IN",
+            "uncertainty": 0.05,
+            "source": "SYNTHETIC_SAMPLE_PV"
+          },
+          {
+            "id": "battery",
+            "value": 3000,
+            "unit": "W",
+            "direction": "IN",
+            "uncertainty": 30,
+            "source": "SYNTHETIC_SAMPLE_STORAGE"
+          },
+          {
+            "id": "load",
+            "value": 9,
+            "unit": "kW",
+            "direction": "OUT",
+            "uncertainty": 0.04,
+            "source": "SYNTHETIC_SAMPLE_LOAD"
+          },
+          {
+            "id": "loss",
+            "value": 1000,
+            "unit": "W",
+            "direction": "OUT",
+            "uncertainty": 20,
+            "source": "SYNTHETIC_SAMPLE_LOSS"
+          }
+        ],
+        "tolerance": {
+          "absolute": 0.001,
+          "unit": "kW",
+          "relative": 0
+        }
+      },
+      {
+        "id": "energy_window",
+        "dimension": "ENERGY",
+        "terms": [
+          {
+            "id": "source",
+            "value": 3.6,
+            "unit": "kWh",
+            "direction": "IN",
+            "uncertainty": 0.02,
+            "source": "SYNTHETIC_WINDOW"
+          },
+          {
+            "id": "load",
+            "value": 3600,
+            "unit": "Wh",
+            "direction": "OUT",
+            "uncertainty": 20,
+            "source": "SYNTHETIC_WINDOW"
+          }
+        ],
+        "tolerance": {
+          "absolute": 0.001,
+          "unit": "kWh",
+          "relative": 0
+        }
+      }
+    ],
+    "logic": {
+      "schema": "fab.visual.finite-release-graph.v1",
+      "initial": "draft",
+      "states": [
+        {
+          "id": "draft",
+          "released": false,
+          "authorization": "NOT_RUN",
+          "evidence": "NOT_RUN"
+        },
+        {
+          "id": "checked",
+          "released": false,
+          "authorization": "HOLD",
+          "evidence": "PASS"
+        },
+        {
+          "id": "approved",
+          "released": false,
+          "authorization": "APPROVED",
+          "evidence": "PASS"
+        },
+        {
+          "id": "released",
+          "released": true,
+          "authorization": "APPROVED",
+          "evidence": "PASS"
+        }
+      ],
+      "transitions": [
+        {
+          "from": "draft",
+          "to": "checked",
+          "event": "SUBMIT"
+        },
+        {
+          "from": "checked",
+          "to": "approved",
+          "event": "HUMAN_APPROVAL"
+        },
+        {
+          "from": "approved",
+          "to": "released",
+          "event": "RELEASE_REQUEST"
+        },
+        {
+          "from": "released",
+          "to": "checked",
+          "event": "REVOKE"
+        }
+      ]
+    }
+  },
+  "readouts": [
+    {
+      "id": "part_count",
+      "evaluator": "PART_COUNT",
+      "expected": 6,
+      "unit": "1",
+      "tolerance": 0
+    },
+    {
+      "id": "link_count",
+      "evaluator": "LINK_COUNT",
+      "expected": 7,
+      "unit": "1",
+      "tolerance": 0
+    },
+    {
+      "id": "topology_observable",
+      "evaluator": "NUMERIC_SOURCE_OBSERVABLE",
+      "observableId": "topology_part_count",
+      "expected": 6,
+      "unit": "1",
+      "tolerance": 0
+    }
+  ]
+}
