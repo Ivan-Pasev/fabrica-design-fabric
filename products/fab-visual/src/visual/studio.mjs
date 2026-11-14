@@ -226,6 +226,7 @@ export function renderStudio(scene,{title='FAB.VISUAL Studio · local scene expl
       interchangeFormats:FORMATS,
       isoStatus,isoReason,
       validation:'SCENEIR_VALIDATED',
+      claim:'MODEL_DERIVED_INTERACTIVE_VIEW_NOT_PROOF',
       realRendererFrame:'NOT_ADMITTED',scientificCertification:'NOT_RUN',
       activeHostAuthorization:'NOT_RUN',
       release:'HOLD'
