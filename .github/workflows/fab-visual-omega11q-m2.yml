@@ -1,0 +1,166 @@
+name: FAB.VISUAL Omega11Q M2 exact rational interval cross-oracle
+on:
+  push:
+    branches: ['feature/fab-visual-omega11q-m2-exact-rational-oracle']
+  pull_request:
+    paths:
+      - 'products/fab-visual/src/visual/exact-interval.mjs'
+      - 'products/fab-visual/tests/exact-interval.test.mjs'
+      - 'products/fab-visual/fixtures/exact-microgrid.synthetic.json'
+      - 'products/fab-visual/scripts/omega11q_m2_crosscheck.mjs'
+      - 'products/fab-visual/scripts/omega11q_m2_reference.py'
+      - 'products/fab-visual/docs/OMEGA11Q_M2_*.md'
+      - '.github/workflows/fab-visual-omega11q-m2.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  node-exact-source-matrix:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['20.19.0','22.16.0']
+    steps:
+      - name: Checkout exact research commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Pin Node version
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Pinned original MIT Anatomy checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: wheresryan22/anatomy
+          ref: 1482e8469b0a9e0d8cc18ea2740a01423d29ae80
+          path: original
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Original source pin and full inherited Node regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/omega11q-m2
+          git rev-parse HEAD > evidence/omega11q-m2/candidate-commit.txt
+          node --version > evidence/omega11q-m2/node-version.txt
+          python3 --version > evidence/omega11q-m2/python-version.txt
+          python3 products/fab-visual/scripts/omega10-upstream-lock.py \
+            --root original --commit 1482e8469b0a9e0d8cc18ea2740a01423d29ae80 \
+            --count 173 --output evidence/omega11q-m2/anatomy-original-173.json \
+            > evidence/omega11q-m2/source-lock-summary.json
+          cd products/fab-visual
+          node bin/fab-visual.mjs anatomy-verify > ../../evidence/omega11q-m2/subset-pin.json
+          node --test tests/*.test.mjs 2>&1 | tee ../../evidence/omega11q-m2/node-full-tests.log
+      - name: Execute exact source-locked synthetic microgrid interval audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd products/fab-visual
+          node --input-type=module <<'JS' > ../../evidence/omega11q-m2/exact-interval-report.json
+          import {readFileSync} from 'node:fs';
+          import {auditExactInterval} from './src/visual/exact-interval.mjs';
+          const scene=JSON.parse(readFileSync('templates/energy-microgrid.scene.json','utf8'));
+          const input=JSON.parse(readFileSync('fixtures/exact-microgrid.synthetic.json','utf8'));
+          const r=auditExactInterval(scene,input);
+          if(r.status!=='INCONCLUSIVE'||r.release!=='HOLD'||
+             r.power.intervalLoSI.numerator!=='-140'||
+             r.energy.intervalHiSI.numerator!=='504000'||
+             r.physicalValidation!=='NOT_RUN')process.exit(2);
+          process.stdout.write(JSON.stringify(r,null,2)+'\n');
+          JS
+      - name: 10000 independent Python Fraction vs Node BigInt randomized exact comparisons
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd products/fab-visual
+          node scripts/omega11q_m2_crosscheck.mjs generate \
+            > ../../evidence/omega11q-m2/seeded-exact-vectors.json
+          python3 scripts/omega11q_m2_reference.py \
+            ../../evidence/omega11q-m2/seeded-exact-vectors.json \
+            > ../../evidence/omega11q-m2/independent-python-fraction.json
+          node scripts/omega11q_m2_crosscheck.mjs verify \
+            ../../evidence/omega11q-m2/seeded-exact-vectors.json \
+            ../../evidence/omega11q-m2/independent-python-fraction.json \
+            > ../../evidence/omega11q-m2/independent-crosslanguage-check.json
+          python3 - <<'PY'
+          import json,pathlib
+          p=pathlib.Path('../../evidence/omega11q-m2')
+          r=json.loads((p/'independent-crosslanguage-check.json').read_text())
+          assert r['status']=='PASS' and r['count']==10000
+          assert r['formalProof']=='NOT_RUN' and r['release']=='HOLD'
+          print('INDEPENDENT_EXACT_RATIONAL_CROSSCHECK_10000_PASS')
+          PY
+      - name: Release policy and source immutability must remain closed
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd products/fab-visual
+          if node bin/fab-visual.mjs gate examples/codexstation-policy/manifest.json; then
+            echo 'UNAUTHORIZED_RELEASE_GATE_OPEN' && exit 1
+          fi
+          test -z "$(git -C ../../original status --porcelain)"
+      - name: Hash-seal artifacts
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/omega11q-m2
+          find evidence/omega11q-m2 -type f ! -name SHA256SUMS.txt -print0 \
+            | sort -z | xargs -0 -r sha256sum > evidence/omega11q-m2/SHA256SUMS.txt
+          sha256sum -c evidence/omega11q-m2/SHA256SUMS.txt
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: fab-visual-omega11q-m2-node-${{ matrix.node }}
+          path: evidence/omega11q-m2/
+          if-no-files-found: warn
+          retention-days: 30
+  inherited-offline-browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22.16.0'
+      - name: Build inherited three-domain offline Gallery
+        run: |
+          mkdir -p evidence/omega11q-m2/browser
+          cd products/fab-visual
+          node bin/fab-visual.mjs gallery ../../evidence/omega11q-m2/browser/gallery \
+            > ../../evidence/omega11q-m2/browser/gallery-summary.json
+      - name: Pinned Playwright Chromium offline Gallery and defended ZIP replay
+        run: |
+          set -euo pipefail
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --disable-pip-version-check 'playwright==1.57.0'
+          .venv/bin/python -m playwright install --with-deps chromium
+          .venv/bin/python products/fab-visual/scripts/gallery-browser-smoke.py \
+            --gallery evidence/omega11q-m2/browser/gallery \
+            --output evidence/omega11q-m2/browser/gallery-qa \
+            > evidence/omega11q-m2/browser/gallery-qa-summary.json
+          .venv/bin/python products/fab-visual/scripts/project-import-browser-smoke.py \
+            --gallery evidence/omega11q-m2/browser/gallery \
+            --output evidence/omega11q-m2/browser/import-qa \
+            > evidence/omega11q-m2/browser/import-qa-summary.json
+      - name: Hash-seal inherited browser receipts
+        if: always()
+        run: |
+          mkdir -p evidence/omega11q-m2/browser
+          find evidence/omega11q-m2/browser -type f ! -name SHA256SUMS.txt -print0 \
+            | sort -z | xargs -0 -r sha256sum > evidence/omega11q-m2/browser/SHA256SUMS.txt
+          sha256sum -c evidence/omega11q-m2/browser/SHA256SUMS.txt
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: fab-visual-omega11q-m2-browser
+          path: evidence/omega11q-m2/browser/
+          if-no-files-found: warn
+          retention-days: 30
