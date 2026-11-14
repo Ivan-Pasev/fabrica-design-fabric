@@ -163,7 +163,7 @@ class IngestProofBoundary(unittest.TestCase):
             self.ingest()
 
     def test_fake_checkpoint_mode_rejected(self):
-        self.browser["observations"][4]["checkpoint"]["mode"]="OBSERVING_CHECKPOINT"
+        self.browser["observations"][4]["checkpoint"]["mode"]="MINIMAL_CHECKPOINT"
         with self.assertRaises(ValueError):
             self.ingest()
 
