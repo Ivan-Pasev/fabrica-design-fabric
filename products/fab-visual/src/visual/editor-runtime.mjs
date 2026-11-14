@@ -227,5 +227,6 @@ export function studioEditorClient(importGraphAgainstSource){
     else if(kind==='reactflow'||kind==='cytoscape')safeDownload(kind,derivedGraph(kind),'json','application/json');
     else updateStatus('Export '+kind+' requires CLI recompile; refusing stale original output');
   },true);
+  comp.dispatchEvent(new Event('change'));
   updateStatus('Original scene loaded. Make a local visual edit.');
 }
