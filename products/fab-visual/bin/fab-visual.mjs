@@ -12,7 +12,8 @@ import {renderAnatomyTimeline} from '../src/adapters/anatomy-timeline.mjs';
 import { gate } from '../src/gate.mjs';
 import { renderStudio } from '../src/visual/studio.mjs';
 import { exportInterchange, FORMATS } from '../src/adapters/interchange.mjs';
-function help(){console.log(`FAB.VISUAL v0.4.0-alpha.0 · Ω11J\nUsage:\n  node bin/fab-visual.mjs demo [out.html]\n  node bin/fab-visual.mjs render <scene.json> <out.svg|out.html>\n  node bin/fab-visual.mjs validate <scene.json>\n  node bin/fab-visual.mjs anatomy-plan <scene.json>\n  node bin/fab-visual.mjs inspect-upstream <path>\n  node bin/fab-visual.mjs anatomy-verify\n  node bin/fab-visual.mjs anatomy-render <scene.json> <out.svg|out.html>\n  node bin/fab-visual.mjs anatomy-timeline [out.html]\n  node bin/fab-visual.mjs studio <scene.json> <out.html>\n  node bin/fab-visual.mjs interchange <scene.json> <reactflow|cytoscape|mermaid|dot> <out>\n  node bin/fab-visual.mjs gate <manifest.json>`);}
+import { importInterchange } from '../src/adapters/graph-import.mjs';
+function help(){console.log(`FAB.VISUAL v0.5.0-alpha.0 · Ω11K\nUsage:\n  node bin/fab-visual.mjs demo [out.html]\n  node bin/fab-visual.mjs render <scene.json> <out.svg|out.html>\n  node bin/fab-visual.mjs validate <scene.json>\n  node bin/fab-visual.mjs anatomy-plan <scene.json>\n  node bin/fab-visual.mjs inspect-upstream <path>\n  node bin/fab-visual.mjs anatomy-verify\n  node bin/fab-visual.mjs anatomy-render <scene.json> <out.svg|out.html>\n  node bin/fab-visual.mjs anatomy-timeline [out.html]\n  node bin/fab-visual.mjs studio <scene.json> <out.html>\n  node bin/fab-visual.mjs interchange <scene.json> <reactflow|cytoscape|mermaid|dot> <out>\n  node bin/fab-visual.mjs interchange-import <reactflow|cytoscape> <graph.json> <source-scene.json> <out.json>\n  node bin/fab-visual.mjs gate <manifest.json>`);}
 function write(path,content){const p=resolve(path);mkdirSync(dirname(p),{recursive:true});writeFileSync(p,content);return p;}
 const [cmd,...args]=process.argv.slice(2);
 try {
@@ -48,6 +49,22 @@ try {
     write(out+'.witness.json',JSON.stringify(result.receipt,null,2)+'\n');
     console.log(JSON.stringify({output:resolve(out),witness:resolve(out+'.witness.json'),
       format,release:'HOLD'},null,2));
+  }
+  else if(cmd==='interchange-import'){
+    const [format,graphFile,sourceFile,out]=args;
+    if(!['reactflow','cytoscape'].includes(format)||!graphFile||!sourceFile||!out||!/\.json$/i.test(out))
+      throw Error('usage: interchange-import <reactflow|cytoscape> <graph.json> <source-scene.json> <out.json>');
+    if(resolve(out)===resolve(graphFile)||resolve(out)===resolve(sourceFile))
+      throw Error('import output cannot overwrite graph or original source');
+    const seed=JSON.parse(readFileSync(sourceFile,'utf8'));
+    const graph=readFileSync(graphFile,'utf8');
+    if(Buffer.byteLength(graph)>2000000)throw Error('graph input exceeds 2MB');
+    const received=importInterchange(graph,format,seed);
+    write(out,JSON.stringify(received.scene,null,2)+'\n');
+    write(out+'.import-report.json',JSON.stringify(received.report,null,2)+'\n');
+    write(out+'.witness.json',JSON.stringify(received.receipt,null,2)+'\n');
+    console.log(JSON.stringify({output:resolve(out),report:resolve(out+'.import-report.json'),
+      changedParts:received.report.changed_parts,release:'HOLD'},null,2));
   }
   else if(cmd==='gate'){const r=gate(JSON.parse(readFileSync(args[0],'utf8')));console.log(JSON.stringify(r,null,2));if(r.status!=='ELIGIBLE_FOR_AUTHORIZED_RELEASE')process.exitCode=2;}
   else if(cmd==='render'){

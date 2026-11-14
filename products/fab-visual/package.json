@@ -1,6 +1,6 @@
 {
   "name": "@fab-sys/fab-visual",
-  "version": "0.4.0-alpha.0",
+  "version": "0.5.0-alpha.0",
   "type": "module",
   "private": false,
   "description": "Evidence-carrying model-to-visual reference runtime and portable CodexStation extension; experimental, not production verified",
@@ -20,7 +20,8 @@
     "anatomy:timeline": "node bin/fab-visual.mjs anatomy-timeline dist/anatomy-timeline.html",
     "studio": "node bin/fab-visual.mjs studio fixtures/policy-scene.json dist/fab-visual-studio.html",
     "interchange:reactflow": "node bin/fab-visual.mjs interchange fixtures/policy-scene.json reactflow dist/scene.reactflow.json",
-    "interchange:cytoscape": "node bin/fab-visual.mjs interchange fixtures/policy-scene.json cytoscape dist/scene.cytoscape.json"
+    "interchange:cytoscape": "node bin/fab-visual.mjs interchange fixtures/policy-scene.json cytoscape dist/scene.cytoscape.json",
+    "interchange:roundtrip": "node bin/fab-visual.mjs interchange-import reactflow dist/scene.reactflow.json fixtures/policy-scene.json dist/scene.roundtrip.json"
   },
   "engines": {
     "node": ">=20.10.0"

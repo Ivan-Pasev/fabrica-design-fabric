@@ -1,0 +1,176 @@
+name: FAB.VISUAL Ω11K Product Studio and Interchange
+on:
+  push:
+    branches: ['feature/fab-visual-omega11k-product-studio-interchange']
+  pull_request:
+    paths:
+      - 'products/fab-visual/src/adapters/interchange.mjs'
+      - 'products/fab-visual/src/adapters/graph-import.mjs'
+      - 'products/fab-visual/src/visual/editor-runtime.mjs'
+      - 'products/fab-visual/src/visual/studio.mjs'
+      - 'products/fab-visual/bin/fab-visual.mjs'
+      - 'products/fab-visual/tests/studio-interchange.test.mjs'
+      - 'products/fab-visual/tests/graph-import.test.mjs'
+      - 'products/fab-visual/scripts/studio-omega11k-browser-smoke.py'
+      - 'products/fab-visual/scripts/studio-browser-smoke.py'
+      - 'products/fab-visual/docs/OMEGA11J_*.md'
+      - '.github/workflows/fab-visual-omega11k-product.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  product-studio-executable:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - name: Checkout exact unmerged Studio source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: fabrica
+          persist-credentials: false
+      - name: Checkout original MIT Anatomy source without changes
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: wheresryan22/anatomy
+          ref: 1482e8469b0a9e0d8cc18ea2740a01423d29ae80
+          path: original
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Check Node runtime and all 173 upstream source Git objects
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/omega11k
+          git -C fabrica rev-parse HEAD > evidence/omega11k/review-head.txt
+          git -C original rev-parse HEAD > evidence/omega11k/original-head.txt
+          node --version | tee evidence/omega11k/node-version.txt
+          python3 fabrica/products/fab-visual/scripts/omega10-upstream-lock.py \
+            --root original --commit 1482e8469b0a9e0d8cc18ea2740a01423d29ae80 \
+            --count 173 --output evidence/omega11k/173-source-lock.json \
+            > evidence/omega11k/173-source-summary.json
+          test -z "$(git -C original status --porcelain)"
+      - name: Execute entire FAB.VISUAL Node regression and product export tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd fabrica/products/fab-visual
+          node --test tests/*.test.mjs \
+            2>&1 | tee ../../../evidence/omega11k/node-test-all.log
+      - name: Build standalone usable Studio and all four graph interchange artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd fabrica/products/fab-visual
+          node bin/fab-visual.mjs studio fixtures/policy-scene.json \
+            ../../../evidence/omega11k/fab-visual-studio-demo.html \
+            > ../../../evidence/omega11k/cli-studio-summary.json
+          node bin/fab-visual.mjs interchange fixtures/policy-scene.json reactflow \
+            ../../../evidence/omega11k/scene.reactflow.json \
+            > ../../../evidence/omega11k/cli-reactflow.json
+          node bin/fab-visual.mjs interchange fixtures/policy-scene.json cytoscape \
+            ../../../evidence/omega11k/scene.cytoscape.json \
+            > ../../../evidence/omega11k/cli-cytoscape.json
+          node bin/fab-visual.mjs interchange fixtures/policy-scene.json mermaid \
+            ../../../evidence/omega11k/scene.mmd \
+            > ../../../evidence/omega11k/cli-mermaid.json
+          node bin/fab-visual.mjs interchange fixtures/policy-scene.json dot \
+            ../../../evidence/omega11k/scene.dot \
+            > ../../../evidence/omega11k/cli-dot.json
+          node bin/fab-visual.mjs interchange-import reactflow \
+            ../../../evidence/omega11k/scene.reactflow.json fixtures/policy-scene.json \
+            ../../../evidence/omega11k/roundtrip-reactflow.scene.json \
+            > ../../../evidence/omega11k/cli-import-reactflow.json
+          node bin/fab-visual.mjs interchange-import cytoscape \
+            ../../../evidence/omega11k/scene.cytoscape.json fixtures/policy-scene.json \
+            ../../../evidence/omega11k/roundtrip-cytoscape.scene.json \
+            > ../../../evidence/omega11k/cli-import-cytoscape.json
+          python3 - <<'PY'
+          import json,hashlib,pathlib
+          root=pathlib.Path('../../../evidence/omega11k')
+          html=(root/'fab-visual-studio-demo.html').read_text()
+          witness=json.loads((root/'fab-visual-studio-demo.html.witness.json').read_text())
+          assert witness['release']=='HOLD'
+          assert witness['views']==['2d','isometric','compare']
+          assert witness['interchangeFormats']==['reactflow','cytoscape','mermaid','dot']
+          assert witness['realRendererFrame']=='NOT_ADMITTED'
+          assert witness['claim']=='MODEL_DERIVED_INTERACTIVE_VIEW_NOT_PROOF'
+          assert witness['outputDigest']=='sha256:'+hashlib.sha256(html.encode()).hexdigest()
+          assert '<script src=' not in html
+          assert 'connect-src &#39;none&#39;' in html
+          assert 'Pinned Anatomy' in html
+          for f in ['scene.reactflow.json','scene.cytoscape.json']:
+            x=json.loads((root/f).read_text());assert x['release']=='HOLD'
+          for name in ['roundtrip-reactflow.scene.json','roundtrip-cytoscape.scene.json']:
+            imported=json.loads((root/name).read_text())
+            original=json.loads(pathlib.Path('fixtures/policy-scene.json').read_text())
+            assert imported==original
+            assert json.loads((root/(name+'.import-report.json')).read_text())['release']=='HOLD'
+          print('STUDIO_ROUNDTRIP_IMPORT_AND_FOUR_FORMAT_EXPORTS_PASS')
+          PY
+      - name: Install pinned independent Chromium browser test runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --disable-pip-version-check 'playwright==1.57.0'
+          .venv/bin/python -m playwright install --with-deps chromium
+      - name: Run real offline browser Studio interaction, inspect, compare and six downloads
+        shell: bash
+        run: |
+          set -euo pipefail
+          .venv/bin/python fabrica/products/fab-visual/scripts/studio-browser-smoke.py \
+            --html evidence/omega11k/fab-visual-studio-demo.html \
+            --output evidence/omega11k/browser \
+            > evidence/omega11k/browser-smoke-summary.json
+          python3 - <<'PY'
+          import json,pathlib
+          p=pathlib.Path('evidence/omega11k/browser/OMEGA11J_STUDIO_BROWSER_RECEIPT.json')
+          r=json.loads(p.read_text())
+          assert r['result']=='PASS_OFFLINE_STUDIO_END_TO_END'
+          assert len(r['downloads'])==6
+          assert len(r['screenshots'])==3
+          assert r['canvas_gpu_present']=='NOT_ADMITTED'
+          assert r['scientific_certification']=='NOT_RUN'
+          assert r['release']=='HOLD'
+          assert not r['blocked_external_requests']
+          assert not r['errors']
+          print('OFFLINE_STUDIO_PRODUCT_INTERACTION_PASS')
+          PY
+          .venv/bin/python fabrica/products/fab-visual/scripts/studio-omega11k-browser-smoke.py \
+            --html evidence/omega11k/fab-visual-studio-demo.html \
+            --reactflow evidence/omega11k/scene.reactflow.json \
+            --cytoscape evidence/omega11k/scene.cytoscape.json \
+            --output evidence/omega11k/editor \
+            > evidence/omega11k/editor-browser-summary.json
+          python3 - <<'PY'
+          import json,pathlib
+          p=pathlib.Path('evidence/omega11k/editor/OMEGA11K_EDITOR_BROWSER_RECEIPT.json')
+          r=json.loads(p.read_text())
+          assert r['result']=='PASS_OFFLINE_ROUNDTRIP_EDITOR'
+          assert len(r['browser_actions'])>=8
+          assert len(r['downloads'])==3
+          assert r['release']=='HOLD'
+          assert r['source_authority_change']=='NONE'
+          assert r['gpu_present']=='NOT_ADMITTED'
+          assert not r['errors'] and not r['blocked']
+          print('SOURCE_ANCHORED_VISUAL_EDITING_AND_DUAL_GRAPH_IMPORT_PASS')
+          PY
+          test -z "$(git -C original status --porcelain)"
+      - name: Verify all artifacts and preserve original source immutability
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git -C original status --porcelain > evidence/omega11k/original-status-final.txt
+          find evidence/omega11k -type f ! -name SHA256SUMS.txt -print0 \
+            | sort -z | xargs -0 -r sha256sum > evidence/omega11k/SHA256SUMS.txt
+          sha256sum -c evidence/omega11k/SHA256SUMS.txt
+      - name: Archive finished product Studio, graph exports, screenshots and witnesses
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: fab-visual-omega11k-studio-product
+          path: evidence/omega11k/
+          if-no-files-found: warn
+          retention-days: 30
