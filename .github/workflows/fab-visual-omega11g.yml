@@ -138,6 +138,44 @@ jobs:
           print('CONTROLLED_APPLIED_ORDINAL_3_PASS; FULL_FRAME_NOT_ADMITTED')
           PY
           test -z "$(git -C original status --porcelain)"
+      - name: Append provenance-verified third-application checkpoints to the central SQLite DB
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 fabrica/products/fab-visual/db/ingest_checkpoints.py \
+            --db evidence/omega11g/FAB_VISUAL_CENTRAL_v0.1.sqlite \
+            --manifest evidence/omega11g/CHECKPOINT_VARIANTS.json \
+            --browser evidence/omega11g/browser/OMEGA11G_CHECKPOINT_BROWSER.json \
+            --head-file evidence/omega11g/review-head.txt \
+            --run-id "$GITHUB_RUN_ID" \
+            --receipt evidence/omega11g/CENTRAL_DB_FINAL_RECEIPT.json \
+            > evidence/omega11g/db-ingestion-status.json
+          python3 - <<'PY'
+          import json,sqlite3,hashlib
+          from pathlib import Path
+          b=Path('evidence/omega11g')
+          db=b/'FAB_VISUAL_CENTRAL_v0.1.sqlite'
+          r=json.loads((b/'CENTRAL_DB_FINAL_RECEIPT.json').read_text())
+          assert hashlib.sha256(db.read_bytes()).hexdigest()==r['final_db_sha256']
+          assert r['number_original_uninstrumented']==4
+          assert r['number_derivative_checkpoint_rows']==8
+          assert r['observer_state_snapshot_rows']==4
+          assert r['checkpoint_ordinal']==3
+          assert r['real_presented_frame']=='NOT_ADMITTED'
+          assert r['real_geometry_depth']=='NOT_RUN'
+          assert r['state_equivalence']=='INCONCLUSIVE_UNCONTROLLED_RAF_TIME'
+          assert r['remote_server']=='NOT_DEPLOYED'
+          assert r['release']=='HOLD'
+          with sqlite3.connect(db) as conn:
+              assert dict(conn.execute('SELECT status,total FROM gate_counts'))=={'PASS':16,'FAIL':6,'NOT_RUN':9,'HOLD':1}
+              assert conn.execute('SELECT COUNT(*) FROM checkpoint_events').fetchone()[0]==8
+              assert conn.execute('SELECT COUNT(*) FROM checkpoint_events WHERE source_state_sha256 IS NOT NULL').fetchone()[0]==4
+              assert conn.execute('SELECT COUNT(*) FROM ci_runs').fetchone()[0]==3
+              assert conn.execute('PRAGMA integrity_check').fetchone()[0]=='ok'
+              assert conn.execute('PRAGMA foreign_key_check').fetchall()==[]
+          print('CENTRAL_DB_CHECKPOINT_INGESTION_PASS; SOURCE_SHEET_AUTHORITY_PRESERVED')
+          PY
+          test -z "$(git -C original status --porcelain)"
       - name: Re-verify source and hash evidence without rewriting gate statuses
         if: always()
         shell: bash
