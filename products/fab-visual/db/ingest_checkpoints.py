@@ -110,6 +110,13 @@ def ingest(database,manifest_path,browser_path,head_path,run_id,receipt_path):
             snapshot=events[-1].get("applied_state")
             if not isinstance(snapshot,dict):
                 raise ValueError("missing real instrumented application data")
+            if scene=="raptor-light":
+                if not isinstance(snapshot.get("springs"),dict) or not isinstance(snapshot.get("burn"),dict):
+                    raise ValueError("raptor source application state missing")
+            else:
+                applied=snapshot.get("applied_controller_state")
+                if not isinstance(applied,dict) or any(k not in applied for k in ("table","lift","time")):
+                    raise ValueError("turning controller-set applied state missing")
             state_sha=DB.digest(DB.canonical(snapshot))
         payload={"ci_run_id":run_id,"git_head":head,"scene":scene,"variant":side,
                  "process":proc,"applied_ordinal":3,"source_html_sha":entry["original_html_sha256"],
