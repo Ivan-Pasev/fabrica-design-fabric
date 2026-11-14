@@ -26,3 +26,7 @@ The authoritative research and release tree is maintained separately in [Google 
 **No third-party source, restricted React Bits components, private jury mapping, secret keys, GPU receipts, or private research snapshots are contained in this public repository bootstrap.**
 
 License: MIT for FDF's original source only. See [LICENSE](LICENSE) and [AGENTS.md](AGENTS.md).
+
+## Experimental FAB.VISUAL IDE reference (unmerged branch)
+
+An additional **non-released** FAB.VISUAL visual science skill is under development on branch `feature/fab-visual-omega11o-ide-science-skill`. Agents and IDEs able to read GitHub may use [IDE_START_HERE_FAB_VISUAL.md](IDE_START_HERE_FAB_VISUAL.md) in that branch for a read-only source discovery path and may inspect [FAB.VISUAL product source](products/fab-visual/README.md) on the same branch. Do not assume this is shipped on `main`; no self-installer, universal IDE auto-activation, host privileges or science certification are provided. User-approved command execution and separate release gates are required.
