@@ -15,7 +15,7 @@ on:
       - 'products/fab-visual/bin/fab-visual.mjs'
       - 'products/fab-visual/tests/studio-interchange.test.mjs'
       - 'products/fab-visual/tests/graph-import.test.mjs'
-      - 'products/fab-visual/scripts/studio-omega11l-browser-smoke.py'
+      - 'products/fab-visual/scripts/studio-omega11k-browser-smoke.py'
       - 'products/fab-visual/scripts/studio-browser-smoke.py'
       - 'products/fab-visual/docs/OMEGA11J_*.md'
       - '.github/workflows/fab-visual-omega11l-product.yml'
@@ -169,7 +169,7 @@ jobs:
           assert not r['errors']
           print('OFFLINE_STUDIO_PRODUCT_INTERACTION_PASS')
           PY
-          .venv/bin/python fabrica/products/fab-visual/scripts/studio-omega11l-browser-smoke.py \
+          .venv/bin/python fabrica/products/fab-visual/scripts/studio-omega11k-browser-smoke.py \
             --html evidence/omega11l/fab-visual-studio-demo.html \
             --reactflow evidence/omega11l/scene.reactflow.json \
             --cytoscape evidence/omega11l/scene.cytoscape.json \
