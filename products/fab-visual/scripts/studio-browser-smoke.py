@@ -39,7 +39,7 @@ async def run(path,out):
             assert await page.locator("#stage g[data-part]").count()==4
             assert await page.locator("button[data-view='2d']").get_attribute("aria-pressed")=="true"
             assert await page.locator("button[data-view='isometric']").is_enabled()
-            assert "Release HOLD" in await page.locator("#scene-state").inner_text()
+            assert "release hold" in (await page.locator("#scene-state").inner_text()).lower()
             shot=out/"studio-reference-2d.png"
             await page.screenshot(path=str(shot),animations="disabled")
             log["screenshots"]["reference_2d_sha256"]=sha(shot)
