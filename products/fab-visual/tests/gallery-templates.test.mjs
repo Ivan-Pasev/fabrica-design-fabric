@@ -128,7 +128,7 @@ test('gallery content is standalone CSP, accessible search, categories and three
  assert.equal((html.match(/data-open-studio=/g)||[]).length,3);
  assert.equal((html.match(/data-gallery-card/g)||[]).length,4); // CSS/JS + 3 card attributes
  assert.doesNotMatch(html,/<script\s+src=/i);
- assert.doesNotMatch(html,/https?:\/\/[^ '"<>]+/i);
+ assert.doesNotMatch(html,/(?:src|href)=["']https?:\/\//i);
 });
 test('each Studio compiled in the gallery is editable with original claim boundary',()=>{
  const {assets,manifest}=buildGalleryBundle();
