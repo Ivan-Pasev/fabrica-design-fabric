@@ -239,6 +239,7 @@ export function renderStudio(scene,{title='FAB.VISUAL Studio · local scene expl
     '<div class="project-actions"><button type="button" id="edit-fork">Download fork SceneIR</button>',
     '<button type="button" id="edit-project">Download project ZIP</button>',
     '<button type="button" id="edit-diff-toggle" aria-expanded="false">Compare source / current</button></div>',
+    '<label for="edit-revision">Compare revision<select id="edit-revision"></select></label>',
     '<div id="edit-diff" class="visual-diff" hidden></div>',
     '</div>',
     '<h3>Import source-anchored graph</h3>',
