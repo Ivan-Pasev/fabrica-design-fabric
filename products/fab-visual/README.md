@@ -81,7 +81,7 @@ The gallery has three FIRST_PARTY_SYNTHETIC domain templates:
 
 Every scene carries a source-label and explicit units for numeric observables; all empirical status is NOT_RUN. The gallery is a capability demonstration, NOT a measured engineering system, installed apparatus, scientific paper, operational agent authorization or external connected service. The templates are original first-party source and do not copy new external renderer/editor runtimes.
 
-Open a domain's editable Studio from the gallery; move or resize components, add typed illustrative links, undo/redo and export edited SceneIR / SVG / XYFlow / Cytoscape. Editing disables stale original Anatomy 3D/compare visualizations until recompilation and audit. No hidden server, DB migration, external network request or public deployment is involved. Scientific validation and production release remain **HOLD**.
+Open a domain's editable Studio from the gallery; move or resize components, add or remove typed illustrative links, undo/redo, download explicit local edit-history JSON, and export edited SceneIR / SVG / XYFlow / Cytoscape. Editing disables stale original Anatomy 3D/compare visualizations until recompilation and audit. No hidden server, DB migration, external network request or public deployment is involved. Scientific validation and production release remain **HOLD**.
 
 The Gallery's source contract is `src/visual/gallery.mjs`, source models live in `templates/*.scene.json`, automated negative tests in `tests/gallery-templates.test.mjs`, and browser end-to-end verification in `scripts/gallery-browser-smoke.py`.
 
