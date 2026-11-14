@@ -1,0 +1,305 @@
+name: FAB.VISUAL Ω11N Product Studio and Interchange
+on:
+  push:
+    branches: ['feature/fab-visual-omega11n-fork-diff-project']
+  pull_request:
+    paths:
+      - 'products/fab-visual/src/adapters/interchange.mjs'
+      - 'products/fab-visual/src/adapters/graph-import.mjs'
+      - 'products/fab-visual/src/visual/editor-runtime.mjs'
+      - 'products/fab-visual/src/visual/studio.mjs'
+      - 'products/fab-visual/src/visual/gallery.mjs'
+      - 'products/fab-visual/src/visual/project.mjs'
+      - 'products/fab-visual/src/visual/project-import.mjs'
+      - 'products/fab-visual/tests/project-import.test.mjs'
+      - 'products/fab-visual/scripts/project-import-browser-smoke.py'
+      - 'products/fab-visual/tests/project.test.mjs'
+      - 'products/fab-visual/scripts/project-browser-smoke.py'
+      - 'products/fab-visual/templates/**'
+      - 'products/fab-visual/tests/gallery-templates.test.mjs'
+      - 'products/fab-visual/scripts/gallery-browser-smoke.py'
+      - 'products/fab-visual/bin/fab-visual.mjs'
+      - 'products/fab-visual/tests/studio-interchange.test.mjs'
+      - 'products/fab-visual/tests/graph-import.test.mjs'
+      - 'products/fab-visual/scripts/studio-omega11k-browser-smoke.py'
+      - 'products/fab-visual/scripts/studio-browser-smoke.py'
+      - 'products/fab-visual/docs/OMEGA11J_*.md'
+      - 'products/fab-visual/docs/OMEGA11M_*.md'
+      - 'products/fab-visual/docs/OMEGA11N_*.md'
+      - 'products/fab-visual/package.json'
+      - 'products/fab-visual/README.md'
+      - 'products/fab-visual/CHANGELOG.md'
+      - '.github/workflows/fab-visual-omega11n-import.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  product-studio-executable:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - name: Checkout exact unmerged Studio source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: fabrica
+          persist-credentials: false
+      - name: Checkout original MIT Anatomy source without changes
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: wheresryan22/anatomy
+          ref: 1482e8469b0a9e0d8cc18ea2740a01423d29ae80
+          path: original
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Check Node runtime and all 173 upstream source Git objects
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/omega11n
+          git -C fabrica rev-parse HEAD > evidence/omega11n/review-head.txt
+          git -C original rev-parse HEAD > evidence/omega11n/original-head.txt
+          node --version | tee evidence/omega11n/node-version.txt
+          python3 fabrica/products/fab-visual/scripts/omega10-upstream-lock.py \
+            --root original --commit 1482e8469b0a9e0d8cc18ea2740a01423d29ae80 \
+            --count 173 --output evidence/omega11n/173-source-lock.json \
+            > evidence/omega11n/173-source-summary.json
+          test -z "$(git -C original status --porcelain)"
+      - name: Execute entire FAB.VISUAL Node regression and product export tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd fabrica/products/fab-visual
+          node --test tests/*.test.mjs \
+            2>&1 | tee ../../../evidence/omega11n/node-test-all.log
+      - name: Build standalone usable Studio and all four graph interchange artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd fabrica/products/fab-visual
+          node bin/fab-visual.mjs studio fixtures/policy-scene.json \
+            ../../../evidence/omega11n/fab-visual-studio-demo.html \
+            > ../../../evidence/omega11n/cli-studio-summary.json
+          node bin/fab-visual.mjs interchange fixtures/policy-scene.json reactflow \
+            ../../../evidence/omega11n/scene.reactflow.json \
+            > ../../../evidence/omega11n/cli-reactflow.json
+          node bin/fab-visual.mjs interchange fixtures/policy-scene.json cytoscape \
+            ../../../evidence/omega11n/scene.cytoscape.json \
+            > ../../../evidence/omega11n/cli-cytoscape.json
+          node bin/fab-visual.mjs interchange fixtures/policy-scene.json mermaid \
+            ../../../evidence/omega11n/scene.mmd \
+            > ../../../evidence/omega11n/cli-mermaid.json
+          node bin/fab-visual.mjs interchange fixtures/policy-scene.json dot \
+            ../../../evidence/omega11n/scene.dot \
+            > ../../../evidence/omega11n/cli-dot.json
+          node bin/fab-visual.mjs interchange-import reactflow \
+            ../../../evidence/omega11n/scene.reactflow.json fixtures/policy-scene.json \
+            ../../../evidence/omega11n/roundtrip-reactflow.scene.json \
+            > ../../../evidence/omega11n/cli-import-reactflow.json
+          node bin/fab-visual.mjs interchange-import cytoscape \
+            ../../../evidence/omega11n/scene.cytoscape.json fixtures/policy-scene.json \
+            ../../../evidence/omega11n/roundtrip-cytoscape.scene.json \
+            > ../../../evidence/omega11n/cli-import-cytoscape.json
+          python3 - <<'PY'
+          import json,hashlib,pathlib
+          root=pathlib.Path('../../../evidence/omega11n')
+          html=(root/'fab-visual-studio-demo.html').read_text()
+          witness=json.loads((root/'fab-visual-studio-demo.html.witness.json').read_text())
+          assert witness['release']=='HOLD'
+          assert witness['views']==['2d','isometric','compare']
+          assert witness['interchangeFormats']==['reactflow','cytoscape','mermaid','dot']
+          assert witness['realRendererFrame']=='NOT_ADMITTED'
+          assert witness['claim']=='MODEL_DERIVED_INTERACTIVE_VIEW_NOT_PROOF'
+          assert witness['outputDigest']=='sha256:'+hashlib.sha256(html.encode()).hexdigest()
+          assert '<script src=' not in html
+          assert 'connect-src &#39;none&#39;' in html
+          assert 'Pinned Anatomy' in html
+          for f in ['scene.reactflow.json','scene.cytoscape.json']:
+            x=json.loads((root/f).read_text());assert x['release']=='HOLD'
+          for name in ['roundtrip-reactflow.scene.json','roundtrip-cytoscape.scene.json']:
+            imported=json.loads((root/name).read_text())
+            original=json.loads(pathlib.Path('fixtures/policy-scene.json').read_text())
+            assert imported==original
+            assert json.loads((root/(name+'.import-report.json')).read_text())['release']=='HOLD'
+          print('STUDIO_ROUNDTRIP_IMPORT_AND_FOUR_FORMAT_EXPORTS_PASS')
+          PY
+      - name: Generate three standalone domain Studios and source-labelled offline Gallery
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd fabrica/products/fab-visual
+          node bin/fab-visual.mjs gallery ../../../evidence/omega11n/gallery \
+            > ../../../evidence/omega11n/cli-gallery-summary.json
+          python3 - <<'PY'
+          import json,hashlib,pathlib
+          root=pathlib.Path('../../../evidence/omega11n/gallery')
+          manifest=json.loads((root/'gallery.manifest.json').read_text())
+          assert manifest['schema']=='fab.visual.gallery-manifest.v1'
+          assert manifest['release']=='HOLD'
+          assert manifest['real_measurements']=='NOT_PRESENT'
+          assert manifest['scientific_certification']=='NOT_RUN'
+          assert manifest['external_resources_required'] is False
+          assert [x['key'] for x in manifest['templates']]==['energy','laboratory','agents']
+          assert hashlib.sha256((root/'index.html').read_bytes()).hexdigest()==manifest['output_html_sha256']
+          for x in manifest['templates']:
+              assert hashlib.sha256((root/x['studio_path']).read_bytes()).hexdigest()==x['html_sha256']
+              assert hashlib.sha256((root/x['scene_path']).read_bytes()).hexdigest()==x['scene_sha256']
+              assert hashlib.sha256((root/x['preview_path']).read_bytes()).hexdigest()==x['svg_sha256']
+              scene=json.loads((root/x['scene_path']).read_text())
+              assert scene['model']['synthetic'] is True
+              assert scene['claim']['status']=='EXPLANATORY'
+              assert all(o['evidence']=='NOT_RUN' for o in scene['observables'])
+          print('THREE_SYNTHETIC_DOMAIN_STUDIOS_SOURCE_MANIFEST_PASS')
+          PY
+      - name: Build independently readable source/fork project ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd fabrica/products/fab-visual
+          node bin/fab-visual.mjs project \
+            templates/energy-microgrid.scene.json templates/energy-microgrid.scene.json \
+            omega11n ../../../evidence/omega11n/demo-portable-project.zip \
+            > ../../../evidence/omega11n/cli-project-summary.json
+          python3 - <<'PY'
+          import json,pathlib,zipfile,hashlib
+          root=pathlib.Path('../../../evidence/omega11n')
+          path=root/'demo-portable-project.zip'
+          with zipfile.ZipFile(path,'r') as z:
+              assert z.testzip() is None
+              assert sorted(z.namelist())==sorted([
+                'manifest.json','source/original.scene.json','derived/fork.scene.json',
+                'evidence/visual-diff.json','evidence/edit-history.json','readme.txt'])
+              manifest=json.loads(z.read('manifest.json'))
+              assert manifest['release']=='HOLD'
+              assert manifest['sourceAuthorityPreserved'] is True
+              assert manifest['hostAuthorization']=='NOT_RUN'
+              orig=json.loads(z.read('source/original.scene.json'))
+              fork=json.loads(z.read('derived/fork.scene.json'))
+              assert orig['model']['authority']==fork['model']['authority']
+              assert orig['claim']==fork['claim']
+          r=json.loads((root/'demo-portable-project.zip.witness.json').read_text())
+          assert r['archiveSha256']=='sha256:'+hashlib.sha256(path.read_bytes()).hexdigest()
+          assert r['signedByAuthority'] is False and r['release']=='HOLD'
+          print('DETERMINISTIC_READABLE_SOURCE_PRESERVING_PROJECT_ZIP_PASS')
+          PY
+      - name: Install pinned independent Chromium browser test runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --disable-pip-version-check 'playwright==1.57.0'
+          .venv/bin/python -m playwright install --with-deps chromium
+      - name: Run real offline browser Studio interaction, inspect, compare and six downloads
+        shell: bash
+        run: |
+          set -euo pipefail
+          .venv/bin/python fabrica/products/fab-visual/scripts/studio-browser-smoke.py \
+            --html evidence/omega11n/fab-visual-studio-demo.html \
+            --output evidence/omega11n/browser \
+            > evidence/omega11n/browser-smoke-summary.json
+          python3 - <<'PY'
+          import json,pathlib
+          p=pathlib.Path('evidence/omega11n/browser/OMEGA11J_STUDIO_BROWSER_RECEIPT.json')
+          r=json.loads(p.read_text())
+          assert r['result']=='PASS_OFFLINE_STUDIO_END_TO_END'
+          assert len(r['downloads'])==6
+          assert len(r['screenshots'])==3
+          assert r['canvas_gpu_present']=='NOT_ADMITTED'
+          assert r['scientific_certification']=='NOT_RUN'
+          assert r['release']=='HOLD'
+          assert not r['blocked_external_requests']
+          assert not r['errors']
+          print('OFFLINE_STUDIO_PRODUCT_INTERACTION_PASS')
+          PY
+          .venv/bin/python fabrica/products/fab-visual/scripts/studio-omega11k-browser-smoke.py \
+            --html evidence/omega11n/fab-visual-studio-demo.html \
+            --reactflow evidence/omega11n/scene.reactflow.json \
+            --cytoscape evidence/omega11n/scene.cytoscape.json \
+            --output evidence/omega11n/editor \
+            > evidence/omega11n/editor-browser-summary.json
+          python3 - <<'PY'
+          import json,pathlib
+          p=pathlib.Path('evidence/omega11n/editor/OMEGA11K_EDITOR_BROWSER_RECEIPT.json')
+          r=json.loads(p.read_text())
+          assert r['result']=='PASS_OFFLINE_ROUNDTRIP_EDITOR'
+          assert len(r['browser_actions'])>=8
+          assert len(r['downloads'])==3
+          assert r['release']=='HOLD'
+          assert r['source_authority_change']=='NONE'
+          assert r['gpu_present']=='NOT_ADMITTED'
+          assert not r['errors'] and not r['blocked']
+          print('SOURCE_ANCHORED_VISUAL_EDITING_AND_DUAL_GRAPH_IMPORT_PASS')
+          PY
+          .venv/bin/python fabrica/products/fab-visual/scripts/gallery-browser-smoke.py \
+            --gallery evidence/omega11n/gallery \
+            --output evidence/omega11n/gallery-browser \
+            > evidence/omega11n/gallery-browser-summary.json
+          python3 - <<'PY'
+          import json,pathlib
+          p=pathlib.Path('evidence/omega11n/gallery-browser/OMEGA11L_GALLERY_BROWSER_RECEIPT.json')
+          receipt=json.loads(p.read_text())
+          assert receipt['result']=='PASS_THREE_LOCAL_DOMAIN_STUDIOS_AND_GALLERY'
+          assert len(receipt['source_templates'])==3
+          assert receipt['real_measurements']=='NOT_PRESENT'
+          assert receipt['scientific_validation']=='NOT_RUN'
+          assert receipt['release']=='HOLD'
+          assert not receipt['browser_error'] and not receipt['external_requests_blocked']
+          print('THREE_DOMAIN_OFFLINE_GALLERY_BROWSER_EDIT_DOWNLOAD_PASS')
+          PY
+          .venv/bin/python fabrica/products/fab-visual/scripts/project-browser-smoke.py \
+            --gallery evidence/omega11n/gallery \
+            --output evidence/omega11n/project-browser \
+            > evidence/omega11n/project-browser-summary.json
+          python3 - <<'PY'
+          import json,pathlib
+          root=pathlib.Path('evidence/omega11n/project-browser')
+          r=json.loads((root/'OMEGA11M_PRODUCT_BROWSER_RECEIPT.json').read_text())
+          assert r['result']=='PASS_OFFLINE_THREE_DOMAIN_PROJECT_FORK_DIFF_CONNECTOR'
+          assert len(r['cases'])==3
+          assert r['source_authority']=='PRESERVED'
+          assert r['host_authorization']=='NOT_RUN'
+          assert r['real_gpu_present']=='NOT_ADMITTED'
+          assert r['release']=='HOLD'
+          assert not r['errors'] and not r['blocked_external_requests']
+          print('THREE_DOMAIN_REAL_BROWSER_SOURCE_FORK_VISUAL_DIFF_AND_PORTABLE_ZIP_PASS')
+          PY
+          .venv/bin/python fabrica/products/fab-visual/scripts/project-import-browser-smoke.py \
+            --gallery evidence/omega11n/gallery \
+            --output evidence/omega11n/import-browser \
+            > evidence/omega11n/import-browser-summary.json
+          python3 - <<'PY'
+          import json,pathlib,zipfile,hashlib
+          root=pathlib.Path('evidence/omega11n/import-browser')
+          r=json.loads((root/'OMEGA11N_PROJECT_IMPORT_BROWSER_RECEIPT.json').read_text())
+          assert r['result']=='PASS_THREE_DOMAIN_SOURCE_BOUND_ZIP_IMPORT_REPLAY'
+          assert len(r['cases'])==3
+          assert r['publisherSignature']=='NOT_PRESENT'
+          assert r['gpuPresent']=='NOT_ADMITTED'
+          assert r['release']=='HOLD'
+          assert not r['errors'] and not r['blockedExternal']
+          for case in r['cases']:
+              file=root/(case['domain']+'-source-project.zip')
+              with zipfile.ZipFile(file,'r') as z:
+                  assert z.testzip() is None
+                  assert json.loads(z.read('manifest.json'))['release']=='HOLD'
+              assert hashlib.sha256(file.read_bytes()).hexdigest()==case['source_zip_sha256']
+          print('SOURCE_LOCKED_THREE_DOMAIN_PORTABLE_PROJECT_IMPORT_AND_REPLAY_PASS')
+          PY
+          test -z "$(git -C original status --porcelain)"
+      - name: Verify all artifacts and preserve original source immutability
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git -C original status --porcelain > evidence/omega11n/original-status-final.txt
+          find evidence/omega11n -type f ! -name SHA256SUMS.txt -print0 \
+            | sort -z | xargs -0 -r sha256sum > evidence/omega11n/SHA256SUMS.txt
+          sha256sum -c evidence/omega11n/SHA256SUMS.txt
+      - name: Archive finished product Studio, graph exports, screenshots and witnesses
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: fab-visual-omega11n-portable-project
+          path: evidence/omega11n/
+          if-no-files-found: warn
+          retention-days: 30
