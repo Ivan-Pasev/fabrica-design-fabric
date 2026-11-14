@@ -1,3 +1,12 @@
+## v0.7.0-alpha.0 — Ω11M Source Forks, Visual Diff and Portable Projects
+
+- Added visual-only derived SceneIR forks with distinct ID/revision, pinned source ancestry, preserved claims and source authority.
+- Added real 2D source-versus-derived comparison, revision timeline, moved/resized component and typed-edge diffs.
+- Added keyboard/pointer connector selection on actual SVG nodes and existing edges, preserving port constraints and reversible history.
+- Added deterministic offline ZIP project export containing source scene, fork, typed diff, local edit history, manifest and readme, plus CLI with SHA-256 witness.
+- Added 20 new Node negative/functional cases and three-domain Chromium browser tests; no new external runtime or network.
+- ZIP CRC32 detects transport errors, not publisher signatures; model/physics/GPU/host authorization claims are not promoted. Production release HOLD.
+
 ## v0.6.0-alpha.0 — Ω11L Typed Domain Templates and Offline Gallery
 
 - Added three first-party source-labelled synthetic SceneIR templates: Citizen Solar microgrid, laboratory DAQ/interlocks, and CodexStation evidence/approval orchestration.
