@@ -91,8 +91,10 @@ test('reject ZIP traversal and unknown member names even with valid CRC',()=>{
  for(const name of ['../bad.json','escape.js','source/../original.scene.json','a/b.txt']){
   const a=built();
   const files=a.files.map((f,i)=>i===0?{path:name,content:f.content}:f);
-  const zip=zipStore(files);
-  assert.throws(()=>parseProjectZip(zip),/unexpected, duplicate or unsafe member/);
+  if(name.includes('..'))
+    assert.throws(()=>zipStore(files),/PROJECT_ZIP_REJECT/);
+  else
+    assert.throws(()=>parseProjectZip(zipStore(files)),/unexpected, duplicate or unsafe member/);
  }
 });
 test('reject archive member count mismatches',()=>{
