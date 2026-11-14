@@ -114,7 +114,7 @@ test('interactive Studio contains actual reference, pinned isometric and inspect
   assert.ok(result.html.includes('id="flow-filter"'));
   assert.ok(result.html.includes('data-export="reactflow"'));
   assert.ok(result.html.includes('data-export="mermaid"'));
-  assert.ok(result.html.includes('class="part node'));
+  assert.ok(JSON.parse(result.html.match(/<script type="application\\/json" id="fab-studio-data">([\\s\\S]*?)<\\/script>/)[1]).svg2d.includes('class="part node'));
   assert.ok(result.html.includes('Pinned Anatomy'));
   assertHostHold(result.metadata);
 });
@@ -135,10 +135,11 @@ test('Studio safely preserves malicious model content in script JSON but never a
   const result=renderStudio(s);
   assert.ok(!result.html.includes('</script><img'));
   assert.ok(!result.html.includes('<img src=x'));
-  assert.ok(result.html.includes('&lt;img'));
+  assert.ok(!result.html.includes('<img'));
   const match=result.html.match(/<script type="application\/json" id="fab-studio-data">([\s\S]*?)<\/script>/);
   assert.ok(match);
   const bundle=JSON.parse(match[1]);
+  assert.ok(bundle.svg2d.includes('&lt;img'));
   assert.equal(bundle.scene.parts[1].label,attack);
   assert.equal(bundle.release,'HOLD');
 });
