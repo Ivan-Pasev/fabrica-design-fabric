@@ -51,3 +51,26 @@ The seed canonical_seed_2026-11-14.json is derived from live 2026-11-14 native-s
 v0.2: source-revisioned import with reconciled append-only new gate events after native Sheet review.
 v0.3: source-verified event crosswalk across CI, research drafts, screenshots and derivative captures.
 Only with explicit authority: optionally deploy authenticated SQL endpoint and continuous reconciliation with RBAC, backups, conflict resolution, and append-only audit signatures. No such endpoint is installed in this increment.
+
+
+## Exact-head Ω11G transactional ingestion
+
+The full independent CI builds the initial deterministic SQLite database and records
+DB_SNAPSHOT_RECEIPT.json with its **pre-ingestion** SHA256. After twelve fresh
+Chromium process observations verify the original, minimal and observing source
+sides, db/ingest_checkpoints.py appends only independently source-locked
+instrumented derivative events and emits CENTRAL_DB_FINAL_RECEIPT.json.
+
+- Four original-browser observations have no test hook and produce **no** false checkpoint rows.
+- Four MINIMAL_DERIVATIVE records preserve exact ordinal three, with source state SHA absent.
+- Four OBSERVING_DERIVATIVE records preserve exact ordinal three, with a SHA256 hash of the third source-applied state.
+- The final SQLite contains 32 pre-existing Sheet-originated gates, 35 evidence references, 8 derived checkpoint records, and 3 CI receipts (two Ω11F plus the actual Ω11G run).
+- **Use the final receipt's final_db_sha256 to verify the distributed SQLite file**. The initial receipt describes an earlier intermediate snapshot and must not be used to validate the final bytes.
+- The browser's applied ordinal is fixed, but its RAF time remains uncontrolled: application state equivalence is INCONCLUSIVE, and actual renderer presentation remains NOT_ADMITTED.
+- SQLite is versioned and archived; no always-on service, automatic Google Drive synchronization, or production release is implied.
+
+Research decision: products/fab-visual/docs/OMEGA11G_CENTRAL_DATABASE_CHECKPOINT_DECISION.md.
+First independently verified full ingestion CI:
+https://github.com/Ivan-Pasev/fabrica-design-fabric/actions/runs/43573628843.
+Canonical archived database and receipts:
+https://drive.google.com/file/d/1ul7zcuKHzsGHjItxiqRsahEzsOJyTJ8k/view.
