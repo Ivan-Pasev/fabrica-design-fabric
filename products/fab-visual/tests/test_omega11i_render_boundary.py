@@ -11,7 +11,7 @@ spec=importlib.util.spec_from_file_location("omega11i_source_audit",SCRIPT)
 A=importlib.util.module_from_spec(spec);spec.loader.exec_module(A)
 
 RAPTOR=(b"const D={};function f(){requestAnimationFrame(tick);requestAnimationFrame(tick);"
-        b"new IntersectionObserver(cb);setTimeout(cb,300);G.layer({camera:D.camera});"
+        b"new IntersectionObserver(cb);setTimeout(cb,300);glLayer({camera:D.camera});"
         b"stage.style.transform='translate(0px)';}")
 TURN=(b"const LIVE = 'a';T.build();const started=Date.now();"
       b"function f(){requestAnimationFrame(tick);requestAnimationFrame(tick);"
