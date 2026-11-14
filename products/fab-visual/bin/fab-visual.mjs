@@ -34,7 +34,7 @@ try {
       throw Error('gallery output cannot write inside source code or original templates');
     const {assets,manifest}=buildGalleryBundle();
     for(const file of assets){
-      if(!/^(?:studios|scenes|previews)\/[a-z][a-z0-9-]*\.(?:html|json|svg)$|^(?:index\.html|gallery\.manifest\.json)$/.test(file.path))
+      if(!/^(?:studios\/[a-z][a-z0-9-]*\.html|scenes\/[a-z][a-z0-9-]*\.scene\.json|previews\/[a-z][a-z0-9-]*\.svg|index\.html|gallery\.manifest\.json)$/.test(file.path))
         throw Error('unexpected gallery artifact name');
       write(resolve(target,file.path),file.content);
     }
