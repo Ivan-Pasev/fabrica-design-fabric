@@ -53,9 +53,8 @@ test('M1 wrong model identifier and unauthorized equation cannot execute',()=>{
  const b=copy(specimen);b.sourceModel.revision='production';
  assert.throws(()=>audit(original,b),/model identity/);
 });
-test('M1 source SHA, numeric observable, topology, claim tampering fail closed',()=>{
+test('M1 source SHA, observable and claim drift fail closed; invalid graph fails schema first',()=>{
  for(const mut of [
- s=>s.parts.pop(),
  s=>s.claim.status='CERTIFIED',
  s=>s.observables[0].value=123,
  s=>s.model.authority='RELEASED'
@@ -63,6 +62,9 @@ test('M1 source SHA, numeric observable, topology, claim tampering fail closed',
    const scene=copy(original);mut(scene);
    assert.throws(()=>audit(scene),/source SceneIR hash mismatch/);
  }
+ const invalidGraph=copy(original);
+ invalidGraph.parts.pop();
+ assert.throws(()=>audit(invalidGraph),/links\[4\]: missing endpoint/);
 });
 test('M1 deliberately changed source bound with numeric readout detects divergence',()=>{
  const scene=copy(original);
