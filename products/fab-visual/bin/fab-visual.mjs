@@ -50,6 +50,22 @@ try {
     console.log(JSON.stringify({output:resolve(out),witness:resolve(out+'.witness.json'),
       format,release:'HOLD'},null,2));
   }
+  else if(cmd==='interchange-import'){
+    const [format,graphFile,sourceFile,out]=args;
+    if(!['reactflow','cytoscape'].includes(format)||!graphFile||!sourceFile||!out||!/\.json$/i.test(out))
+      throw Error('usage: interchange-import <reactflow|cytoscape> <graph.json> <source-scene.json> <out.json>');
+    if(resolve(out)===resolve(graphFile)||resolve(out)===resolve(sourceFile))
+      throw Error('import output cannot overwrite graph or original source');
+    const seed=JSON.parse(readFileSync(sourceFile,'utf8'));
+    const graph=readFileSync(graphFile,'utf8');
+    if(Buffer.byteLength(graph)>2000000)throw Error('graph input exceeds 2MB');
+    const received=importInterchange(graph,format,seed);
+    write(out,JSON.stringify(received.scene,null,2)+'\n');
+    write(out+'.import-report.json',JSON.stringify(received.report,null,2)+'\n');
+    write(out+'.witness.json',JSON.stringify(received.receipt,null,2)+'\n');
+    console.log(JSON.stringify({output:resolve(out),report:resolve(out+'.import-report.json'),
+      changedParts:received.report.changed_parts,release:'HOLD'},null,2));
+  }
   else if(cmd==='gate'){const r=gate(JSON.parse(readFileSync(args[0],'utf8')));console.log(JSON.stringify(r,null,2));if(r.status!=='ELIGIBLE_FOR_AUTHORIZED_RELEASE')process.exitCode=2;}
   else if(cmd==='render'){
     const s=JSON.parse(readFileSync(args[0],'utf8'));assertScene(s);
