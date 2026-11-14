@@ -16,3 +16,9 @@ Use the public entrypoint at repository root `IDE_START_HERE_FAB_VISUAL.md` and 
 The new `audit-quantitative` CLI validates strict SI dimensional consistency, synthetic signed balances, conservative uncertainty and a declared finite transition graph; `PASS` means **internal declared-input numerical consistency only**. It is not a field measurement, calibrated unit assurance, scientific theory validation, real human approval, engine access or release authorization. Read `docs/MATH_LOGIC_PHYSICS_BOUNDARIES_OMEGA11O.md` for equations and counterexamples.
 
 Default autonomous behavior is **read-only reasoning and proposal**. Never clone, execute a remote repo, install an IDE skill, edit host files, push or deploy without the host user's explicit authorization. Keep `release: HOLD`.
+
+## Ω11P source binding and optional IDE packaging gate
+
+Every numerical claim associated with a SceneIR needs exact SHA-256 and model identity/revision binding through `audit-bound`. Synthetic structural part/link counts may be independently checked from the loaded SceneIR; numeric source observables are **only declared values**, not independent solvers. Separate nominal PASS, interval INCONCLUSIVE and real-world NOT_RUN; an OUTSIDE_DECLARED_BOUNDS result must fail. Do not convert an uncertainty-overlapping interval to a verified physical balance.
+
+The local `ide-package` CLI defaults to `--dry-run`; only an explicit `--write` invocation may create a brand-new source-reference package under a pre-existing parent outside this repository. It must never claim automatic activation in a foreign IDE, inspect secrets or grant commands. `release: HOLD` is invariant.
