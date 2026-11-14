@@ -1,0 +1,244 @@
+{
+  "schema": "fab.scene.v0.2",
+  "id": "codexstation-agent-evidence-graph",
+  "representation": "ANALOGICAL",
+  "model": {
+    "id": "fab.visual.omega11l.agent-orchestration",
+    "revision": "0.6.0-alpha.0",
+    "authority": "FAB.VISUAL Ω11L first-party synthetic fixture — no external measurements or authorization",
+    "synthetic": true,
+    "source_profile": "FIRST_PARTY_SYNTHETIC_SCENE",
+    "units": "illustrative canvas coordinates; not metric distance",
+    "trace": [
+      "TEMPLATE_SOURCE_ONLY",
+      "NO_LIVE_DEVICE_OR_HOST"
+    ]
+  },
+  "template": {
+    "schema": "fab.visual.domain-template.v1",
+    "domain": "agent-orchestration",
+    "title": "CodexStation · Evidence and Approval",
+    "origin": "FIRST_PARTY_SYNTHETIC",
+    "licensing": "FAB.VISUAL first-party MIT source",
+    "source_status": "NOT_MEASURED",
+    "scope": "TOPOLOGY_ILLUSTRATION_ONLY",
+    "all_numeric_observables_are_synthetic": true,
+    "real_hardware_or_host_attestation": "NOT_RUN"
+  },
+  "parts": [
+    {
+      "id": "request",
+      "label": "Human request",
+      "x": 35,
+      "y": 132,
+      "w": 160,
+      "h": 88,
+      "ports": [
+        {
+          "id": "control-out",
+          "flow": "control"
+        }
+      ]
+    },
+    {
+      "id": "planner",
+      "label": "Orchestration planner",
+      "x": 260,
+      "y": 132,
+      "w": 175,
+      "h": 88,
+      "ports": [
+        {
+          "id": "control-in",
+          "flow": "control"
+        },
+        {
+          "id": "task-out",
+          "flow": "dependency"
+        },
+        {
+          "id": "review-out",
+          "flow": "information"
+        }
+      ]
+    },
+    {
+      "id": "research",
+      "label": "Evidence collection agent",
+      "x": 505,
+      "y": 55,
+      "w": 175,
+      "h": 88,
+      "ports": [
+        {
+          "id": "task-in",
+          "flow": "dependency"
+        },
+        {
+          "id": "result-out",
+          "flow": "information"
+        }
+      ]
+    },
+    {
+      "id": "verifier",
+      "label": "Independent verifier",
+      "x": 765,
+      "y": 55,
+      "w": 183,
+      "h": 88,
+      "ports": [
+        {
+          "id": "evidence-in",
+          "flow": "information"
+        },
+        {
+          "id": "assessment-out",
+          "flow": "information"
+        }
+      ]
+    },
+    {
+      "id": "policy",
+      "label": "Policy and consent gate",
+      "x": 495,
+      "y": 310,
+      "w": 190,
+      "h": 93,
+      "ports": [
+        {
+          "id": "review-in",
+          "flow": "information"
+        },
+        {
+          "id": "assessment-in",
+          "flow": "information"
+        },
+        {
+          "id": "escalate-out",
+          "flow": "control"
+        }
+      ]
+    },
+    {
+      "id": "human",
+      "label": "Human approval",
+      "x": 755,
+      "y": 310,
+      "w": 180,
+      "h": 93,
+      "ports": [
+        {
+          "id": "escalate-in",
+          "flow": "control"
+        },
+        {
+          "id": "decision-out",
+          "flow": "control"
+        }
+      ]
+    },
+    {
+      "id": "execution",
+      "label": "Execution / release",
+      "x": 905,
+      "y": 495,
+      "w": 180,
+      "h": 90,
+      "ports": [
+        {
+          "id": "decision-in",
+          "flow": "control"
+        }
+      ],
+      "status": "BLOCKED"
+    }
+  ],
+  "links": [
+    {
+      "from": "request",
+      "to": "planner",
+      "flow": "control",
+      "fromPort": "control-out",
+      "toPort": "control-in"
+    },
+    {
+      "from": "planner",
+      "to": "research",
+      "flow": "dependency",
+      "fromPort": "task-out",
+      "toPort": "task-in"
+    },
+    {
+      "from": "research",
+      "to": "verifier",
+      "flow": "information",
+      "fromPort": "result-out",
+      "toPort": "evidence-in"
+    },
+    {
+      "from": "planner",
+      "to": "policy",
+      "flow": "information",
+      "fromPort": "review-out",
+      "toPort": "review-in"
+    },
+    {
+      "from": "verifier",
+      "to": "policy",
+      "flow": "information",
+      "fromPort": "assessment-out",
+      "toPort": "assessment-in"
+    },
+    {
+      "from": "policy",
+      "to": "human",
+      "flow": "control",
+      "fromPort": "escalate-out",
+      "toPort": "escalate-in"
+    },
+    {
+      "from": "human",
+      "to": "execution",
+      "flow": "control",
+      "fromPort": "decision-out",
+      "toPort": "decision-in"
+    }
+  ],
+  "observables": [
+    {
+      "id": "synthetic_agent_count",
+      "value": 3,
+      "unit": "1",
+      "source": "FAB.VISUAL Ω11L first-party synthetic fixture — no external measurements or authorization",
+      "evidence": "NOT_RUN"
+    },
+    {
+      "id": "policy_state",
+      "value": "ESCALATE",
+      "source": "FAB.VISUAL Ω11L first-party synthetic fixture — no external measurements or authorization",
+      "evidence": "NOT_RUN"
+    },
+    {
+      "id": "approval_granted",
+      "value": false,
+      "source": "FAB.VISUAL Ω11L first-party synthetic fixture — no external measurements or authorization",
+      "evidence": "NOT_RUN"
+    },
+    {
+      "id": "external_execution_enabled",
+      "value": false,
+      "source": "FAB.VISUAL Ω11L first-party synthetic fixture — no external measurements or authorization",
+      "evidence": "NOT_RUN"
+    }
+  ],
+  "audit": {
+    "empirical_validation": "NOT_RUN",
+    "real_host_verification": "NOT_RUN",
+    "scientific_admission": "NOT_RUN"
+  },
+  "claim": {
+    "status": "EXPLANATORY",
+    "interpretation": "Synthetic evidence and human-approval workflow; does not connect to real CodexStation agents, preserve actual consent records, grant operational permissions, or authorize execution. Release remains BLOCKED."
+  }
+}
