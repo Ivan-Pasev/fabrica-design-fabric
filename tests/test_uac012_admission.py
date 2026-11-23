@@ -192,3 +192,16 @@ class EvidenceHardeningTests(unittest.TestCase):
         result = module.triage(self.w, self.o)
         self.assertEqual(result["result"], "INCOMPLETE_EVIDENCE_HOLD")
         self.assertFalse(result["field_checks_complete"])
+
+
+
+class OwnerPilotTemplateTest(unittest.TestCase):
+    def test_owner_observation_template_is_fail_closed(self):
+        item = json.loads((root / "examples" / "UAC013_OWNER_OBSERVATION_TEMPLATE.json").read_text(encoding="utf-8"))
+        self.assertEqual(item["schema"], module.OBSERVATION)
+        self.assertEqual(item["record_type"], "DRAFT_TEMPLATE_NOT_EVIDENCE")
+        self.assertEqual(item["independent_review"], "PENDING")
+        for key in module.REQUIRED_FLAGS:
+            self.assertIs(item[key], False)
+        self.assertIs(item["owner_release_approval"], False)
+        self.assertTrue(item["skill_source_commit"].startswith("REPLACE_"))
