@@ -152,7 +152,16 @@ def main(argv: list[str] | None = None) -> int:
     try:
         report = status(args.project, args.host, args.intent)
     except (OSError, ValueError, RuntimeError, TypeError) as error:
-        print("HOLD: " + str(error), file=sys.stderr)
+        # Exceptions may contain private absolute paths: never echo exception text.
+        if isinstance(error, FileNotFoundError):
+            label = "CALLER_WORKSPACE_NOT_ACCESSIBLE"
+        elif isinstance(error, PermissionError):
+            label = "CALLER_WORKSPACE_PERMISSION_DENIED"
+        elif isinstance(error, ValueError):
+            label = "INVALID_INPUT_OR_UNSAFE_WORKSPACE"
+        else:
+            label = "LOCAL_STATUS_PROBE_FAILED"
+        print("HOLD: " + label, file=sys.stderr)
         return 2
     print(json.dumps(report, indent=2, sort_keys=True, ensure_ascii=False))
     return 0

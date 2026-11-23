@@ -132,3 +132,19 @@ class OwnerStatusTests(unittest.TestCase):
 
 if __name__=="__main__":
     unittest.main()
+
+
+
+class PrivateErrorOutputTests(unittest.TestCase):
+    def test_missing_workspace_error_does_not_echo_path(self):
+        import contextlib
+        import io
+        with tempfile.TemporaryDirectory() as t:
+            secret = str(Path(t) / "CONFIDENTIAL_OWNER_WORKSPACE_NAME")
+            err = io.StringIO()
+            with contextlib.redirect_stderr(err):
+                status = mod.main(["status","--project",secret,"--host","antigravity","--intent","design"])
+            self.assertEqual(status,2)
+            self.assertIn("HOLD: CALLER_WORKSPACE_NOT_ACCESSIBLE",err.getvalue())
+            self.assertNotIn(secret,err.getvalue())
+            self.assertNotIn("CONFIDENTIAL_OWNER_WORKSPACE_NAME",err.getvalue())
