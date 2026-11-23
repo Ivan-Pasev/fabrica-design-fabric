@@ -148,3 +148,69 @@ class PrivateErrorOutputTests(unittest.TestCase):
             self.assertIn("HOLD: CALLER_WORKSPACE_NOT_ACCESSIBLE",err.getvalue())
             self.assertNotIn(secret,err.getvalue())
             self.assertNotIn("CONFIDENTIAL_OWNER_WORKSPACE_NAME",err.getvalue())
+
+
+
+class MetadataOnlyReadBoundaryTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        (self.root / "AGENTS.md").write_text("CONFIDENTIAL_POLICY_DATA", encoding="utf-8")
+
+    def test_no_policy_content_reads_git_or_legacy_capture(self):
+        import subprocess
+        with patch.object(Path, "read_bytes", side_effect=AssertionError("policy bytes read")), \
+             patch.object(subprocess, "run", side_effect=AssertionError("Git subprocess invoked")), \
+             patch.object(mod.fdf_projectdna, "capture",
+                          side_effect=AssertionError("legacy hash witness invoked")):
+            result = mod.status(str(self.root), "antigravity", "design")
+        self.assertFalse(result["policy_file_contents_accessed"])
+        self.assertFalse(result["policy_file_hashes_computed"])
+        self.assertFalse(result["git_subprocess_invoked"])
+        self.assertEqual(result["git_state"], "UNKNOWN")
+
+    def test_policy_count_is_metadata_only(self):
+        result = mod.status(str(self.root), "codex", "design")
+        self.assertEqual(result["bounded_policy_file_count"], 1)
+        self.assertEqual(result["bounded_policy_state_counts"],
+                         {"PRESENT_METADATA_ONLY": 1})
+        self.assertTrue(result["policy_paths_content_and_hashes_disclosed"] is False)
+
+    def test_hidden_git_tree_is_not_inventoried(self):
+        hidden = self.root / ".git"
+        hidden.mkdir()
+        (hidden / "AGENTS.md").write_text("HIDDEN_CONTENT", encoding="utf-8")
+        result = mod.status(str(self.root), "antigravity", "design")
+        self.assertEqual(result["bounded_policy_file_count"], 1)
+
+    def test_many_policy_files_trigger_bounded_inventory_hold(self):
+        for index in range(mod.MAX_POLICY_ITEMS + 1):
+            item = self.root / ("policy_" + str(index))
+            item.mkdir()
+            (item / "GEMINI.md").write_text("policy metadata only", encoding="utf-8")
+        result = mod.status(str(self.root), "gemini-cli", "design")
+        self.assertEqual(result["status"],
+                         "HOLD_UNSAFE_OR_INCOMPLETE_FILESYSTEM_INVENTORY")
+        self.assertLessEqual(result["bounded_policy_file_count"], mod.MAX_POLICY_ITEMS)
+
+    def test_git_marker_is_not_committed_state_evidence(self):
+        (self.root / ".git").mkdir()
+        result = mod.status(str(self.root), "unknown", "design")
+        self.assertEqual(result["git_state"], "UNKNOWN")
+        self.assertFalse(result["native_host_skill_activation_verified"]
+                         if "native_host_skill_activation_verified" in result
+                         else result["on_disk"]["native_host_skill_activation_verified"])
+
+    def test_explicit_unknown_host_will_not_authenticate(self):
+        result = mod.status(str(self.root), "unknown", "design")
+        self.assertTrue(result["declared_host_not_authenticated"])
+        self.assertFalse(result["independent_human_witness_present"])
+        self.assertEqual(result["release"], "HOLD")
+
+    @unittest.skipIf(os.name == "nt", "Windows symlink permission varies")
+    def test_symlinked_root_policy_marks_hold(self):
+        (self.root / "GEMINI.md").symlink_to(self.root / "AGENTS.md")
+        result = mod.status(str(self.root), "gemini-cli", "design")
+        self.assertEqual(result["status"], "HOLD_UNSAFE_OR_INCOMPLETE_FILESYSTEM_INVENTORY")
+        self.assertFalse(result["permissions_to_install_or_modify"])
