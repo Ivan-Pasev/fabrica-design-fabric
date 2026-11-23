@@ -1,0 +1,19 @@
+{
+  "schema": "fdf.host_admission.owner_observation/0.1",
+  "record_type": "DRAFT_TEMPLATE_NOT_EVIDENCE",
+  "host": "antigravity",
+  "projectdna_witness_redacted_reference": "sha256:REPLACE_WITH_ACTUAL_WITNESS_SHA256",
+  "reviewed_first_party_skill": "fdf-universal-bootstrap",
+  "skill_source_commit": "REPLACE_WITH_VERIFIED_40_CHARACTER_SOURCE_COMMIT",
+  "independent_review": "PENDING",
+  "real_workspace_confirmed_by_owner": false,
+  "host_global_and_project_rules_checked": false,
+  "native_skill_discovery_observed": false,
+  "native_skill_activation_observed": false,
+  "one_read_only_proposal_verified": false,
+  "git_status_before_after_reviewed": false,
+  "private_evidence_stored_outside_public_repo": false,
+  "owner_release_approval": false,
+  "local_evidence_in_private_workspace_only": true,
+  "privacy_warning": "Keep raw paths, policy content, screenshots, personal identities and secrets outside public GitHub/Drive. A checked box is an unverified owner report, not proof of actual host behavior."
+}
