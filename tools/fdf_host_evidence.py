@@ -27,6 +27,18 @@ REQUIRED_FLAGS = (
 HEX64 = re.compile(r'^[a-f0-9]{64}$')
 MAX_BYTES = 128*1024
 
+def _reject_duplicate_keys(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError('HOLD: duplicate JSON evidence field')
+        result[key] = value
+    return result
+
+
+def _reject_nonfinite_number(value):
+    raise ValueError('HOLD: non-finite JSON number is forbidden')
+
 
 def read_json(path: str) -> dict:
     p = Path(path)
@@ -35,7 +47,8 @@ def read_json(path: str) -> dict:
     data = p.read_bytes()
     if len(data) > MAX_BYTES:
         raise ValueError('HOLD: oversized evidence')
-    doc = json.loads(data)
+    doc = json.loads(data, object_pairs_hook=_reject_duplicate_keys,
+                     parse_constant=_reject_nonfinite_number)
     if not isinstance(doc,dict):
         raise ValueError('HOLD: evidence must be a JSON object')
     return doc
@@ -47,7 +60,10 @@ def witness_hash(witness: dict) -> str:
         raise ValueError('HOLD: missing or malformed witness digest')
     payload = dict(witness)
     payload.pop('witness_sha256')
-    serialized=(json.dumps(payload,sort_keys=True,separators=(',',':'),ensure_ascii=False)+'\n').encode('utf-8')
+    try:
+        serialized=(json.dumps(payload,sort_keys=True,separators=(',',':'),ensure_ascii=False)+'\n').encode('utf-8')
+    except (TypeError, ValueError, UnicodeError) as exc:
+        raise ValueError('HOLD: invalid or unserializable ProjectDNA witness') from exc
     if hashlib.sha256(serialized).hexdigest() != claim:
         raise ValueError('HOLD: ProjectDNA witness changed since hash calculation')
     return claim
@@ -62,7 +78,7 @@ def triage(witness: dict, observation: dict) -> dict:
     if observation.get('schema') != OBSERVATION:
         raise ValueError('HOLD: unsupported UAC-011 observation schema')
     host = observation.get('host')
-    if host not in HOSTS or witness.get('host_self_declared') != host:
+    if not isinstance(host, str) or host not in HOSTS or witness.get('host_self_declared') != host:
         raise ValueError('HOLD: host mismatch or unsupported declared host')
     ref = observation.get('projectdna_witness_redacted_reference')
     if ref not in (digest,'sha256:'+digest):
@@ -108,7 +124,7 @@ def main(argv: list[str] | None = None) -> int:
     a=p.parse_args(argv)
     try:
         result=triage(read_json(a.projectdna),read_json(a.observation))
-    except (ValueError,OSError,json.JSONDecodeError) as err:
+    except (ValueError, OSError, TypeError, UnicodeError, RecursionError) as err:
         print(str(err),file=sys.stderr)
         return 2
     print(json.dumps(result,indent=2,sort_keys=True))
